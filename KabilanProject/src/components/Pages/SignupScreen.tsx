@@ -15,7 +15,7 @@ import { UserContext } from './UserContext';
 
 const SignupScreen = () => {
   const { userData, setUserData } = useContext<any>(UserContext);
-  console.log(userData);
+  
 
   const [username, setUsername] = useState<any>('');
   const [email, setEmail] = useState<any>('');
