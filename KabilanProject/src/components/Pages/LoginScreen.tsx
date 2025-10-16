@@ -82,8 +82,7 @@ export default function App() {
                 </View>
                 <Text>{option.name}</Text>
               </TouchableOpacity>
-            );
-          })}
+         ) })}
         </View>
         <Image
           source={{ uri: 'https://reactjs.org/logo-og.png' }}
