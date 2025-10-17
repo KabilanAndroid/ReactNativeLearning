@@ -56,7 +56,7 @@ const Homescreen = () => {
   useEffect(() => {
     navigation.setOptions({
       headerStyle: {
-        backgroundColor: '#636B2F',
+        backgroundColor: '#5C5C99',
       },
       headerSearchBarOptions: {
         headerIconColor: 'white',
@@ -80,7 +80,7 @@ const Homescreen = () => {
     <TouchableOpacity
       // eslint-disable-next-line react-native/no-inline-styles
       style={{
-        backgroundColor: selectedValue.includes(item.id) ? 'red' : 'white',
+        backgroundColor: selectedValue.includes(item.id) ? '#A3A3CC' : 'white',
       }}
       onPress={() => {
         if (selectedValue.includes(item.id)) {
@@ -121,7 +121,7 @@ const Homescreen = () => {
         style={{
           flex: 1,
           padding: 5,
-          backgroundColor: '#D4DE95',
+          backgroundColor: '#CCCCFF',
           borderRadius: 20,
         }}
       />
@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 40,
     paddingHorizontal: 20,
-    backgroundColor: '#D4DE95',
+    backgroundColor: '#CCCCFF',
     rowGap: 10,
   },
   item: {

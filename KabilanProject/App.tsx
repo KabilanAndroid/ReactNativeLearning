@@ -1,46 +1,21 @@
-import { NavigationContainer } from '@react-navigation/native';
-import * as React from 'react';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import SignupScreen from './src/components/Pages/SignupScreen';
-import Homescreen from './src/components/Pages/Homescreen';
-import { UserProvider } from './src/components/Pages/UserContext';
+import React from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 
+import { View, Text, Button } from 'react-native';
+import { decrement, increment, counterState } from './src/redux/slice/counterSlice';
 
-type RoutescreenTypes = {
-  Home: undefined;
-  signup: undefined;
+const App = () => {
+  const count = useSelector(state=>state);
+  const dispatch = useDispatch();
+
+  return (
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <Text>Redux Example</Text>
+      <Text>Count: {count}</Text>
+      <Button title="Increment" onPress={() => dispatch(increment())} />
+      <Button title="Decrement" onPress={() => dispatch(decrement())} />
+    </View>
+  );
 };
 
-const Stack = createNativeStackNavigator<RoutescreenTypes>();
-
-function RootStack() {
-  return (
-    <UserProvider>
-      <Stack.Navigator initialRouteName="signup">
-        <Stack.Screen name="Home" component={Homescreen} />
-        <Stack.Screen
-          name="signup"
-          component={SignupScreen}
-          options={{
-            headerStyle: {
-              backgroundColor: '#636B2F',
-            },
-            headerTintColor: '#fff',
-            headerTitleStyle: {
-              fontWeight: 'bold',
-            },
-          }}
-        />
-      </Stack.Navigator>
-      
-    </UserProvider>
-  );
-}
-
-export default function App() {
-  return (
-    <NavigationContainer>
-      <RootStack />
-    </NavigationContainer>
-  );
-}
+export default App;

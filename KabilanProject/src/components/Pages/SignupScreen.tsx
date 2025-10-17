@@ -14,7 +14,7 @@ import { IconButton } from 'react-native-paper';
 import { UserContext } from './UserContext';
 
 const SignupScreen = () => {
-  const { userData, setUserData } = useContext<any>(UserContext);
+  const { setUserData } = useContext<any>(UserContext);
   
 
   const [username, setUsername] = useState<any>('');
@@ -226,13 +226,13 @@ const styles = StyleSheet.create({
     padding: 20,
     justifyContent: 'center',
     flexGrow: 1,
-    backgroundColor: '#D4DE95',
+    backgroundColor: '#CCCCFF',
   },
   title: {
     fontSize: 24,
     marginBottom: 20,
     textAlign: 'center',
-    color: '#222',
+    color: 'black',
   },
   input: {
     height: 50,
@@ -266,13 +266,13 @@ const styles = StyleSheet.create({
     marginLeft: 5,
   },
   button: {
-    backgroundColor: '#636B2F',
+    backgroundColor: '#5C5C99',
     paddingVertical: 15,
     borderRadius: 6,
     marginTop: 10,
   },
   buttonText: {
-    color: 'white',
+    color: 'black',
     textAlign: 'center',
     fontWeight: 'bold',
     fontSize: 16,
