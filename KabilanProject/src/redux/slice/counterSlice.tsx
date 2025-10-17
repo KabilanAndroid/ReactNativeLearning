@@ -33,17 +33,15 @@ export const counterSlice = createSlice({
   name: 'counter',
   initialState: initialState, 
   reducers: {
-    increment: (state) => {
-      state.value += 1;
+    update: (state) => {
+      state.name += 1;
     },
-    decrement: (state) => {
-      state.value -= 1;
-    },
+   
   },
 });
 
-export const { increment, decrement } = counterSlice.actions;
+export const { update } = counterSlice.actions;
 
-export const selectCount = (state: { counter: InitialStateType }) => state.counter.value;
+export const selectCount = (state: { counter: InitialStateType }) => state.counter.name;
 
 export default counterSlice.reducer;
