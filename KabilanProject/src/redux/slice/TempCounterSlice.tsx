@@ -25,17 +25,17 @@ const initialState: InitialStateType = {
   },
 };
 
-export const counterSlice = createSlice({
-  name: 'counter',
+export const TempCounterSlice = createSlice({
+  name: 'tempcounter',
   initialState: initialState,
   reducers: {
-    UpdateName: (state, action: PayloadAction<Partial<InitialStateType>>) => {
+    Updatename: (state, action: PayloadAction<Partial<InitialStateType>>) => {
       return {
         ...state,
         ...action.payload,
       };
     },
-    UpdateAddress: (state, action: PayloadAction<Partial<addressType>>) => {
+    Updateaddress: (state, action: PayloadAction<Partial<addressType>>) => {
       console.log(action.payload);
       return {
         ...state,
@@ -45,7 +45,7 @@ export const counterSlice = createSlice({
         },
       };
     },
-    updateGeo: (state, action: PayloadAction<Partial<geoType>>) => {
+    updategeo: (state, action: PayloadAction<Partial<geoType>>) => {
       console.log(action.payload);
       return {
         ...state,
@@ -59,7 +59,7 @@ export const counterSlice = createSlice({
         },
       };
     },
-    UpdateCompany: (state, action: PayloadAction<Partial<companyType>>) => {
+    Updatecompany: (state, action: PayloadAction<Partial<companyType>>) => {
       console.log(action.payload);
       return {
         ...state,
@@ -72,8 +72,8 @@ export const counterSlice = createSlice({
   },
 });
 
-export const { UpdateName, UpdateAddress ,updateGeo,UpdateCompany} = counterSlice.actions;
+export const { Updatename, Updateaddress ,updategeo,Updatecompany} = TempCounterSlice.actions;
 
 
 
-export default counterSlice.reducer;
+export default TempCounterSlice.reducer;

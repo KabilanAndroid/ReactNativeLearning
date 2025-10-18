@@ -1,14 +1,15 @@
 import { AppRegistry } from "react-native";
 import App from './App'
 import { name as appName } from './app.json';
-import {store} from './src/redux/store'
+import { PersistGate } from "redux-persist/integration/react";
+import {store,persistor} from './src/redux/store'
 import {Provider} from 'react-redux'
 
 const KabilanProject = () =>(
-    <Provider store = {store}>
+<Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
         <App />
-        console.log();
-        
+      </PersistGate>
     </Provider>
     
 );
