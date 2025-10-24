@@ -26,3 +26,4 @@ export interface companyType {
   catchPhrase: string;
   bs: string;
 }
+

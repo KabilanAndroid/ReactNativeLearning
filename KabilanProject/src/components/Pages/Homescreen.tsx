@@ -1,5 +1,5 @@
 import { useNavigation } from '@react-navigation/native';
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   FlatList,
@@ -7,8 +7,10 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from 'react-native';
+
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { UserContext } from './UserContext';
+import { useDispatch } from 'react-redux';
+import { setLoginStatus } from '../../redux/slice/userActions';
 
 const DATA = [
   { id: '1', title: 'First Item' },
@@ -42,8 +44,8 @@ const Item = ({ title }: any) => (
 );
 
 const Homescreen = () => {
-  const { userData } = useContext<any>(UserContext);
-
+  // const { userData } = useContext<any>(UserContext);
+  const dispatch = useDispatch();
   const [selectedValue, setSelectedValue] = useState<string[]>([]);
   const [searchText, setSearchText] = useState('');
   // const route = useRoute();
@@ -97,14 +99,14 @@ const Homescreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View>
+      {/* <View>
         {userData && (
           <View>
             <Text>Username: {userData.username}</Text>
             <Text>Email: {userData.email}</Text>
           </View>
         )}
-      </View>
+      </View> */}
       {/* <Text>itemId: {JSON.stringify(user)}</Text> */}
       <FlatList
         data={filteredData}
@@ -125,6 +127,9 @@ const Homescreen = () => {
           borderRadius: 20,
         }}
       />
+      <TouchableOpacity onPress={() => dispatch(setLoginStatus(false))}>
+        <Text>Logout</Text>
+      </TouchableOpacity>
     </SafeAreaView>
   );
 };

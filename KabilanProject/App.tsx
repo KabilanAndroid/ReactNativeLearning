@@ -1,46 +1,65 @@
 import React, { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { View, Text, Button } from 'react-native';
-import {  updateGeo, UpdateName} from './src/redux/slice/counterSlice'; 
-import { RootState } from './src/redux/store'; 
-import { updategeo, Updatename } from './src/redux/slice/TempCounterSlice';
+import { useSelector } from 'react-redux';
+import { RootState } from './src/redux/store';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { NavigationContainer } from '@react-navigation/native';
+import SignupScreen from './src/components/Pages/SignupScreen';
+import LoginScreen from './src/components/Pages/LoginScreen';
+import Homescreen from './src/components/Pages/Homescreen';
+
+const Stack = createNativeStackNavigator();
+
+const AuthStack = () => (
+  <Stack.Navigator
+    initialRouteName="Login"
+    screenOptions={{
+      headerStyle: { backgroundColor: '#5C5C99' },
+      headerTintColor: '#fff',
+      headerTitleStyle: { fontWeight: 'bold' },
+    }}
+  >
+    <Stack.Screen
+      name="signup"
+      component={SignupScreen}
+      options={{ title: 'Sign Up' }}
+    />
+    <Stack.Screen
+      name="Login"
+      component={LoginScreen}
+      options={{ title: 'Login' }}
+    />
+  </Stack.Navigator>
+);
+
+const AppStack = () => (
+  <Stack.Navigator
+    initialRouteName="Home"
+    screenOptions={{
+      headerStyle: { backgroundColor: '#5C5C99' },
+      headerTintColor: '#fff',
+      headerTitleStyle: { fontWeight: 'bold' },
+    }}
+  >
+    <Stack.Screen
+      name="Home"
+      component={Homescreen}
+      options={{ title: 'Home' }}
+    />
+  </Stack.Navigator>
+);
 
 const App = () => {
-  
-  const name = useSelector((state: RootState) => state.Counter);
-  const tempname = useSelector((state: RootState) => state.tempcounter);
-  const dispatch = useDispatch();
+  const authState = useSelector((state: RootState) => state.auth);
+  const isLoggedIn = authState.isLoggedIn;
 
-
-  console.log(name);
-  
-  
-
-  useEffect(()=>{
-    console.log('test-->',name,tempname)
-  },[name,tempname])
-
-
+  useEffect(() => {
+    console.log('Authentication state changed:', authState);
+  }, [authState]);
 
   return (
-    // eslint-disable-next-line react-native/no-inline-styles
-    <View style={{ flex: 1,gap:20,justifyContent:'center', alignItems: 'center' }}>
-      <Text>Redux Example</Text>
-      
-      <Button
-        title="Update permanent name"
-        onPress={() => dispatch(UpdateName ({
-          name:"kabilan"
-        }))}
-      />
-
-      <Button
-        title="Update temporary name"
-        onPress={() => dispatch(Updatename ({
-          name:'Thiru'
-        }))}
-      />
-    </View>
+    <NavigationContainer>
+      {isLoggedIn ? <AppStack /> : <AuthStack />}
+    </NavigationContainer>
   );
 };
 

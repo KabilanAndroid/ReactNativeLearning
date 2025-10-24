@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import {
   Text,
   TextInput,
@@ -9,28 +9,30 @@ import {
   Platform,
   View,
 } from 'react-native';
+import { useDispatch } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import { IconButton } from 'react-native-paper';
-import { UserContext } from './UserContext';
+import { setSignupData } from '../../redux/slice/userActions';
+
+// import { UserContext } from './UserContext';
 
 const SignupScreen = () => {
-  const { setUserData } = useContext<any>(UserContext);
-  
+  // const { setUserData } = useContext<any>(UserContext);
 
-  const [username, setUsername] = useState<any>('');
-  const [email, setEmail] = useState<any>('');
-  const [password, setPassword] = useState<any>('');
-  const [rePassword, setRePassword] = useState<any>('');
+  const [username, setUsername] = useState<string>('');
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [rePassword, setRePassword] = useState<string>('');
+
+  const dispatch = useDispatch();
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [isRePasswordVisible, setIsRePasswordVisible] = useState(false);
   const [errors, setErrors] = useState({
     username: '',
     email: '',
     password: '',
     rePassword: '',
   });
-
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  const [isRePasswordVisible, setIsRePasswordVisible] = useState(false);
-
   const validateField = (name: string, value: string) => {
     let error = '';
     switch (name) {
@@ -117,10 +119,11 @@ const SignupScreen = () => {
   const navigation = useNavigation();
   const onPress = () => {
     if (validate()) {
-      const data = { username, email };
-      setUserData(data);
+      // const data = { username, email };
+      // setUserData(data);
+      dispatch(setSignupData(username, password, email, rePassword));
 
-      navigation.navigate('Home');
+      navigation.navigate('Login' as never);
     }
   };
 
