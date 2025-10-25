@@ -1,16 +1,18 @@
 import { useNavigation } from '@react-navigation/native';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, FC } from 'react';
 import {
   View,
   FlatList,
   Text,
   StyleSheet,
   TouchableOpacity,
+  useColorScheme,
 } from 'react-native';
 
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDispatch } from 'react-redux';
 import { setLoginStatus } from '../../redux/slice/userActions';
+import { lightColor,darkcolor } from '../../utils/colors';
 
 const DATA = [
   { id: '1', title: 'First Item' },
@@ -36,14 +38,23 @@ const DATA = [
   { id: '110', title: 'Tenth Item' },
   { id: '111', title: 'First Item' },
 ];
-
-const Item = ({ title }: any) => (
+type Itemtype={
+   title :string
+   textColor:string
+}
+const Item:FC<Itemtype> = ({title,textColor}) => {
+  console.log("textdhsishd",textColor);
+  
+  return(
   <View style={[styles.item]}>
-    <Text style={styles.title}>{title}</Text>
+    <Text style={[styles.title,{color:textColor}]}>{title}</Text>
   </View>
-);
+)
+}
 
 const Homescreen = () => {
+  const colorScheme = useColorScheme();
+  const colors = colorScheme === 'dark' ? darkcolor : lightColor;
   // const { userData } = useContext<any>(UserContext);
   const dispatch = useDispatch();
   const [selectedValue, setSelectedValue] = useState<string[]>([]);
@@ -58,12 +69,12 @@ const Homescreen = () => {
   useEffect(() => {
     navigation.setOptions({
       headerStyle: {
-        backgroundColor: '#5C5C99',
+        backgroundColor:colors.headercolor,
       },
       headerSearchBarOptions: {
-        headerIconColor: 'white',
-        textColor: 'white',
-        hintTextColor: 'white',
+        headerIconColor: colors.white,
+        textColor: colors.white,
+        hintTextColor: colors.white,
         placeholder: 'Search...',
         onChangeText: (event: any) => {
           const text = event.nativeEvent.text;
@@ -76,13 +87,16 @@ const Homescreen = () => {
         onCancelButtonPress: () => setSearchText(''),
       },
     });
-  }, [navigation]);
+  }, [colors.headercolor, colors.white, navigation]);
+  console.log(colors.text);
+  
 
   const renderItem = ({ item }: any) => (
     <TouchableOpacity
       // eslint-disable-next-line react-native/no-inline-styles
       style={{
-        backgroundColor: selectedValue.includes(item.id) ? '#A3A3CC' : 'white',
+        backgroundColor: selectedValue.includes(item.id) ? colors.clickcolor : colors.nonclick,
+ 
       }}
       onPress={() => {
         if (selectedValue.includes(item.id)) {
@@ -93,7 +107,9 @@ const Homescreen = () => {
         }
       }}
     >
-      <Item title={item.title} />
+      <Item title={item.title}
+      textColor={colors.text}
+      />
     </TouchableOpacity>
   );
 
@@ -123,7 +139,7 @@ const Homescreen = () => {
         style={{
           flex: 1,
           padding: 5,
-          backgroundColor: '#CCCCFF',
+          backgroundColor: colors.containerbgcolor,
           borderRadius: 20,
         }}
       />
@@ -139,7 +155,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 40,
     paddingHorizontal: 20,
-    backgroundColor: '#CCCCFF',
+    backgroundColor: darkcolor.containerbgcolor,
     rowGap: 10,
   },
   item: {
@@ -148,6 +164,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
+    // color:'red'
   },
 });
 

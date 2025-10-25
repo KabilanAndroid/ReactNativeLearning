@@ -1,14 +1,23 @@
-import React from 'react';
+import React, { FC } from 'react';
 import { TextInput } from 'react-native-paper';
 import { StyleSheet } from 'react-native';
 
-const CustomFormTextInput = ({ label, placeholder,  value, onChangeText, style, }:any) => {
+type custtype={
+  label:string,
+  placeholder:string,  
+  value:string, 
+  onChangeText:()=>void, 
+  style:string,
+}
+const CustomFormTextInput:FC<custtype> = ({ label, placeholder,  value, onChangeText, style, }) => {
+  
+  
   return (
     <TextInput
       mode="outlined"
       label={label}
       placeholder={placeholder}
-      style={[styles.input, style]} 
+      style={[styles.input]} 
       value={value}
       onChangeText={onChangeText}
     />
@@ -18,11 +27,13 @@ const CustomFormTextInput = ({ label, placeholder,  value, onChangeText, style, 
 const styles = StyleSheet.create({
   input: {
     backgroundColor: '#fff',
-    width: '100%',
-    marginTop: 15,
+    width: '80%',
+    margin: 50,
+    marginStart:40,
     color: '#000',
     textAlign: 'center',
-    justifyContent:'center'
+    justifyContent:'center',
+    
   },
   
 });
