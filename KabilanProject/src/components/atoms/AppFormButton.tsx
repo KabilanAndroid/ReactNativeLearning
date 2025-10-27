@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { Dispatch, FC, SetStateAction } from 'react';
 import { TextInput } from 'react-native-paper';
 import { StyleSheet } from 'react-native';
 
@@ -6,7 +6,7 @@ type custtype={
   label:string,
   placeholder:string,  
   value:string, 
-  onChangeText:()=>void, 
+  onChangeText:Dispatch<SetStateAction<string>>, 
   style:string,
 }
 const CustomFormTextInput:FC<custtype> = ({ label, placeholder,  value, onChangeText, style, }) => {

@@ -6,14 +6,14 @@ export const lightColor={
     headertexticon:'#fff',
     headerhintTextColor:"#fff",
     clickcolor:'#3636ccff',
-    text:'#f11a1aff',
+    text:'#000000ff',
     nonclick:'#ffffffff',
     containerbgcolor:'#CCCCFF'
 }
 export const darkcolor={
     white:'#ffff',
     grey:"#7c7c7bff",
-    headercolor:"#ff0000ff",
+    headercolor:"#13ff1eff",
     headersearchIconColor:"#fff",
     headertexticon:'#fff',
     headerhintTextColor:"#fff",

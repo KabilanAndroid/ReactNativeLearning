@@ -43,7 +43,7 @@ const AppStack = () => (
   >
     <Stack.Screen
       name="Home"
-      component={Homescreen}
+      component={ApiScreen}
       options={{ title: 'Home' }}
     />
   </Stack.Navigator>

@@ -27,3 +27,13 @@ export interface companyType {
   bs: string;
 }
 
+export interface ApiStateType{
+ ß
+  comments:CommentsTypes,
+
+}
+export interface CommentsTypes{
+  id:number,
+  text:String,
+  postId:number,
+}
