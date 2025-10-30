@@ -1,0 +1,1 @@
+const kabi = require('./src/database/db.json')

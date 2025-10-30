@@ -8,6 +8,7 @@ import LoginScreen from './src/components/Pages/LoginScreen';
 import Homescreen from './src/components/Pages/Homescreen';
 import ApiScreen from './src/components/Pages/Api/ApiScreen';
 import Animation1 from './src/components/Pages/Animation/Animation1';
+import Animation2 from './src/components/Pages/Animation/Animation2';
 
 const Stack = createNativeStackNavigator();
 
@@ -44,7 +45,7 @@ const AppStack = () => (
   >
     <Stack.Screen
       name="Home"
-      component={Animation1}
+      component={Animation2}
       options={{ title: 'Home' }}
     />
   </Stack.Navigator>

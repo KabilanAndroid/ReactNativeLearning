@@ -1,6 +1,5 @@
 import {
   Animated,
-  Image,
   LayoutChangeEvent,
   StyleSheet,
   Text,
@@ -23,16 +22,14 @@ const Animation1 = () => {
       duration: 500,
       useNativeDriver: false,
     }).start();
-
-    
   };
-  useEffect (()=>{
+  useEffect(() => {
     Animated.timing(RotateAnim, {
       toValue: isEnabled ? 0 : 1,
       duration: 300,
       useNativeDriver: true,
     }).start();
-},[isEnabled,RotateAnim])
+  }, [isEnabled, RotateAnim]);
 
   const handleLayout = (event: LayoutChangeEvent) => {
     if (dynheight === 0) {
@@ -61,20 +58,21 @@ const Animation1 = () => {
             },
           ]}
         />
-        ;
+        
       </TouchableOpacity>
 
       <View
+        // eslint-disable-next-line react-native/no-inline-styles
         style={{ opacity: 0, position: 'absolute' }}
         onLayout={handleLayout}
       >
-        <Text style={styles.text}>dhg</Text>
-        <Text style={styles.text}>ggdgdhf</Text>
+        <Text style={styles.text}>Kabilan</Text>
+        <Text style={styles.text}>Kabilan</Text>
       </View>
 
       <Animated.View style={[styles.box, { height: animatedHeight }]}>
-        <Text style={styles.text}>dhg</Text>
-        <Text style={styles.text}>ggdgdhf</Text>
+        <Text style={styles.text}>Kabilan</Text>
+        <Text style={styles.text}>Kabilan</Text>
       </Animated.View>
 
       <View style={styles.box1} />
