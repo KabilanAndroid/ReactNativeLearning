@@ -45,7 +45,7 @@ const AppStack = () => (
   >
     <Stack.Screen
       name="Home"
-      component={Animation2}
+      component={ApiScreen}
       options={{ title: 'Home' }}
     />
   </Stack.Navigator>
