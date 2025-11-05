@@ -5,8 +5,9 @@ import { Colors } from '../utils/Colors';
 import { image } from '../utils/Images';
 
 import LoginForms from '../Components/LoginForms';
+import UsernameForms from '../Components/UsernameForm';
 
-const LoginScreen = () => {
+const summa = () => {
   return (
     <View style={styles.container} >
       <View style={styles.imageview}>
@@ -18,13 +19,13 @@ const LoginScreen = () => {
       </View>
 
       <View style={styles.card}>
-        <LoginForms />
+        <UsernameForms />
       </View>
     </View>
   );
 };
 
-export default LoginScreen;
+export default summa;
 
 const styles = StyleSheet.create({
   container: {
@@ -114,7 +115,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     position: 'absolute',
-    paddingVertical: 150,
+    paddingVertical: 250,
     paddingHorizontal: 20,
     backgroundColor: '#f6f1f146',
   },

@@ -1,22 +1,79 @@
-import * as React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
+import React, { useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { RootState } from '../QuickGram/src/redux/Store';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import IntroScreen from './src/Pages/IntroScreen';
-import LoginScreen from './src/Pages/LoginScreen';
+import { NavigationContainer } from '@react-navigation/native';
+
 import SignupScreen from './src/Pages/SignupScreen';
+import LoginScreen from './src/Pages/LoginScreen';
+import HomeScreen from './src/Pages/HomeScreen';
+import UsernameScreen from './src/Pages/UsernameScreen';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import summa from './src/Pages/summa';
 
 const Stack = createNativeStackNavigator();
+const Tab = createBottomTabNavigator();
+const AuthStack = () => (
+  <Stack.Navigator initialRouteName="Login" screenOptions={{ headerShown: false }} >
+    <Stack.Screen name="signup" component={SignupScreen} options={{ title: 'Sign Up' }} />
+    <Stack.Screen name="Login" component={LoginScreen} options={{ title: 'Login' }} />
+  </Stack.Navigator>
+);
 
-function AppNavigation() {
+
+const MainTabNavigator = () => {
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="Intro">
-        <Stack.Screen name="Intro" component={IntroScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="SignUp" component={SignupScreen} options={{ headerShown: false }} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <Tab.Navigator
+      initialRouteName="Home"
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
+      <Tab.Screen name="Home" component={HomeScreen} options={{ title: 'Home' }} />
+      
+    </Tab.Navigator>
   );
 }
 
-export default AppNavigation;
+const RootNavigator = ()=> {
+   const authState = useSelector((state: RootState) => state.auth);
+  const hasusername = authState.hasusername;
+
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
+      {hasusername ? (
+        <Stack.Screen name="MainTabs" component={MainTabNavigator} />
+      ) : (
+        <Stack.Screen name="UsernameScreen" component={UsernameScreen} />
+      )}
+  
+    </Stack.Navigator>
+  );
+}
+
+
+
+
+
+
+
+const App = () => {
+  const authState = useSelector((state: RootState) => state.auth);
+  const isLoggedIn = authState.isLoggedIn;
+
+  useEffect(() => {
+    console.log('Authentication state changed:', authState);
+  }, [authState]);
+
+  return (
+    <NavigationContainer>
+      {isLoggedIn ? <RootNavigator /> : <AuthStack />}
+    </NavigationContainer>
+  );
+};
+
+export default App;

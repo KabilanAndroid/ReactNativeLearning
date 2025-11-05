@@ -1,5 +1,5 @@
 export const Colors ={
-    introbg:'#52AC3B',
+    introbg:'#8EBB46',
     introbtn:'#fff',
     loginbg:'#fff',
     logintxt:'#000000ff',

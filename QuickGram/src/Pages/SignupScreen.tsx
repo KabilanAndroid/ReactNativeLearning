@@ -1,5 +1,5 @@
 /* eslint-disable react-native/no-inline-styles */
-import { Image, StyleSheet, View } from 'react-native';
+import {  Image, StyleSheet, View } from 'react-native';
 import React from 'react';
 import { Colors } from '../utils/Colors';
 import { image } from '../utils/Images';
@@ -7,6 +7,8 @@ import { image } from '../utils/Images';
 import SignupForms from '../Components/SignupForms';
 
 const SignupScreen = () => {
+  
+     
   return (
     <View style={styles.container}>
       <View style={styles.imageview}>

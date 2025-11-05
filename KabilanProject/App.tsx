@@ -5,10 +5,9 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
 import SignupScreen from './src/components/Pages/SignupScreen';
 import LoginScreen from './src/components/Pages/LoginScreen';
-import Homescreen from './src/components/Pages/Homescreen';
+
 import ApiScreen from './src/components/Pages/Api/ApiScreen';
-import Animation1 from './src/components/Pages/Animation/Animation1';
-import Animation2 from './src/components/Pages/Animation/Animation2';
+
 
 const Stack = createNativeStackNavigator();
 

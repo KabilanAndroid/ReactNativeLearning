@@ -1,0 +1,4 @@
+
+export const SET_LOGIN_STATUS = 'SET_LOGIN_STATUS';
+export const LOGOUT = 'LOGOUT';
+export const SET_USERNAME_STATUS = 'SET_USERNAME_STATUS'

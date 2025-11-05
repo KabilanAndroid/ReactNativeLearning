@@ -1,4 +1,3 @@
-/* eslint-disable react-native/no-inline-styles */
 import { Image, StyleSheet, View } from 'react-native';
 import React from 'react';
 import { Colors } from '../utils/Colors';
@@ -22,7 +21,7 @@ const IntroScreen = () => {
         />
 
         <AppText
-          text={`           Scroll less. Live more. Share your 
+          text={`           Scroll less. Live more. Share your
                               green feed.`}
           type={'welcomeText'}
           style={styles.text}
@@ -32,7 +31,7 @@ const IntroScreen = () => {
         text={`Let's Explore`}
         Style={styles.button}
         Onpress={function (): void {
-          navigation.navigate('Login' as never);
+          navigation.navigate('Login'as never);
         }}
       />
     </View>
@@ -47,7 +46,6 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.introbg,
     alignItems: 'center',
     padding: 20,
-    // justifyContent: 'flex-end',
   },
   button: {
     backgroundColor: 'white',

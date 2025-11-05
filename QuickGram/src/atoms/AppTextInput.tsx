@@ -2,7 +2,7 @@ import {  TextInput, TextInputProps, View, ViewStyle } from 'react-native';
 import React, { FC } from 'react';
 
 type AppTextInputType = {
-  onChangeText: () => void;
+  onChangeText: (text:string) => void;
   value: string;
   placeholder: string;
   style:ViewStyle;
