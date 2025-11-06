@@ -4,24 +4,24 @@ import React from 'react';
 import { Colors } from '../utils/Colors';
 import { image } from '../utils/Images';
 
-import LoginForms from '../Components/LoginForms';
 import UsernameForms from '../Components/UsernameForm';
 
 const summa = () => {
   return (
-    <View style={styles.container} >
+    <View style={styles.container}>
       <View style={styles.imageview}>
         <Image source={image.loginbg} style={styles.images} />
       </View>
 
       <View style={[styles.whiteview]}>
-        <Image source={image.logo} style={{height:90,width:90}}/>
+        <Image source={image.logo} style={{ height: 90, width: 90 }} />
       </View>
 
       <View style={styles.card}>
         <UsernameForms />
       </View>
     </View>
+    // </KeyboardAvoidingView>
   );
 };
 
@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     shadowColor: '#000000ff',
     paddingHorizontal: 30,
-    paddingVertical: 20,
+    paddingVertical: 10,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
   card: {
     flex: 1,
     width: '100%',
-    height: '100%',
+    // height: '100%',
     position: 'absolute',
     paddingVertical: 250,
     paddingHorizontal: 20,
@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.loginbg,
     justifyContent: 'flex-end',
-    alignItems:'center',
-    paddingBottom:30,
+    alignItems: 'center',
+    paddingBottom: 30,
   },
 });

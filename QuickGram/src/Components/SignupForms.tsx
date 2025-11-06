@@ -14,18 +14,17 @@ import AppText from '../atoms/AppText';
 import AppTextInput from '../atoms/AppTextInput';
 import LoginButton from '../atoms/LoginButton';
 import { Colors } from '../utils/Colors';
-import firestore from '@react-native-firebase/firestore';
 import Apptextbutton from '../atoms/Apptextbutton';
 import { useNavigation } from '@react-navigation/native';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { setLoginStatus, setUsernameStatus } from '../redux/UserAction';
 
 const SignupForms = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState("Kabilan@2003");
-  const [rePassword, setRePassword] = useState<string>("Kabilan@2003");
+  const [password, setPassword] = useState('Kabilan@2003');
+  const [rePassword, setRePassword] = useState<string>('Kabilan@2003');
   const [errors, setErrors] = useState({
     email: '',
     password: '',
@@ -111,8 +110,8 @@ const SignupForms = () => {
         );
         if (res.user.uid) {
           dispatch(setLoginStatus(true));
-         
-            dispatch(setUsernameStatus(false));
+
+          dispatch(setUsernameStatus(false));
         }
         console.log('res', res);
       } catch (error: any) {
@@ -129,107 +128,105 @@ const SignupForms = () => {
 
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={styles.cardinsidecard}
-    >
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        keyboardShouldPersistTaps="handled"
-      >
-        <AppText text={'Signup'} type={'LoginText'} />
-        <View style={styles.textinsideview1}>
-          <AppText text={'User name'} type={'userText'} />
-        </View>
-        <View style={styles.textinput1}>
-          <AppTextInput
-            onChangeText={text => {
-              setEmail(text);
-              validateField('email', text);
-            }}
-            value={email}
-            placeholder={'Email'}
-            style={styles.textinput}
-            props={{
-              autoCapitalize: 'none',
-              keyboardType: 'email-address',
-            }}
-          />
-          {errors.email ? (
-            <Text style={styles.errorText}>{errors.email}</Text>
-          ) : null}
-        </View>
-        <View style={styles.textinsideview2}>
-          <AppText text={'Password'} type={'userText'} />
-        </View>
-        <View style={styles.textinput2}>
-          <AppTextInput
-            onChangeText={text => {
-              setPassword('');
-              validateField('password', text);
-            }}
-            value={password}
-            placeholder={'Password'}
-            style={styles.textinput}
-            props={{
-              secureTextEntry: true,
-            }}
-          />
-        </View>
-        {errors.password ? (
-          <Text style={styles.errorText}>{errors.password}</Text>
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={styles.cardinsidecard}
+        >
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps="handled"
+          >
+      <AppText text={'Signup'} type={'LoginText'} />
+      <View style={styles.textinsideview1}>
+        <AppText text={'User name'} type={'userText'} />
+      </View>
+      <View style={styles.textinput1}>
+        <AppTextInput
+          onChangeText={text => {
+            setEmail(text);
+            validateField('email', text);
+          }}
+          value={email}
+          placeholder={'Email'}
+          style={styles.textinput}
+          props={{
+            autoCapitalize: 'none',
+            keyboardType: 'email-address',
+          }}
+        />
+        {errors.email ? (
+          <Text style={styles.errorText}>{errors.email}</Text>
         ) : null}
-        <View style={styles.textinsideview2}>
-          <AppText text={'Confirm Password'} type={'userText'} />
-        </View>
-        <View style={styles.textinput2}>
-          <AppTextInput
-            onChangeText={text => {
-              setRePassword('');
-              validateField('rePassword', text);
-            }}
-            value={rePassword}
-            placeholder={'confirm-password'}
-            style={styles.textinput}
-            props={{
-              secureTextEntry: true,
-            }}
-          />
-        </View>
-        {errors.rePassword ? (
-          <Text style={styles.errorText}>{errors.rePassword}</Text>
-        ) : null}
-        <View style={styles.loinbtnview}>
-          <LoginButton
-            text={'Signup'}
-            Style={styles.loginButton}
+      </View>
+      <View style={styles.textinsideview2}>
+        <AppText text={'Password'} type={'userText'} />
+      </View>
+      <View style={styles.textinput2}>
+        <AppTextInput
+          onChangeText={text => {
+            setPassword('');
+            validateField('password', text);
+          }}
+          value={password}
+          placeholder={'Password'}
+          style={styles.textinput}
+          props={{
+            secureTextEntry: true,
+          }}
+        />
+      </View>
+      {errors.password ? (
+        <Text style={styles.errorText}>{errors.password}</Text>
+      ) : null}
+      <View style={styles.textinsideview2}>
+        <AppText text={'Confirm Password'} type={'userText'} />
+      </View>
+      <View style={styles.textinput2}>
+        <AppTextInput
+          onChangeText={text => {
+            setRePassword('');
+            validateField('rePassword', text);
+          }}
+          value={rePassword}
+          placeholder={'confirm-password'}
+          style={styles.textinput}
+          props={{
+            secureTextEntry: true,
+          }}
+        />
+      </View>
+      {errors.rePassword ? (
+        <Text style={styles.errorText}>{errors.rePassword}</Text>
+      ) : null}
+      <View style={styles.loinbtnview}>
+        <LoginButton
+          text={'Signup'}
+          Style={styles.loginButton}
+          Onpress={function (): void {
+            handleSignUp();
+          }}
+        />
+      </View>
+      <View style={styles.imageviewinsideview}>
+        <View style={{ flexDirection: 'row', gap: 5 }}>
+          <AppText text={`already have an account?`} type={'donthave'} />
+          <Apptextbutton
+            text={'login here'}
+            textType="signupfont"
             Onpress={function (): void {
-              handleSignUp();
+              navigation.navigate('Login' as never);
             }}
           />
         </View>
-        <View style={styles.imageviewinsideview}>
-          <View style={{ flexDirection: 'row', gap: 5 }}>
-            <AppText text={`already have an account?`} type={'donthave'} />
-            <Apptextbutton
-              text={'login here'}
-              textType="signupfont"
-              Onpress={function (): void {
-                navigation.navigate('Login' as never);
-              }}
-            />
-          </View>
-        </View>
-      </ScrollView>
+      </View>
+    </ScrollView>
     </KeyboardAvoidingView>
+   
   );
 };
 
 export default SignupForms;
 
 const styles = StyleSheet.create({
-  forgetpass: {
-    alignSelf: 'flex-end',
-  },
   imageviewinsideview: {
     paddingVertical: 20,
     alignSelf: 'center',
@@ -271,7 +268,6 @@ const styles = StyleSheet.create({
     height: 45,
     borderColor: '#000',
     borderWidth: 1,
-
     paddingHorizontal: 30,
   },
 
@@ -279,7 +275,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'white',
     width: '100%',
-    height: '100%',
+    // height:'10%',
     borderRadius: 20,
     shadowColor: '#000000ff',
     paddingHorizontal: 8,
@@ -297,10 +293,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     backgroundColor: '#d7d7d746',
   },
-  images: {
-    height: '100%',
-    width: '100%',
-  },
+
   card: {
     flex: 1,
     width: '100%',
@@ -308,19 +301,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     paddingVertical: 120,
     paddingHorizontal: 20,
+    marginVertical:20,
     backgroundColor: '#f6f1f146',
-  },
-  loginTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-
-  whiteview: {
-    flex: 1,
-    backgroundColor: Colors.loginbg,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
 });

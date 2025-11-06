@@ -1,4 +1,3 @@
-/* eslint-disable react-native/no-inline-styles */
 import {
   Alert,
   KeyboardAvoidingView,
@@ -17,7 +16,7 @@ import firestore from '@react-native-firebase/firestore';
 import AppText from '../atoms/AppText';
 import AppTextInput from '../atoms/AppTextInput';
 import LoginButton from '../atoms/LoginButton';
-import { useNavigation } from '@react-navigation/native';
+
 import { setUsernameStatus } from '../redux/UserAction';
 import { useDispatch } from 'react-redux';
 
@@ -25,36 +24,22 @@ import { useDispatch } from 'react-redux';
   const UsernameForms = () => {
 
   const [username, setUsername] = useState('');
-  const navigation = useNavigation();
   const dispatch = useDispatch();
-  const user = auth().currentUser;
- const [errors, setErrors] = useState({
+  const [errors, setErrors] = useState({
     username: '',
-  
   });
-   const validate = () => {
+  const user = auth().currentUser;
+  const validate = () => {
     let valid = true;
-    const newErrors = { username: '', };
+    const newErrors = { username: '' };
 
-    if (!email.trim()) {
-      newErrors.email = 'Email is required';
-      valid = false;
-    } else {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(email.trim())) {
-        newErrors.email = 'Email is invalid';
-        valid = false;
-      }
-    }
-
-    if (!password) {
     if (!username.trim()) {
-      newErrors.username = 'Email is required';
+      newErrors.username = 'username is required';
       valid = false;
     } else {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      const emailRegex = /^[a-zA-Z][a-zA-Z0-9_]{5,19}$/;
       if (!emailRegex.test(username.trim())) {
-        newErrors.username = 'Email is invalid';
+        newErrors.username = 'username is invalid';
         valid = false;
       }
     }
@@ -62,48 +47,43 @@ import { useDispatch } from 'react-redux';
     setErrors(newErrors);
     return valid;
   };
-
   const saveUsername = async () => {
-    if (!username.trim()) {
-      Alert.alert('Username is required');
-      return;
-    }
+    if (validate()) {
+      try {
+        const usersRef = firestore().collection('UserDetails');
+        const snapshot = await usersRef.where('username', '==', username).get();
+        if (!snapshot.empty) {
+          Alert.alert('That username is already taken.');
+          return;
+        }
 
-    try {
-      const usersRef = firestore().collection('UserDetails');
-      const snapshot = await usersRef.where('username', '==', username).get();
-      if (!snapshot.empty) {
-        Alert.alert('That username is already taken.');
-        return;
+        await usersRef.doc(user?.uid).set({
+          username: username,
+          email: user?.email,
+          createdAt: firestore.FieldValue.serverTimestamp(),
+        });
+
+        await user?.updateProfile({ displayName: username }).then(() => {
+          dispatch(setUsernameStatus(true));
+        });
+
+      } catch (error) {
+        console.error(error);
+        Alert.alert('An error occurred while saving profile.');
       }
-
-      await usersRef.doc(user?.uid).set({
-        username: username,
-        email: user?.email,
-        createdAt: firestore.FieldValue.serverTimestamp(),
-      });
-
-      await user?.updateProfile({ displayName: username }).then(()=>{
-      dispatch(setUsernameStatus(true));
-      })
-  
-      navigation.navigate('Home' as never);
-    } catch (error) {
-      console.error(error);
-      Alert.alert('An error occurred while saving profile.');
     }
   }
-}
+
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={styles.cardinsidecard}
-    >
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        keyboardShouldPersistTaps="handled"
-      >
+     <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={styles.cardinsidecard}
+        >
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps="handled"
+          >
         <AppText text={'set username'} type={'LoginText'} />
         <View style={styles.textinsideview1}>
           <AppText text={''} type={'userText'} />
@@ -111,7 +91,7 @@ import { useDispatch } from 'react-redux';
         <View style={styles.textinput1}>
           <AppTextInput
             value={username}
-            onChangeText={setUsername}
+        onChangeText={setUsername}
             placeholder={'username'}
             style={styles.textinput}
           />
@@ -125,14 +105,16 @@ import { useDispatch } from 'react-redux';
             text={'set'}
             Style={styles.loginButton}
             Onpress={function (): void {
-              saveUsername;
+              saveUsername();
             }}
           />
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
+
   );
 };
+
 
 export default UsernameForms;
 
@@ -189,7 +171,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'white',
     width: '100%',
-    height: '100%',
     borderRadius: 20,
     shadowColor: '#000000ff',
     paddingHorizontal: 8,

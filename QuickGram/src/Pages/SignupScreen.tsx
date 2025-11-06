@@ -1,5 +1,11 @@
 /* eslint-disable react-native/no-inline-styles */
-import {  Image, StyleSheet, View } from 'react-native';
+import {
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  StyleSheet,
+  View,
+} from 'react-native';
 import React from 'react';
 import { Colors } from '../utils/Colors';
 import { image } from '../utils/Images';
@@ -7,21 +13,22 @@ import { image } from '../utils/Images';
 import SignupForms from '../Components/SignupForms';
 
 const SignupScreen = () => {
-  
-     
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={styles.container}
+    >
       <View style={styles.imageview}>
         <Image source={image.loginbg} style={styles.images} />
       </View>
 
-      <View style={styles.whiteview} >
-        <Image source={image.logo} style={{height:90,width:90}}/>
+      <View style={styles.whiteview}>
+        <Image source={image.logo} style={{ height: 90, width: 90 }} />
       </View>
       <View style={styles.card}>
         <SignupForms />
       </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -122,7 +129,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.loginbg,
     justifyContent: 'flex-end',
-    alignItems:'center',
-    paddingBottom:5,
+    alignItems: 'center',
+    paddingBottom: 5,
   },
 });

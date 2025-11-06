@@ -8,13 +8,13 @@ import LoginForms from '../Components/LoginForms';
 
 const LoginScreen = () => {
   return (
-    <View style={styles.container} >
+    <View style={styles.container}>
       <View style={styles.imageview}>
         <Image source={image.loginbg} style={styles.images} />
       </View>
 
       <View style={[styles.whiteview]}>
-        <Image source={image.logo} style={{height:90,width:90}}/>
+        <Image source={image.logo} style={{ height: 90, width: 90 }} />
       </View>
 
       <View style={styles.card}>
@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.loginbg,
     justifyContent: 'flex-end',
-    alignItems:'center',
-    paddingBottom:30,
+    alignItems: 'center',
+    paddingBottom: 30,
   },
 });

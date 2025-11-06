@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import { Image, StyleSheet, View } from 'react-native';
 import React from 'react';
 import { Colors } from '../utils/Colors';
@@ -6,7 +7,6 @@ import AppButton from '../atoms/AppButton';
 import AppText from '../atoms/AppText';
 import { image } from '../utils/Images';
 import { useNavigation } from '@react-navigation/native';
-
 
 const IntroScreen = () => {
   const navigation = useNavigation();
@@ -31,7 +31,7 @@ const IntroScreen = () => {
         text={`Let's Explore`}
         Style={styles.button}
         Onpress={function (): void {
-          navigation.navigate('Login'as never);
+          navigation.navigate('Login' as never);
         }}
       />
     </View>
@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 20,
-    fontWeight:'600'
+    fontWeight: '600',
   },
   image: {
     height: 410,
