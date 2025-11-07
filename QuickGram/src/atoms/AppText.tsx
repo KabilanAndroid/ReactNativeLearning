@@ -8,6 +8,8 @@ type AppTextType = {
   type: AppItemType;
 };
 export type AppItemType =
+  | 'lastmessage'
+  | 'chatpeople'
   | 'signupfont'
   | 'donthave'
   | 'buttonText'
@@ -28,7 +30,13 @@ const AppText: FC<AppTextType> = ({ text, style, type }) => {
     },
     loginbtn: {
       color: 'white',
-      fontSize:18,
+      fontSize: 18,
+    },
+    chatpeople: {
+      fontSize: 18,
+    },
+    lastmessage: {
+      fontSize: 15,
     },
     welcomeText: {
       color: Colors.introbtn,
@@ -52,7 +60,7 @@ const AppText: FC<AppTextType> = ({ text, style, type }) => {
     signupfont: {
       fontSize: 18,
       fontWeight: '600',
-      color:Colors.loginclr
+      color: Colors.loginclr,
     },
     donthave: {
       fontSize: 18,
@@ -62,7 +70,9 @@ const AppText: FC<AppTextType> = ({ text, style, type }) => {
 
   return (
     <View>
-      <Text style={[style, AppType[type]]}>{text}</Text>
+      <Text numberOfLines={1} style={[style, AppType[type]]}>
+        {text}
+      </Text>
     </View>
   );
 };

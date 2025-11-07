@@ -12,7 +12,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDispatch } from 'react-redux';
 import { setLoginStatus } from '../../redux/slice/userActions';
-import { lightColor,darkcolor } from '../../utils/colors';
+import { lightColor, darkcolor } from '../../utils/colors';
 
 const DATA = [
   { id: '1', title: 'First Item' },
@@ -38,30 +38,27 @@ const DATA = [
   { id: '110', title: 'Tenth Item' },
   { id: '111', title: 'First Item' },
 ];
-type Itemtype={
-   title :string
-   textColor:string
-}
-const Item:FC<Itemtype> = ({title,textColor}) => {
-  console.log("textdhsishd",textColor);
-  
-  return(
-  <View style={[styles.item]}>
-    <Text style={[styles.title,{color:textColor}]}>{title}</Text>
-  </View>
-)
-}
+type Itemtype = {
+  title: string;
+  textColor: string;
+};
+const Item: FC<Itemtype> = ({ title, textColor }) => {
+  console.log('textdhsishd', textColor);
+
+  return (
+    <View style={[styles.item]}>
+      <Text style={[styles.title, { color: textColor }]}>{title}</Text>
+    </View>
+  );
+};
 
 const Homescreen = () => {
   const colorScheme = useColorScheme();
   const colors = colorScheme === 'dark' ? darkcolor : lightColor;
-  // const { userData } = useContext<any>(UserContext);
   const dispatch = useDispatch();
   const [selectedValue, setSelectedValue] = useState<string[]>([]);
   const [searchText, setSearchText] = useState('');
-  // const route = useRoute();
   const navigation = useNavigation();
-  // const { user } = route.params;
   const filteredData = DATA.filter(item =>
     item.title.toLowerCase().includes(searchText.toLowerCase()),
   );
@@ -69,7 +66,7 @@ const Homescreen = () => {
   useEffect(() => {
     navigation.setOptions({
       headerStyle: {
-        backgroundColor:colors.headercolor,
+        backgroundColor: colors.headercolor,
       },
       headerSearchBarOptions: {
         headerIconColor: colors.white,
@@ -89,14 +86,13 @@ const Homescreen = () => {
     });
   }, [colors.headercolor, colors.white, navigation]);
   console.log(colors.text);
-  
 
   const renderItem = ({ item }: any) => (
     <TouchableOpacity
-      // eslint-disable-next-line react-native/no-inline-styles
       style={{
-        backgroundColor: selectedValue.includes(item.id) ? colors.clickcolor : colors.nonclick,
- 
+        backgroundColor: selectedValue.includes(item.id)
+          ? colors.clickcolor
+          : colors.nonclick,
       }}
       onPress={() => {
         if (selectedValue.includes(item.id)) {
@@ -107,9 +103,7 @@ const Homescreen = () => {
         }
       }}
     >
-      <Item title={item.title}
-      textColor={colors.text}
-      />
+      <Item title={item.title} textColor={colors.text} />
     </TouchableOpacity>
   );
 
@@ -123,19 +117,17 @@ const Homescreen = () => {
           </View>
         )}
       </View> */}
-      {/* <Text>itemId: {JSON.stringify(user)}</Text> */}
+      {}
       <FlatList
         data={filteredData}
         renderItem={renderItem}
         keyExtractor={(item, index) => index.toString()}
-        // eslint-disable-next-line react-native/no-inline-styles
         contentContainerStyle={{
           flexGrow: 1,
           paddingVertical: 2,
           paddingHorizontal: 2,
           rowGap: 10,
         }}
-        // eslint-disable-next-line react-native/no-inline-styles
         style={{
           flex: 1,
           padding: 5,
@@ -164,7 +156,6 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
-    // color:'red'
   },
 });
 

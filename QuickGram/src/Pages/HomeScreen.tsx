@@ -5,6 +5,7 @@ import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import { useDispatch } from 'react-redux';
 import { setLoginStatus } from '../redux/UserAction';
+import { Colors } from '../utils/Colors';
 
 const UserDetailsScreen = () => {
   const [username, setUsername] = useState('');
@@ -45,7 +46,7 @@ const UserDetailsScreen = () => {
   };
 
   return (
-    <View style={{ flex: 1, justifyContent: 'center', padding: 20 }}>
+    <View style={{ flex: 1, justifyContent: 'center', padding: 20,backgroundColor:Colors.chatinscreen }}>
       <Button title=" logout" onPress={handleLogout} />
       <Text style={{ fontSize: 20, marginBottom: 20 }}>Enter Your Details</Text>
       <TextInput

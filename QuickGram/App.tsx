@@ -10,8 +10,12 @@ import HomeScreen from './src/Pages/HomeScreen';
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import summa from './src/Pages/summa';
-import ChatScreen from './src/Pages/ChatScreen';
+
 import { Colors } from './src/utils/Colors';
+import ChatHomeScreen from './src/Pages/ChatHomeScreen';
+import ChatScreen from './src/Pages/ChatScreen';
+import { Image } from 'react-native';
+import { image } from './src/utils/Images';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -45,7 +49,8 @@ const MainTabNavigator = () => {
         tabBarStyle: {
           backgroundColor:Colors.introbg,
           
-        }
+        },
+        tabBarHideOnKeyboard: true,
         
        
       }}
@@ -53,14 +58,45 @@ const MainTabNavigator = () => {
       <Tab.Screen
         name="Home"
         component={HomeScreen}
-        options={{ title: 'Home',headerTintColor:Colors.logintxt }}
+        // eslint-disable-next-line react/no-unstable-nested-components
+        options={{ title:'',tabBarInactiveTintColor:'black' ,tabBarIcon: ({size}) => {
+              return (
+                <Image
+                  style={{ width: size, height: size }}
+                  source={image.home}
+                />
+              );
+            },
+          }}
+        
+      />
+      <Tab.Screen
+        name="chat"
+        component={ChatScreen}
+        // eslint-disable-next-line react/no-unstable-nested-components
+        options={{ title: '',tabBarInactiveTintColor:'black' ,tabBarIcon: ({size}) => {
+              return (
+                <Image
+                  style={{ width: size, height: size }}
+                  source={image.livechat}
+                />
+              );
+            },}}
         
       />
 
        <Tab.Screen
-        name="Chat"
-        component={ChatScreen}
-        options={{ title: 'Chat' }}
+        name="ChatHome"
+        component={ChatHomeScreen}
+        // eslint-disable-next-line react/no-unstable-nested-components
+        options={{ title: '',tabBarInactiveTintColor:'black',tabBarIcon: ({size}) => {
+              return (
+                <Image
+                  style={{ width: size, height: size }}
+                  source={image.chat}
+                />
+              );
+            }, }}
         
       />
     </Tab.Navigator>

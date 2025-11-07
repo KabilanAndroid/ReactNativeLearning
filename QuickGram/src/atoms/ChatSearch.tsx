@@ -1,29 +1,30 @@
 import React, { FC } from 'react';
-import { View } from 'react-native';
-import { Searchbar } from 'react-native-paper';
-import { IconSource } from 'react-native-paper/lib/typescript/components/Icon';
+import { TextInput, TextInputProps, View, ViewStyle } from 'react-native';
+
+
 
 type ChatSearchType = {
-  placeholder: string;
   onChangeText: (text: string) => void;
   value: string;
-  icon:IconSource;
+  placeholder: string;
+  style: ViewStyle;
+  props?: TextInputProps;
 };
 
 const ChatSearch: FC<ChatSearchType> = ({
-  placeholder,
   onChangeText,
   value,
-  icon
+  placeholder,
+  style,
+  props,
 }) => {
   return (
     <View>
-      <Searchbar
-        placeholder={placeholder}
+      <TextInput style={style}
         onChangeText={onChangeText}
         value={value}
-        icon={icon}
-      />
+        placeholder={placeholder}
+        {...props} />
     </View>
   );
 };
