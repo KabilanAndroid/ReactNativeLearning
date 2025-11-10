@@ -1,45 +1,103 @@
-import { Image, StyleSheet, View } from 'react-native';
-import React, { useState } from 'react';
+/* eslint-disable react-native/no-inline-styles */
+import { FlatList, Image, KeyboardAvoidingView, Platform, StyleSheet, Text, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
 import { Colors } from '../utils/Colors';
 import AppText from '../atoms/AppText';
 import { image } from '../utils/Images';
 import Appbackbtn from '../atoms/Appbackbtn';
+import auth from '@react-native-firebase/auth';
 import AppTextInput from '../atoms/AppTextInput';
 import AppImage from '../atoms/AppImage';
-import auth from '@react-native-firebase/auth';
-
+import firestore from '@react-native-firebase/firestore';
+const user = auth().currentUser;
 
 const ChatScreen = () => {
-  const [inputmessage, setinputmessage] = useState('');
-  const [sendedmessage, setsendedmessage] = useState('');
+  const [messages, setMessages] = useState([]);
+  const [newMessage, setNewMessage] = useState('');
 
-  // const user = auth().currentUser;
-  const sendmessage =() =>{
-    setsendedmessage(inputmessage);
-  }
-  // const sendmessage = async (senderId, receiverId) => {
-  //   setsendedmessage(inputmessage);
-  //   try {
-  //     const chatId = [user, 'Q2o5nck0ZOZYhjznX7nsFRkxJFx1'].sort().join('_');
+  useEffect(() => {
+    if (!user) {
+      console.error('User is not authenticated.');
+      return;
+    }
 
-  //     const chatRef = firestore().collection('chats').doc(chatId);
-  //     const messagesRef = chatRef.collection('messages');
+    const subscriber = firestore()
+      .collection('chatRooms')
+      .doc('P2RdPLa3FqyMjxANH94p')
+      .collection('messages')
+      .orderBy('timestamp', 'asc')
+      .onSnapshot(querySnapshot => {
+        const fetchedMessages = querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setMessages(fetchedMessages);
+      });
 
-  //     await messagesRef.add({
-  //       senderId: user,
-  //       receiverId: 'Q2o5nck0ZOZYhjznX7nsFRkxJFx1',
-  //       text: { inputmessage },
-  //       timestamp: firestore.FieldValue.serverTimestamp(),
-  //       read: false,
-  //     });
-  //     console.log('Message sent successfully!');
-  //   } catch (error) {
-  //     console.error('Error sending message:', error);
-  //   }
-  // };
+    return () => subscriber();
+  }, []);
+
+  const sendMessage = async () => {
+    if (newMessage.trim() === '' || !user) {
+      return;
+    }
+
+    try {
+      await firestore()
+        .collection('chatRooms')
+        .doc('P2RdPLa3FqyMjxANH94p')
+        .collection('messages')
+        .add({
+          text: newMessage,
+          senderId: user?.uid,
+          timestamp: firestore.FieldValue.serverTimestamp(),
+        });
+      setNewMessage('');
+      console.log('Message sent successfully!');
+    } catch (error) {
+      console.error('Error sending message:', error);
+    }
+  };
+
+  const renderMessage = ({ item }: any) => (
+    <View
+      style={{
+        alignSelf: item.senderId === user?.uid ? 'flex-end' : 'flex-start',
+        margin: 5,
+      }}
+    >
+      <Text
+        style={{
+          // backgroundColor:
+          //   item.senderId === user?.uid ? '#e7e2e2ff' : '#ffffffff',
+          padding: 10,
+          borderRadius: 10,
+        }}
+      >
+        {item.timestamp?.toDate()?.toTimeString()}
+        
+      </Text>
+      <Text
+        style={{
+          backgroundColor:
+            item.senderId === user?.uid ? '#d3f5c8ff' : '#E0E0E0',
+          padding: 10,
+          borderRadius: 10,
+        }}
+      >
+        {item.text}
+        
+      </Text>
+    </View>
+  );
 
   return (
-    <View style={styles.container}>
+    
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'} 
+      style={styles.container}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 60 : 0} 
+    >
       <View style={styles.heaaderstyle}>
         <View style={styles.view1sub}>
           <Appbackbtn
@@ -60,23 +118,32 @@ const ChatScreen = () => {
           <AppImage source={image.threedot} style={styles.callicon} />
         </View>
       </View>
+      
+      <FlatList
+        data={messages}
+        renderItem={renderMessage}
+        keyExtractor={item => item.id}
+      />
+
       <View style={styles.view2}>
-        <AppText text={sendedmessage} type={'chatpeople'} />
+        <AppText text={''} type={'chatpeople'} />
         <View style={styles.textinputview}>
           <AppTextInput
-            onChangeText={setinputmessage}
-            value={inputmessage}
+            onChangeText={setNewMessage}
+            value={newMessage}
             placeholder={''}
             style={styles.textinput}
           />
           <Appbackbtn
-            Onpress={sendmessage}
+            Onpress={sendMessage}
             source={image.sendicon}
             style={styles.sendiconstyle}
           />
         </View>
       </View>
-    </View>
+</KeyboardAvoidingView>
+
+    
   );
 };
 
@@ -92,8 +159,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   heaaderstyle: {
+    // flex:1,
     flexDirection: 'row',
-    backgroundColor: Colors.introbg,
+    
+    // backgroundColor: Colors.introbg,
     padding: 6,
     columnGap: 100,
   },
@@ -102,7 +171,7 @@ const styles = StyleSheet.create({
     width: 26,
   },
   view2sub: {
-    flex: 1,
+    // flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     columnGap: 15,
@@ -110,10 +179,8 @@ const styles = StyleSheet.create({
   },
   view2: {
     justifyContent: 'flex-end',
-    flex: 1,
+    // flex: 1,
     alignItems: 'flex-end',
-
-    backgroundColor: Colors.chatinscreen,
   },
   backbtnstyle1: {
     height: 36,
@@ -124,15 +191,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
     paddingVertical: 10,
-    backgroundColor: Colors.chatinscreen,
+    backgroundColor: 'red',
     justifyContent: 'space-around',
   },
   textinput: {
     backgroundColor: 'white',
     borderRadius: 20,
     height: 45,
-    width: 360,
-    borderColor: '#000',
+    width: 320,
+    borderColor: '#8c12f6ff',
     borderWidth: 1,
   },
   sendiconstyle: {

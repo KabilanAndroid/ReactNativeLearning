@@ -16,6 +16,7 @@ import ChatHomeScreen from './src/Pages/ChatHomeScreen';
 import ChatScreen from './src/Pages/ChatScreen';
 import { Image } from 'react-native';
 import { image } from './src/utils/Images';
+import RoomCreation from './src/Pages/RoomCreation';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -36,6 +37,17 @@ const AuthStack = () => (
     />
   </Stack.Navigator>
 );
+
+const AppStack = () =>(
+  <Stack.Navigator>
+    <Stack.Screen name="HomeTabs" component={MainTabNavigator} options={{ headerShown: false }} />
+    <Stack.Screen 
+    name ="chatDiscuss"
+    component={ChatScreen}
+    options={{ headerShown: false }}
+    />
+  </Stack.Navigator>
+)
 
 const MainTabNavigator = () => {
   return (
@@ -72,7 +84,7 @@ const MainTabNavigator = () => {
       />
       <Tab.Screen
         name="chat"
-        component={ChatScreen}
+        component={RoomCreation}
         // eslint-disable-next-line react/no-unstable-nested-components
         options={{ title: '',tabBarInactiveTintColor:'black' ,tabBarIcon: ({size}) => {
               return (
@@ -114,7 +126,7 @@ const RootNavigator = () => {
       }}
     >
       {hasusername ? (
-        <Stack.Screen name="MainTabs" component={MainTabNavigator} />
+        <Stack.Screen name="MainTabs" component={AppStack} />
       ) : (
         <Stack.Screen name="UsernameScreen" component={summa} />
       )}
