@@ -4,54 +4,91 @@ import {
   KeyboardAvoidingView,
   Platform,
   StyleSheet,
+  TouchableOpacity,
   View,
 } from 'react-native';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import AppText from '../atoms/AppText';
 import ChatSearch from '../atoms/ChatSearch';
+import auth from '@react-native-firebase/auth';
 import { image } from '../utils/Images';
 import { Colors } from '../utils/Colors';
+import firestore from '@react-native-firebase/firestore';
+import { useNavigation } from '@react-navigation/native';
+const user = auth().currentUser;
 
-const ChatListItem = ({ title }: { title: string }) => (
-  <View style={styles.listItem}>
-    <Image source={image.profilelogo} style={styles.avatar} />
-    <View style={styles.textview}>
-      <AppText text={title} type={'chatpeople'} />
-      <AppText text="message hi hello how are you yh uhhio " type='lastmessage' />
-    </View>
-    <View style={styles.timeview}>
-      <AppText text="12.00 Am" type="500-14" />
-      <View style={styles.unreadview}>
-        <AppText text="unread" type="500-14" />
+type DisplayType = {
+  users: usernametype;
+};
+export type usernametype = {
+  uid: string;
+  displayName: string;
+};
+
+const ChatListItem = ({ users }: { users: string }) => {
+  console.log('users:', users);
+
+  return (
+    
+      <View style={styles.listItem}>
+        <Image source={image.profilelogo} style={styles.avatar} />
+        <View style={styles.textview}>
+          <AppText
+            text={users}
+            type={'chatpeople'}
+            rest={{
+              numberOfLines: 200,
+            }}
+          />
+          <AppText
+            text="message hi hello how are you yh uhhiodsfsdf "
+            type="lastmessage"
+          />
+        </View>
+        <View style={styles.timeview}>
+          <AppText text="12.00 Am" type="500-14" />
+          <View style={styles.unreadview}>
+            <AppText text="unread" type="500-14" />
+          </View>
+        </View>
       </View>
-    </View>
-  </View>
-);
+    
+  );
+};
 
 const ChatHomeScreen = () => {
   const [searchitem, setSearchitem] = useState('');
+  const [chatuser, setchatuser] = useState([]);
+  console.log('array flatlist', chatuser);
+const navigation = useNavigation()
 
-  const DATA = [
-    { id: '1', title: 'First Item' },
-    { id: '2', title: 'Second Item' },
-    { id: '3', title: 'Third Item' },
-    { id: '1', title: 'Fourth Item' },
-    { id: '2', title: 'Fifth Item' },
-    { id: '3', title: 'Sixth Item' },
-    { id: '1', title: 'Seventh Item' },
-    { id: '2', title: 'Eighth Item' },
-    { id: '3', title: 'Nineth Item' },
-    { id: '1', title: 'Tenth Item' },
-    { id: '2', title: 'Eleventh Item' },
-    { id: '3', title: 'tweleth Item' },
-  ];
-  const filteredData = DATA.filter(item =>
-    item.title.toLowerCase().includes(searchitem.toLowerCase()),
-  );
 
-  const renderItem = ({ item }: { item: { id: string; title: string } }) => (
-    <ChatListItem title={item.title} />
+
+  const renderItem = ({ item }: DisplayType[]) => {
+    const chatname = item.users.find((a: { uid: string  }) => a.uid !== user?.uid)?.displayName;
+    console.log('chatname:', chatname);
+
+   
+    return (
+      <TouchableOpacity onPress={()=> navigation.navigate('chatDiscuss',{data:item.id})}>
+    <ChatListItem users={chatname} />
+    </TouchableOpacity>
   );
+  };
+
+  useEffect(() => {
+    const subscriber = firestore()
+      .collection('chatRooms')
+      .onSnapshot(querySnapshot => {
+        const newMessages = querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setchatuser(newMessages);
+        console.log('firstload:', newMessages);
+      });
+    return () => subscriber();
+  }, []);
 
   return (
     <KeyboardAvoidingView
@@ -70,7 +107,7 @@ const ChatHomeScreen = () => {
         style={styles.searchbar}
       />
       <FlatList
-        data={filteredData}
+        data={chatuser}
         renderItem={renderItem}
         keyExtractor={(item, index) => index.toString()}
       />
@@ -83,7 +120,7 @@ export default ChatHomeScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor:Colors.loginbg
+    backgroundColor: Colors.loginbg,
   },
   unreadview: {
     backgroundColor: 'red',
@@ -98,8 +135,8 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
   },
   headertextstyle: {
-    padding:10,
-    backgroundColor:Colors.introbg
+    padding: 10,
+    backgroundColor: Colors.introbg,
   },
   searchbar: {
     backgroundColor: 'white',

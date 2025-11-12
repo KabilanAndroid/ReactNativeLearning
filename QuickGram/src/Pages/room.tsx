@@ -1,13 +1,17 @@
 import firestore from '@react-native-firebase/firestore';
 
+const createTwoUserRoom = async (user1: { uid: any; displayName: any; }, user2: { uid: any; displayName: any; } ) => {
 
-const createTwoUserRoom = async (userId1:any, userId2: any ) => {
+const { uid: uid1, displayName: displayName1 } = user1;
+  const { uid: uid2, displayName: displayName2 } = user2;
   try {
     const roomRef = await firestore()
       .collection('chatRooms')
       .add({
-        users: [userId1, userId2].sort(),
-        createdAt: firestore.FieldValue.serverTimestamp(),
+        users: [
+          { uid: uid1, displayName: displayName1 },
+          { uid: uid2, displayName: displayName2 },
+        ].sort((a, b) => a.uid.localeCompare(b.uid)),
       });
     console.log('Room created with ID: ', roomRef.id);
     return roomRef.id;

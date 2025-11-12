@@ -1,41 +1,121 @@
 /* eslint-disable react-native/no-inline-styles */
-import { FlatList, Image, KeyboardAvoidingView, Platform, StyleSheet, Text, View } from 'react-native';
+import {
+  FlatList,
+  Image,
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import React, { useEffect, useState } from 'react';
-import { Colors } from '../utils/Colors';
 import AppText from '../atoms/AppText';
 import { image } from '../utils/Images';
 import Appbackbtn from '../atoms/Appbackbtn';
 import auth from '@react-native-firebase/auth';
 import AppTextInput from '../atoms/AppTextInput';
 import AppImage from '../atoms/AppImage';
+
 import firestore from '@react-native-firebase/firestore';
+import { Colors } from '../utils/Colors';
+import { MessageType } from '../utils/Types';
+import { useRoute } from '@react-navigation/native';
+
 const user = auth().currentUser;
 
 const ChatScreen = () => {
-  const [messages, setMessages] = useState([]);
+  const [lastvisible, setlastvisible] = useState<Partial<MessageType>>();
+  const [messages, setMessages] = useState<MessageType[]>([]);
+  const [keybrd, setKeyboardVisible] = useState(Boolean);
   const [newMessage, setNewMessage] = useState('');
+  
+const route = useRoute();
+const routeData= route.params?.data
+console.log("routeparam:" ,routeData);
 
   useEffect(() => {
-    if (!user) {
-      console.error('User is not authenticated.');
-      return;
-    }
+    const keyboardDidShowListener = Keyboard.addListener(
+      'keyboardDidShow',
+      () => {
+        setKeyboardVisible(true);
+      },
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      'keyboardDidHide',
+      () => {
+        setKeyboardVisible(false);
+      },
+    );
 
+    return () => {
+      keyboardDidHideListener.remove();
+      keyboardDidShowListener.remove();
+    };
+  }, []);
+  const keyboardOffset = keybrd ? 30 : 0;
+
+  useEffect(() => {
     const subscriber = firestore()
       .collection('chatRooms')
-      .doc('P2RdPLa3FqyMjxANH94p')
+      .doc(routeData.toString())
       .collection('messages')
-      .orderBy('timestamp', 'asc')
+      .orderBy('timestamp', 'desc')
+      .limit(20)
       .onSnapshot(querySnapshot => {
-        const fetchedMessages = querySnapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        setMessages(fetchedMessages);
-      });
+        const newMessages = querySnapshot.docs.map(
+          doc =>
+            ({
+              id: doc.id,
+              ...doc.data(),
+            } as MessageType),
+        );
+        setMessages(newMessages);
+        console.log('firstload:', newMessages);
+        const firstloadlast = querySnapshot.docs[querySnapshot.docs.length - 1];
 
+        console.log('first final :', firstloadlast);
+
+        setlastvisible(firstloadlast);
+      });
     return () => subscriber();
-  }, []);
+  }, [routeData]);
+
+  const loadMoreMessages = async () => {
+    try {
+      if (!lastvisible) return;
+
+      const querySnapshot = await firestore()
+        .collection('chatRooms')
+        .doc(routeData.toString())
+        .collection('messages')
+
+        .orderBy('timestamp', 'desc')
+        .startAfter(lastvisible)
+        .limit(20)
+        .get();
+
+      const moreMessages = querySnapshot.docs.map(
+        doc =>
+          ({
+            id: doc.id,
+            ...doc.data(),
+          } as MessageType),
+      );
+
+      console.log('moremessage: ', moreMessages);
+      setMessages(prevMessages => [...prevMessages, ...moreMessages]);
+
+      if (querySnapshot.docs.length > 0) {
+        const secondvisiblelast =
+          querySnapshot.docs[querySnapshot.docs.length - 1];
+        setlastvisible(secondvisiblelast);
+      } else {
+      }
+    } catch (error) {
+      console.error('Error loading more messages:', error);
+    }
+  };
 
   const sendMessage = async () => {
     if (newMessage.trim() === '' || !user) {
@@ -45,7 +125,7 @@ const ChatScreen = () => {
     try {
       await firestore()
         .collection('chatRooms')
-        .doc('P2RdPLa3FqyMjxANH94p')
+        .doc(routeData.toString())
         .collection('messages')
         .add({
           text: newMessage,
@@ -64,19 +144,10 @@ const ChatScreen = () => {
       style={{
         alignSelf: item.senderId === user?.uid ? 'flex-end' : 'flex-start',
         margin: 5,
+        marginRight: item.senderId === user?.uid ? 5 : 200,
+        marginLeft: item.senderId === user?.uid ? 200 : 5,
       }}
     >
-      <Text
-        style={{
-          // backgroundColor:
-          //   item.senderId === user?.uid ? '#e7e2e2ff' : '#ffffffff',
-          padding: 10,
-          borderRadius: 10,
-        }}
-      >
-        {item.timestamp?.toDate()?.toTimeString()}
-        
-      </Text>
       <Text
         style={{
           backgroundColor:
@@ -86,17 +157,24 @@ const ChatScreen = () => {
         }}
       >
         {item.text}
-        
       </Text>
+      <AppText
+        text={
+          item.timestamp?.toDate()?.getHours().toString().padStart(2, '0') +
+          `:` +
+          item.timestamp?.toDate()?.getMinutes().toString().padStart(2, '0')
+        }
+        type={'timestamptxt'}
+        style={styles.timestampText}
+      />
     </View>
   );
 
   return (
-    
     <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'} 
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={styles.container}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 60 : 0} 
+      keyboardVerticalOffset={keyboardOffset}
     >
       <View style={styles.heaaderstyle}>
         <View style={styles.view1sub}>
@@ -109,7 +187,10 @@ const ChatScreen = () => {
             }}
           />
           <Image source={image.whiteimg} style={styles.avatar} />
-          <AppText text={'Rohit Sharma'} type={'chatpeople'} />
+          <AppText
+            text={user?.displayName?.toLocaleUpperCase()}
+            type={'chatpeople'}
+          />
         </View>
 
         <View style={styles.view2sub}>
@@ -118,11 +199,14 @@ const ChatScreen = () => {
           <AppImage source={image.threedot} style={styles.callicon} />
         </View>
       </View>
-      
+
       <FlatList
         data={messages}
         renderItem={renderMessage}
         keyExtractor={item => item.id}
+        onEndReached={loadMoreMessages}
+        onEndReachedThreshold={0.5}
+        inverted
       />
 
       <View style={styles.view2}>
@@ -131,7 +215,7 @@ const ChatScreen = () => {
           <AppTextInput
             onChangeText={setNewMessage}
             value={newMessage}
-            placeholder={''}
+            placeholder={'message'}
             style={styles.textinput}
           />
           <Appbackbtn
@@ -141,9 +225,7 @@ const ChatScreen = () => {
           />
         </View>
       </View>
-</KeyboardAvoidingView>
-
-    
+    </KeyboardAvoidingView>
   );
 };
 
@@ -159,10 +241,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   heaaderstyle: {
-    // flex:1,
     flexDirection: 'row',
-    
-    // backgroundColor: Colors.introbg,
+    backgroundColor: Colors.introbg,
     padding: 6,
     columnGap: 100,
   },
@@ -170,8 +250,13 @@ const styles = StyleSheet.create({
     height: 26,
     width: 26,
   },
+  timestampText: {
+    fontSize: 10,
+    color: '#08361fff',
+    marginTop: 3,
+    alignSelf: 'flex-end',
+  },
   view2sub: {
-    // flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     columnGap: 15,
@@ -179,7 +264,6 @@ const styles = StyleSheet.create({
   },
   view2: {
     justifyContent: 'flex-end',
-    // flex: 1,
     alignItems: 'flex-end',
   },
   backbtnstyle1: {
@@ -190,8 +274,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     width: '100%',
-    paddingVertical: 10,
-    backgroundColor: 'red',
+    paddingVertical: 20,
+    backgroundColor: Colors.introbg,
     justifyContent: 'space-around',
   },
   textinput: {
@@ -199,7 +283,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     height: 45,
     width: 320,
-    borderColor: '#8c12f6ff',
+    borderColor: '#55cd1dff',
     borderWidth: 1,
   },
   sendiconstyle: {

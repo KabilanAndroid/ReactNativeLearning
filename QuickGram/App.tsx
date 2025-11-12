@@ -17,6 +17,7 @@ import ChatScreen from './src/Pages/ChatScreen';
 import { Image } from 'react-native';
 import { image } from './src/utils/Images';
 import RoomCreation from './src/Pages/RoomCreation';
+import SearchScreen from './src/Pages/SearchScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -82,6 +83,23 @@ const MainTabNavigator = () => {
           }}
         
       />
+
+<Tab.Screen
+        name="search"
+        component={SearchScreen}
+        // eslint-disable-next-line react/no-unstable-nested-components
+        options={{ title:'',tabBarInactiveTintColor:'black' ,tabBarIcon: ({size}) => {
+              return (
+                <Image
+                  style={{ width: size, height: size }}
+                  source={image.seachiconn}
+                />
+              );
+            },
+          }}
+        
+      />
+
       <Tab.Screen
         name="chat"
         component={RoomCreation}

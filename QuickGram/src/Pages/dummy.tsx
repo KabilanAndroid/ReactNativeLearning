@@ -1,1 +1,0 @@
-{item.timestamp.toDate().toTimeString()}

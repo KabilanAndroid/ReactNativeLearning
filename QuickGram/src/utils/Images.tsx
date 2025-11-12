@@ -14,5 +14,7 @@ export const image ={
     callicon:require('../assests/callicon.png'),
     videoicon:require('../assests/videoicon.png'),
     threedot:require('../assests/threedot.png'),
-    
+    seachiconn:require('../assests/searchiconn.png'),
+    addedfrnicn:require('../assests/addedfrnicn.png'),
+    addfrndicn:require('../assests/addfrndicn.png'),
 }

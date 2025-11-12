@@ -1,4 +1,4 @@
-import { Text, TextStyle, View } from 'react-native';
+import { Text, TextProps, TextStyle, View } from 'react-native';
 import React, { FC, memo } from 'react';
 import { Colors } from '../utils/Colors';
 
@@ -6,8 +6,10 @@ type AppTextType = {
   text: string;
   style?: TextStyle;
   type: AppItemType;
+  rest?:TextProps
 };
 export type AppItemType =
+  | 'timestamptxt'
   | 'lastmessage'
   | 'chatpeople'
   | 'signupfont'
@@ -20,7 +22,7 @@ export type AppItemType =
   | 'loginbtn'
   | '500-14';
 
-const AppText: FC<AppTextType> = ({ text, style, type }) => {
+const AppText: FC<AppTextType> = ({ text, style, type ,rest}) => {
   const AppType: Record<AppItemType, TextStyle> = {
     buttonText: {
       color: Colors.introbg,
@@ -66,11 +68,14 @@ const AppText: FC<AppTextType> = ({ text, style, type }) => {
       fontSize: 18,
       fontWeight: '600',
     },
+    timestamptxt: {
+      fontSize: 10,
+    },
   };
 
   return (
     <View>
-      <Text numberOfLines={1} style={[style, AppType[type]]}>
+      <Text numberOfLines={1} style={[style, AppType[type]]}{...rest} >
         {text}
       </Text>
     </View>
