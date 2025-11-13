@@ -15,44 +15,53 @@ import { image } from '../utils/Images';
 import { Colors } from '../utils/Colors';
 import firestore from '@react-native-firebase/firestore';
 import { useNavigation } from '@react-navigation/native';
+import { Rootofchathome } from '../utils/Types';
 const user = auth().currentUser;
 
-type DisplayType = {
-  users: usernametype;
-};
+
 export type usernametype = {
   uid: string;
   displayName: string;
 };
 
-const ChatListItem = ({ users }: { users: string }) => {
-  console.log('users:', users);
+const ChatListItem = ({
+  username,
+  usermessage,
+  countreads,
+}: {
+  username: string;
+  usermessage: string;
+  countreads: string;
+}) => {
+  console.log('users:', username);
 
   return (
-    
-      <View style={styles.listItem}>
-        <Image source={image.profilelogo} style={styles.avatar} />
-        <View style={styles.textview}>
-          <AppText
-            text={users}
-            type={'chatpeople'}
-            rest={{
-              numberOfLines: 200,
-            }}
-          />
-          <AppText
-            text="message hi hello how are you yh uhhiodsfsdf "
-            type="lastmessage"
-          />
-        </View>
-        <View style={styles.timeview}>
-          <AppText text="12.00 Am" type="500-14" />
-          <View style={styles.unreadview}>
-            <AppText text="unread" type="500-14" />
-          </View>
+    <View style={styles.listItem}>
+      <Image source={image.profilelogo} style={styles.avatar} />
+      <View style={styles.textview}>
+        <AppText
+          text={username}
+          type={'chatpeople'}
+          rest={{
+            numberOfLines: 200,
+          }}
+        />
+        <AppText text={usermessage?.lastmessage} type="lastmessage" />
+      </View>
+      <View style={styles.timeview}>
+        <AppText
+          text={usermessage?.lasttime?.toDate()?.toLocaleTimeString('en-US', {
+            hour: 'numeric',
+            minute: 'numeric',
+            hour12: true,
+          })}
+          type="500-14"
+        />
+        <View style={styles.unreadview}>
+          <AppText text={countreads} type="unread" />
         </View>
       </View>
-    
+    </View>
   );
 };
 
@@ -60,20 +69,50 @@ const ChatHomeScreen = () => {
   const [searchitem, setSearchitem] = useState('');
   const [chatuser, setchatuser] = useState([]);
   console.log('array flatlist', chatuser);
-const navigation = useNavigation()
+  const navigation = useNavigation();
 
+  const renderItem = ({
+    item,
+    index,
+  }: {
+    item: Rootofchathome;
+    index: number;
+  }) => {
+    console.log(item);
 
+    const chatname = item?.users?.find(
+      (a: { uid: string }) => a.uid !== user?.uid,
+    )?.displayName;
+    const oppositeuserid = item?.users?.find(
+      (a: { uid: string }) => a.uid !== user?.uid,
+    )?.uid;
+    console.log("user id is:",user?.uid)
+    let countread
+    if(user?.uid){
+      countread = item.unreaduser?.[user?.uid]?.unreadcount||0
+    }
 
-  const renderItem = ({ item }: DisplayType[]) => {
-    const chatname = item.users.find((a: { uid: string  }) => a.uid !== user?.uid)?.displayName;
-    console.log('chatname:', chatname);
+    console.log('countread are:', countread);
 
-   
+    const chatmessage = item;
+
     return (
-      <TouchableOpacity onPress={()=> navigation.navigate('chatDiscuss',{data:item.id})}>
-    <ChatListItem users={chatname} />
-    </TouchableOpacity>
-  );
+      <TouchableOpacity
+        onPress={() =>
+          navigation.navigate('chatDiscuss', {
+            data: item.id,
+            chatnamescrn: chatname,
+            oppositeid: oppositeuserid,
+          })
+        }
+      >
+        <ChatListItem
+          username={chatname}
+          usermessage={chatmessage}
+          countreads={countread}
+        />
+      </TouchableOpacity>
+    );
   };
 
   useEffect(() => {

@@ -6,9 +6,10 @@ type AppTextType = {
   text: string;
   style?: TextStyle;
   type: AppItemType;
-  rest?:TextProps
+  rest?: TextProps;
 };
 export type AppItemType =
+  | 'unread'
   | 'timestamptxt'
   | 'lastmessage'
   | 'chatpeople'
@@ -22,7 +23,7 @@ export type AppItemType =
   | 'loginbtn'
   | '500-14';
 
-const AppText: FC<AppTextType> = ({ text, style, type ,rest}) => {
+const AppText: FC<AppTextType> = ({ text, style, type, rest }) => {
   const AppType: Record<AppItemType, TextStyle> = {
     buttonText: {
       color: Colors.introbg,
@@ -59,6 +60,10 @@ const AppText: FC<AppTextType> = ({ text, style, type ,rest}) => {
     '500-14': {
       fontSize: 14,
     },
+    unread: {
+      fontSize: 14,
+      color: 'white',
+    },
     signupfont: {
       fontSize: 18,
       fontWeight: '600',
@@ -75,7 +80,7 @@ const AppText: FC<AppTextType> = ({ text, style, type ,rest}) => {
 
   return (
     <View>
-      <Text numberOfLines={1} style={[style, AppType[type]]}{...rest} >
+      <Text numberOfLines={1} style={[style, AppType[type]]} {...rest}>
         {text}
       </Text>
     </View>

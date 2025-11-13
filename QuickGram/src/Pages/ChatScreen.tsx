@@ -16,8 +16,7 @@ import Appbackbtn from '../atoms/Appbackbtn';
 import auth from '@react-native-firebase/auth';
 import AppTextInput from '../atoms/AppTextInput';
 import AppImage from '../atoms/AppImage';
-
-import firestore from '@react-native-firebase/firestore';
+import firestore, { FieldValue, firebase, increment } from '@react-native-firebase/firestore';
 import { Colors } from '../utils/Colors';
 import { MessageType } from '../utils/Types';
 import { useRoute } from '@react-navigation/native';
@@ -29,10 +28,11 @@ const ChatScreen = () => {
   const [messages, setMessages] = useState<MessageType[]>([]);
   const [keybrd, setKeyboardVisible] = useState(Boolean);
   const [newMessage, setNewMessage] = useState('');
-  
-const route = useRoute();
-const routeData= route.params?.data
-console.log("routeparam:" ,routeData);
+  const [count,setcount] = useState(0)
+
+  const route = useRoute();
+  const routeData = route.params;
+  console.log('routeparam:', routeData);
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -58,7 +58,7 @@ console.log("routeparam:" ,routeData);
   useEffect(() => {
     const subscriber = firestore()
       .collection('chatRooms')
-      .doc(routeData.toString())
+      .doc(routeData?.data?.toString())
       .collection('messages')
       .orderBy('timestamp', 'desc')
       .limit(20)
@@ -87,7 +87,7 @@ console.log("routeparam:" ,routeData);
 
       const querySnapshot = await firestore()
         .collection('chatRooms')
-        .doc(routeData.toString())
+        .doc(routeData?.data?.toString())
         .collection('messages')
 
         .orderBy('timestamp', 'desc')
@@ -125,7 +125,7 @@ console.log("routeparam:" ,routeData);
     try {
       await firestore()
         .collection('chatRooms')
-        .doc(routeData.toString())
+        .doc(routeData?.data?.toString())
         .collection('messages')
         .add({
           text: newMessage,
@@ -137,6 +137,68 @@ console.log("routeparam:" ,routeData);
     } catch (error) {
       console.error('Error sending message:', error);
     }
+  };
+  const calltwo = () => {
+    sendlastmessage();
+    sendMessage();
+  };
+
+
+// useEffect(() => {
+//     const subscriber = firestore()
+//       .collection('chatRooms')
+//       .doc(routeData?.data?.toString())
+//       .collection('messages')
+//       .orderBy('timestamp', 'desc')
+//       .limit(20)
+//       .onSnapshot(querySnapshot => {
+//         const newMessages = querySnapshot.docs.map(
+//           doc =>
+//             ({
+//               id: doc.id,
+//               ...doc.data(),
+//             } as MessageType),
+//         );
+//         setMessages(newMessages);
+//         console.log('firstload:', newMessages);
+//         const firstloadlast = querySnapshot.docs[querySnapshot.docs.length - 1];
+
+//         console.log('first final :', firstloadlast);
+
+//         setlastvisible(firstloadlast);
+//       });
+//     return () => subscriber();
+//   }, [routeData]);
+
+
+
+
+
+
+const reset = async() =>{
+  await firestore().collection('chatRooms').doc(routeData?.data?.toString()).update({
+      lastmessage: newMessage,
+      lasttime: firestore.FieldValue.serverTimestamp(),
+      [`unreaduser.${user?.uid}.unreadcount`]: 0
+    });
+}
+
+
+
+
+
+
+
+
+
+  const sendlastmessage = async () => {
+    setcount(count => count+1)
+    await firestore().collection('chatRooms').doc(routeData?.data?.toString()).update({
+      lastmessage: newMessage,
+      lasttime: firestore.FieldValue.serverTimestamp(),
+      // unreaduser:uid:routeData?.oppositeid ,unreadcount:increment(1)}
+      [`unreaduser.${routeData?.oppositeid}.unreadcount`]: firestore.FieldValue.increment(1)
+    });
   };
 
   const renderMessage = ({ item }: any) => (
@@ -159,11 +221,11 @@ console.log("routeparam:" ,routeData);
         {item.text}
       </Text>
       <AppText
-        text={
-          item.timestamp?.toDate()?.getHours().toString().padStart(2, '0') +
-          `:` +
-          item.timestamp?.toDate()?.getMinutes().toString().padStart(2, '0')
-        }
+        text={item.timestamp?.toDate()?.toLocaleTimeString('en-US', {
+          hour: 'numeric',
+          minute: 'numeric',
+          hour12: true,
+        })}
         type={'timestamptxt'}
         style={styles.timestampText}
       />
@@ -187,10 +249,7 @@ console.log("routeparam:" ,routeData);
             }}
           />
           <Image source={image.whiteimg} style={styles.avatar} />
-          <AppText
-            text={user?.displayName?.toLocaleUpperCase()}
-            type={'chatpeople'}
-          />
+          <AppText text={routeData?.chatnamescrn} type={'chatpeople'} />
         </View>
 
         <View style={styles.view2sub}>
@@ -205,6 +264,7 @@ console.log("routeparam:" ,routeData);
         renderItem={renderMessage}
         keyExtractor={item => item.id}
         onEndReached={loadMoreMessages}
+        onStartReached={reset}
         onEndReachedThreshold={0.5}
         inverted
       />
@@ -219,7 +279,7 @@ console.log("routeparam:" ,routeData);
             style={styles.textinput}
           />
           <Appbackbtn
-            Onpress={sendMessage}
+            Onpress={calltwo}
             source={image.sendicon}
             style={styles.sendiconstyle}
           />
