@@ -16,5 +16,6 @@ export const image ={
     threedot:require('../assests/threedot.png'),
     seachiconn:require('../assests/searchiconn.png'),
     addedfrnicn:require('../assests/addedfrnicn.png'),
-    addfrndicn:require('../assests/addfrndicn.png'),
+    post:require('../assests/post.png'),
+    heart:require('../assests/heart.png'),
 }

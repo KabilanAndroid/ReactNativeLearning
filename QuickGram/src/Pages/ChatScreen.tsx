@@ -13,24 +13,23 @@ import React, { useEffect, useState } from 'react';
 import AppText from '../atoms/AppText';
 import { image } from '../utils/Images';
 import Appbackbtn from '../atoms/Appbackbtn';
-import auth from '@react-native-firebase/auth';
 import AppTextInput from '../atoms/AppTextInput';
 import AppImage from '../atoms/AppImage';
-import firestore, { FieldValue, firebase, increment } from '@react-native-firebase/firestore';
+import firestore from '@react-native-firebase/firestore';
 import { Colors } from '../utils/Colors';
-import { MessageType } from '../utils/Types';
-import { useRoute } from '@react-navigation/native';
+import { MessageType, ScreenType } from '../utils/Types';
+import { RouteProp, useRoute } from '@react-navigation/native';
+import { useAppSelector } from '../redux/ReduxHook';
 
-const user = auth().currentUser;
+
 
 const ChatScreen = () => {
   const [lastvisible, setlastvisible] = useState<Partial<MessageType>>();
   const [messages, setMessages] = useState<MessageType[]>([]);
   const [keybrd, setKeyboardVisible] = useState(Boolean);
   const [newMessage, setNewMessage] = useState('');
-  const [count,setcount] = useState(0)
-
-  const route = useRoute();
+  const user = useAppSelector((state) => state.auth);
+  const route = useRoute<RouteProp<ScreenType>>();
   const routeData = route.params;
   console.log('routeparam:', routeData);
 
@@ -58,7 +57,7 @@ const ChatScreen = () => {
   useEffect(() => {
     const subscriber = firestore()
       .collection('chatRooms')
-      .doc(routeData?.data?.toString())
+      .doc(routeData?.discussionid?.toString())
       .collection('messages')
       .orderBy('timestamp', 'desc')
       .limit(20)
@@ -87,7 +86,7 @@ const ChatScreen = () => {
 
       const querySnapshot = await firestore()
         .collection('chatRooms')
-        .doc(routeData?.data?.toString())
+        .doc(routeData?.discussionid?.toString())
         .collection('messages')
 
         .orderBy('timestamp', 'desc')
@@ -125,11 +124,11 @@ const ChatScreen = () => {
     try {
       await firestore()
         .collection('chatRooms')
-        .doc(routeData?.data?.toString())
+        .doc(routeData?.discussionid?.toString())
         .collection('messages')
         .add({
           text: newMessage,
-          senderId: user?.uid,
+          senderId: user?.userid,
           timestamp: firestore.FieldValue.serverTimestamp(),
         });
       setNewMessage('');
@@ -143,77 +142,41 @@ const ChatScreen = () => {
     sendMessage();
   };
 
-
-// useEffect(() => {
-//     const subscriber = firestore()
-//       .collection('chatRooms')
-//       .doc(routeData?.data?.toString())
-//       .collection('messages')
-//       .orderBy('timestamp', 'desc')
-//       .limit(20)
-//       .onSnapshot(querySnapshot => {
-//         const newMessages = querySnapshot.docs.map(
-//           doc =>
-//             ({
-//               id: doc.id,
-//               ...doc.data(),
-//             } as MessageType),
-//         );
-//         setMessages(newMessages);
-//         console.log('firstload:', newMessages);
-//         const firstloadlast = querySnapshot.docs[querySnapshot.docs.length - 1];
-
-//         console.log('first final :', firstloadlast);
-
-//         setlastvisible(firstloadlast);
-//       });
-//     return () => subscriber();
-//   }, [routeData]);
-
-
-
-
-
-
-const reset = async() =>{
-  await firestore().collection('chatRooms').doc(routeData?.data?.toString()).update({
-      lastmessage: newMessage,
-      lasttime: firestore.FieldValue.serverTimestamp(),
-      [`unreaduser.${user?.uid}.unreadcount`]: 0
-    });
-}
-
-
-
-
-
-
-
-
+  const reset = async () => {
+    await firestore()
+      .collection('chatRooms')
+      .doc(routeData?.discussionid?.toString())
+      .update({
+        lasttime: firestore.FieldValue.serverTimestamp(),
+        [`unreaduser.${user?.userid}.unreadcount`]: 0,
+      });
+  };
 
   const sendlastmessage = async () => {
-    setcount(count => count+1)
-    await firestore().collection('chatRooms').doc(routeData?.data?.toString()).update({
-      lastmessage: newMessage,
-      lasttime: firestore.FieldValue.serverTimestamp(),
-      // unreaduser:uid:routeData?.oppositeid ,unreadcount:increment(1)}
-      [`unreaduser.${routeData?.oppositeid}.unreadcount`]: firestore.FieldValue.increment(1)
-    });
+    await firestore()
+      .collection('chatRooms')
+      .doc(routeData?.discussionid?.toString())
+      .update({
+        lastmessage: newMessage,
+        lasttime: firestore.FieldValue.serverTimestamp(),
+        [`unreaduser.${routeData?.oppositeid}.unreadcount`]:
+          firestore.FieldValue.increment(1),
+      });
   };
 
   const renderMessage = ({ item }: any) => (
     <View
       style={{
-        alignSelf: item.senderId === user?.uid ? 'flex-end' : 'flex-start',
+        alignSelf: item.senderId === user?.userid ? 'flex-end' : 'flex-start',
         margin: 5,
-        marginRight: item.senderId === user?.uid ? 5 : 200,
-        marginLeft: item.senderId === user?.uid ? 200 : 5,
+        marginRight: item.senderId === user?.userid ? 5 : 200,
+        marginLeft: item.senderId === user?.userid ? 200 : 5,
       }}
     >
       <Text
         style={{
           backgroundColor:
-            item.senderId === user?.uid ? '#d3f5c8ff' : '#E0E0E0',
+            item.senderId === user?.userid? '#d3f5c8ff' : '#E0E0E0',
           padding: 10,
           borderRadius: 10,
         }}
@@ -249,7 +212,7 @@ const reset = async() =>{
             }}
           />
           <Image source={image.whiteimg} style={styles.avatar} />
-          <AppText text={routeData?.chatnamescrn} type={'chatpeople'} />
+          <AppText text={routeData?.chatnamescrn!} type={'chatpeople'} />
         </View>
 
         <View style={styles.view2sub}>

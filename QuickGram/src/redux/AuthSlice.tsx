@@ -1,35 +1,33 @@
-import { SET_LOGIN_STATUS, LOGOUT, SET_USERNAME_STATUS } from '../redux/ReduxType';
+import { createSlice } from '@reduxjs/toolkit';
+import { StateTypeForRedux } from './ReduxType';
 
-const initialState = {
+const initialState: StateTypeForRedux = {
   isLoggedIn: false,
-  hasusername:false,
+  hasusernames: false,
+  userid: '',
+  username: '',
 };
 
-const authReducer = (
-  state = initialState,
-  action: { type: string; payload?: any },
-) => {
-  switch (action.type) {
-    case SET_LOGIN_STATUS:
-      return {
-        ...state,
-        isLoggedIn: action.payload,
-      };
+export const Authslice = createSlice({
+  name: 'Authentication',
+  initialState: initialState,
+  reducers: {
+    setlogin: (state, action) => {
+      state.isLoggedIn = true;
+      state.userid = action.payload;
+      console.log("actionand payload:",action.payload);
+    },
+    setlogout: state => {
+      state.isLoggedIn = false;
+    },
 
-    case LOGOUT:
-      return {
-        ...initialState,
-        isLoggedIn: false,
-      };
-    case SET_USERNAME_STATUS:
-      return {
-        ...state,
-        hasusername: action.payload,
-      };
-
-    default:
-      return state;
-  }
-};
-
-export default authReducer;
+    setusername: state => {
+      state.hasusernames = true;
+    },
+    setusernamefalse: state => {
+      state.hasusernames = false;
+    },
+  },
+});
+export const { setlogin, setusername, setlogout ,setusernamefalse} = Authslice.actions;
+export default Authslice.reducer;

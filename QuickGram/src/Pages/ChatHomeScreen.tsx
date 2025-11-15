@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import {
   FlatList,
   Image,
@@ -7,18 +8,17 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, {  useEffect, useState } from 'react';
 import AppText from '../atoms/AppText';
 import ChatSearch from '../atoms/ChatSearch';
-import auth from '@react-native-firebase/auth';
 import { image } from '../utils/Images';
 import { Colors } from '../utils/Colors';
 import firestore from '@react-native-firebase/firestore';
-import { useNavigation } from '@react-navigation/native';
-import { Rootofchathome } from '../utils/Types';
-const user = auth().currentUser;
-
-
+import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { Rootofchathome, ScreenType } from '../utils/Types';
+import { useAppSelector } from '../redux/ReduxHook';
+import auth from '@react-native-firebase/auth';
+const usermain = auth().currentUser;
 export type usernametype = {
   uid: string;
   displayName: string;
@@ -30,8 +30,8 @@ const ChatListItem = ({
   countreads,
 }: {
   username: string;
-  usermessage: string;
-  countreads: string;
+  usermessage: Rootofchathome;
+  countreads: number;
 }) => {
   console.log('users:', username);
 
@@ -58,7 +58,7 @@ const ChatListItem = ({
           type="500-14"
         />
         <View style={styles.unreadview}>
-          <AppText text={countreads} type="unread" />
+          <AppText text={countreads?.toString()} type="unread" />
         </View>
       </View>
     </View>
@@ -66,30 +66,27 @@ const ChatListItem = ({
 };
 
 const ChatHomeScreen = () => {
-  const [searchitem, setSearchitem] = useState('');
-  const [chatuser, setchatuser] = useState([]);
-  console.log('array flatlist', chatuser);
-  const navigation = useNavigation();
+  const user = useAppSelector((state) => state.auth);
+  console.log('useselector for user id:', user?.userid);
 
-  const renderItem = ({
-    item,
-    index,
-  }: {
-    item: Rootofchathome;
-    index: number;
-  }) => {
+  const [searchitem, setSearchitem] = useState('');
+  const [chatuser, setchatuser] = useState<Rootofchathome[]>([]);
+  console.log('array flatlist', chatuser);
+  const navigation = useNavigation<NavigationProp<ScreenType>>();
+
+  const renderItem = ({ item }: { item: Rootofchathome; index: number }) => {
     console.log(item);
 
     const chatname = item?.users?.find(
-      (a: { uid: string }) => a.uid !== user?.uid,
+      (a: { uid: string }) => a.uid !== user?.userid,
     )?.displayName;
     const oppositeuserid = item?.users?.find(
-      (a: { uid: string }) => a.uid !== user?.uid,
+      (a: { uid: string }) => a.uid !== user?.userid,
     )?.uid;
-    console.log("user id is:",user?.uid)
-    let countread
-    if(user?.uid){
-      countread = item.unreaduser?.[user?.uid]?.unreadcount||0
+    console.log('user id is:', user?.userid);
+    let countread;
+    if (user?.userid) {
+      countread = item.unreaduser?.[user?.userid]?.unreadcount || 0;
     }
 
     console.log('countread are:', countread);
@@ -99,35 +96,95 @@ const ChatHomeScreen = () => {
     return (
       <TouchableOpacity
         onPress={() =>
-          navigation.navigate('chatDiscuss', {
-            data: item.id,
+          navigation.navigate('chatscreen', {
+            discussionid: item.id,
             chatnamescrn: chatname,
             oppositeid: oppositeuserid,
           })
         }
       >
         <ChatListItem
-          username={chatname}
-          usermessage={chatmessage}
-          countreads={countread}
+          username={chatname!}
+          usermessage={chatmessage!}
+          countreads={countread!}
         />
       </TouchableOpacity>
     );
   };
 
+
   useEffect(() => {
     const subscriber = firestore()
       .collection('chatRooms')
       .onSnapshot(querySnapshot => {
-        const newMessages = querySnapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        setchatuser(newMessages);
-        console.log('firstload:', newMessages);
+        const newMessages = querySnapshot.docs.map(
+          doc =>
+            ({
+              id: doc.id,
+              ...doc.data(),
+            } as Rootofchathome),
+        );
+        const confirmchat = newMessages?.filter(a => a.users === user.userid)
+        
+        setchatuser(confirmchat);
+        console.log('new confirmchat:', confirmchat);
+        console.log('new newMessages:', newMessages);
       });
     return () => subscriber();
   }, []);
+
+
+
+
+const  getRoomsForCurrentUser = async() => {
+  console.log("username:",usermain?.displayName);
+  
+  try {
+
+    const roomsSnapshot = await firestore()
+      .collection('chatRooms')
+      .where('users', 'array-contains', { uid: user?.userid ,displayName:usermain?.displayName }) 
+      .get();
+
+    const rooms = roomsSnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+    setchatuser(rooms)
+    console.log('Rooms for current user:', rooms);
+    return rooms;
+
+  } catch (error) {
+    console.error('Error fetching rooms:', error);
+    return [];
+  }
+}
+useEffect(()=>{
+  getRoomsForCurrentUser()
+},[getRoomsForCurrentUser])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   return (
     <KeyboardAvoidingView
@@ -162,7 +219,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.loginbg,
   },
   unreadview: {
-    backgroundColor: 'red',
+    backgroundColor: '#8acc29ff',
     borderRadius: 10,
     paddingHorizontal: 6,
     paddingVertical: 2,

@@ -12,19 +12,19 @@ import React, { useState } from 'react';
 import Apptextbutton from '../atoms/Apptextbutton';
 import AppText from '../atoms/AppText';
 import firestore from '@react-native-firebase/firestore';
-import { setLoginStatus, setUsernameStatus } from '../redux/UserAction';
-
 import AppTextInput from '../atoms/AppTextInput';
 import { firebase } from '@react-native-firebase/auth';
 import LoginButton from '../atoms/LoginButton';
 import { Colors } from '../utils/Colors';
-import { useNavigation } from '@react-navigation/native';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { useDispatch } from 'react-redux';
+import { setlogin, setusername } from '../redux/AuthSlice';
+import { ScreenType } from '../utils/Types';
 
 const LoginForms = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('Kabilan@2003');
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp<ScreenType>>();
   const dispatch = useDispatch();
 
   const [errors, setErrors] = useState({
@@ -85,7 +85,7 @@ const LoginForms = () => {
         console.log(res);
 
         if (res.user.uid) {
-          dispatch(setLoginStatus(true));
+          dispatch(setlogin(res.user.uid));
           console.log('Fetching document for UID:', res.user.uid);
 
           const userDoc = await firestore()
@@ -96,9 +96,9 @@ const LoginForms = () => {
           console.log('Document snapshot received:', userDoc);
           if (userDoc.exists() && userDoc.data()?.username) {
             console.log("Userdata:",userDoc?.data()?.username);
-            dispatch(setUsernameStatus(true));
+            dispatch(setusername());
           } else {
-            dispatch(setUsernameStatus(false));
+            
           }
         }
       } catch (error: any) {
@@ -187,7 +187,7 @@ const LoginForms = () => {
               text={'Sign up'}
               textType="signupfont"
               Onpress={function (): void {
-                navigation.navigate('signup' as never);
+                navigation.navigate('signupscreen');
               }}
             />
           </View>

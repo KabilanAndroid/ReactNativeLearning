@@ -15,13 +15,14 @@ import AppTextInput from '../atoms/AppTextInput';
 import LoginButton from '../atoms/LoginButton';
 import { Colors } from '../utils/Colors';
 import Apptextbutton from '../atoms/Apptextbutton';
-import { useNavigation } from '@react-navigation/native';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { useDispatch } from 'react-redux';
-import { setLoginStatus, setUsernameStatus } from '../redux/UserAction';
+import { setlogin, setusernamefalse } from '../redux/AuthSlice';
+import { ScreenType } from '../utils/Types';
 
 const SignupForms = () => {
   const dispatch = useDispatch();
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp<ScreenType>>();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('Kabilan@2003');
   const [rePassword, setRePassword] = useState<string>('Kabilan@2003');
@@ -109,9 +110,9 @@ const SignupForms = () => {
           password,
         );
         if (res.user.uid) {
-          dispatch(setLoginStatus(true));
-
-          dispatch(setUsernameStatus(false));
+          
+          dispatch(setlogin(res.user.uid));
+          dispatch(setusernamefalse());
         }
         console.log('res', res);
       } catch (error: any) {
@@ -128,99 +129,98 @@ const SignupForms = () => {
 
   return (
     <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          style={styles.cardinsidecard}
-        >
-          <ScrollView
-            showsVerticalScrollIndicator={false}
-            keyboardShouldPersistTaps="handled"
-          >
-      <AppText text={'Signup'} type={'LoginText'} />
-      <View style={styles.textinsideview1}>
-        <AppText text={'User name'} type={'userText'} />
-      </View>
-      <View style={styles.textinput1}>
-        <AppTextInput
-          onChangeText={text => {
-            setEmail(text);
-            validateField('email', text);
-          }}
-          value={email}
-          placeholder={'Email'}
-          style={styles.textinput}
-          props={{
-            autoCapitalize: 'none',
-            keyboardType: 'email-address',
-          }}
-        />
-        {errors.email ? (
-          <Text style={styles.errorText}>{errors.email}</Text>
-        ) : null}
-      </View>
-      <View style={styles.textinsideview2}>
-        <AppText text={'Password'} type={'userText'} />
-      </View>
-      <View style={styles.textinput2}>
-        <AppTextInput
-          onChangeText={text => {
-            setPassword('');
-            validateField('password', text);
-          }}
-          value={password}
-          placeholder={'Password'}
-          style={styles.textinput}
-          props={{
-            secureTextEntry: true,
-          }}
-        />
-      </View>
-      {errors.password ? (
-        <Text style={styles.errorText}>{errors.password}</Text>
-      ) : null}
-      <View style={styles.textinsideview2}>
-        <AppText text={'Confirm Password'} type={'userText'} />
-      </View>
-      <View style={styles.textinput2}>
-        <AppTextInput
-          onChangeText={text => {
-            setRePassword('');
-            validateField('rePassword', text);
-          }}
-          value={rePassword}
-          placeholder={'confirm-password'}
-          style={styles.textinput}
-          props={{
-            secureTextEntry: true,
-          }}
-        />
-      </View>
-      {errors.rePassword ? (
-        <Text style={styles.errorText}>{errors.rePassword}</Text>
-      ) : null}
-      <View style={styles.loinbtnview}>
-        <LoginButton
-          text={'Signup'}
-          Style={styles.loginButton}
-          Onpress={function (): void {
-            handleSignUp();
-          }}
-        />
-      </View>
-      <View style={styles.imageviewinsideview}>
-        <View style={{ flexDirection: 'row', gap: 5 }}>
-          <AppText text={`already have an account?`} type={'donthave'} />
-          <Apptextbutton
-            text={'login here'}
-            textType="signupfont"
-            Onpress={function (): void {
-              navigation.navigate('Login' as never);
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={styles.cardinsidecard}
+    >
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+      >
+        <AppText text={'Signup'} type={'LoginText'} />
+        <View style={styles.textinsideview1}>
+          <AppText text={'User name'} type={'userText'} />
+        </View>
+        <View style={styles.textinput1}>
+          <AppTextInput
+            onChangeText={text => {
+              setEmail(text);
+              validateField('email', text);
+            }}
+            value={email}
+            placeholder={'Email'}
+            style={styles.textinput}
+            props={{
+              autoCapitalize: 'none',
+              keyboardType: 'email-address',
+            }}
+          />
+          {errors.email ? (
+            <Text style={styles.errorText}>{errors.email}</Text>
+          ) : null}
+        </View>
+        <View style={styles.textinsideview2}>
+          <AppText text={'Password'} type={'userText'} />
+        </View>
+        <View style={styles.textinput2}>
+          <AppTextInput
+            onChangeText={text => {
+              setPassword('');
+              validateField('password', text);
+            }}
+            value={password}
+            placeholder={'Password'}
+            style={styles.textinput}
+            props={{
+              secureTextEntry: true,
             }}
           />
         </View>
-      </View>
-    </ScrollView>
+        {errors.password ? (
+          <Text style={styles.errorText}>{errors.password}</Text>
+        ) : null}
+        <View style={styles.textinsideview2}>
+          <AppText text={'Confirm Password'} type={'userText'} />
+        </View>
+        <View style={styles.textinput2}>
+          <AppTextInput
+            onChangeText={text => {
+              setRePassword('');
+              validateField('rePassword', text);
+            }}
+            value={rePassword}
+            placeholder={'confirm-password'}
+            style={styles.textinput}
+            props={{
+              secureTextEntry: true,
+            }}
+          />
+        </View>
+        {errors.rePassword ? (
+          <Text style={styles.errorText}>{errors.rePassword}</Text>
+        ) : null}
+        <View style={styles.loinbtnview}>
+          <LoginButton
+            text={'Signup'}
+            Style={styles.loginButton}
+            Onpress={function (): void {
+              handleSignUp();
+            }}
+          />
+        </View>
+        <View style={styles.imageviewinsideview}>
+          <View style={{ flexDirection: 'row', gap: 5 }}>
+            <AppText text={`already have an account?`} type={'donthave'} />
+            <Apptextbutton
+              text={'login here'}
+              textType="signupfont"
+              Onpress={function (): void {
+                navigation.navigate('loginscreen');
+              }}
+            />
+          </View>
+        </View>
+      </ScrollView>
     </KeyboardAvoidingView>
-   
   );
 };
 
@@ -301,7 +301,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     paddingVertical: 120,
     paddingHorizontal: 20,
-    marginVertical:20,
+    marginVertical: 20,
     backgroundColor: '#f6f1f146',
   },
 });

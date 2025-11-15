@@ -28,7 +28,7 @@ export interface companyType {
 }
 
 export interface ApiStateType{
- ß
+ 
   comments:CommentsTypes,
 
 }

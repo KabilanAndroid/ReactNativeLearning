@@ -1,62 +1,87 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react/no-unstable-nested-components */
 import { FlatList, Image, StyleSheet, View } from 'react-native';
-import React, { FC, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ChatSearch from '../atoms/ChatSearch';
 import { Colors } from '../utils/Colors';
 import AppText from '../atoms/AppText';
 import { image } from '../utils/Images';
 import Appbackbtn from '../atoms/Appbackbtn';
-
-type ChatType = {
-  title: string;
-
-};
-
-const ChatListItem: FC<ChatType> = ({ title }) => {
-  // const [iconstate,seticonstate] = useState(false)
-  return (
-    <View style={styles.listItem}>
-      <Image source={image.profilelogo} style={styles.avatar} />
-      <View style={styles.textview}>
-        <AppText text={title} type={'chatpeople'} />
-      </View>
-      <View style={styles.addfriendview}>
-        <Appbackbtn
-          //   Onpress={seticonstate(true)}
-          source={ image.addedfrnicn}
-          style={styles.iconstyle}
-          Onpress={function (): void {
-            throw new Error('Function not implemented.');
-          }}
-        />
-      </View>
-    </View>
-  );
-};
-
+import firestore from '@react-native-firebase/firestore';
+import { searchnewtype } from '../utils/Types';
+import { useAppSelector } from '../redux/ReduxHook';
+import auth from '@react-native-firebase/auth';
+const usermain = auth().currentUser;
 const SearchScreen = () => {
   const [searchitem, setSearchitem] = useState('');
-  const DATA = [
-    { id: '1', title: 'First Item' },
-    { id: '2', title: 'Second Item' },
-    { id: '3', title: 'Third Item' },
-    { id: '1', title: 'Fourth Item' },
-    { id: '2', title: 'Fifth Item' },
-    { id: '3', title: 'Sixth Item' },
-    { id: '1', title: 'Seventh Item' },
-    { id: '2', title: 'Eighth Item' },
-    { id: '3', title: 'Nineth Item' },
-    { id: '1', title: 'Tenth Item' },
-    { id: '2', title: 'Eleventh Item' },
-    { id: '3', title: 'tweleth Item' },
-  ];
+  const [chatuser, setchatuser] = useState<searchnewtype[]>([]);
+  const user = useAppSelector(state => state.auth);
 
-  const filteredData = DATA.filter(item =>
-    item.title.toLowerCase().includes(searchitem.toLowerCase()),
-  );
 
-  const renderItem = ({ item }: { item: { id: string; title: string } }) => (
-    <ChatListItem title={item.title}  />
-  );
+
+  const getsearchitem = async () => {
+    const querySnapshot = await firestore().collection('UserDetails').get();
+    const newMessages = querySnapshot.docs.map(
+      doc =>
+        ({
+          id: doc.id,
+          ...doc.data(),
+        } as searchnewtype),
+    );
+
+     console.log('new new message:', newMessages); 
+    const originalmessage = newMessages?.filter(a => a.id !== user.userid)
+    setchatuser(originalmessage);
+
+    console.log('new original:', originalmessage);
+  };
+
+  useEffect(()=>{
+    getsearchitem()
+  },[])
+console.log("i am rendering");
+
+ 
+
+  const request = async (recieveid: String) => {
+    console.log('item click id :', recieveid);
+
+    try {
+      await firestore()
+        .collection('FriendRequest')
+        .doc('request')
+        .collection('allrequest')
+        .add({
+          senderid: user.userid,
+          recieverid: recieveid,
+          sendername:usermain?.displayName,
+          status: 'pending',
+          timestamp: firestore.FieldValue.serverTimestamp(),
+          type: 'friendrequest',
+        });
+    } catch {
+      console.log('unknown error:');
+    }
+  };
+
+  const renderItem = ({ item }: { item: searchnewtype }) => {
+    return (
+      <View style={styles.listItem}>
+        <Image source={image.profilelogo} style={styles.avatar} />
+        <View style={styles.textview}>
+          <AppText text={item.username} type={'chatpeople'} />
+        </View>
+        <View style={styles.addfriendview}>
+          <Appbackbtn
+            source={image.addedfrnicn}
+            style={styles.iconstyle}
+            Onpress={() => request(item.id)}
+          />
+        </View>
+      </View>
+    );
+  };
+
   return (
     <View style={styles.container}>
       <AppText
@@ -71,7 +96,7 @@ const SearchScreen = () => {
         style={styles.searchbar}
       />
       <FlatList
-        data={filteredData}
+        data={chatuser}
         renderItem={renderItem}
         keyExtractor={(item, index) => index.toString()}
       />

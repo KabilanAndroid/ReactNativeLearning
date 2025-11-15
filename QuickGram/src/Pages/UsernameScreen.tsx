@@ -1,83 +1,136 @@
-import React, { useState } from 'react';
-import { View, TextInput, Button, Alert, Text, StyleSheet } from 'react-native';
-import auth from '@react-native-firebase/auth';
-import firestore from '@react-native-firebase/firestore';
-import { useDispatch } from 'react-redux';
-import { setUsernameStatus } from '../redux/UserAction';
+/* eslint-disable react-native/no-inline-styles */
+import { Image, StyleSheet, View } from 'react-native';
+import React from 'react';
+import { Colors } from '../utils/Colors';
+import { image } from '../utils/Images';
 
-const UsernameScreen = () => {
-  const [username, setUsername] = useState('');
-  const dispatch = useDispatch();
-  const [errors, setErrors] = useState({
-    username: '',
-  });
-  const user = auth().currentUser;
-  const validate = () => {
-    let valid = true;
-    const newErrors = { username: '' };
+import UsernameForms from '../Components/UsernameForm';
 
-    if (!username.trim()) {
-      newErrors.username = 'username is required';
-      valid = false;
-    } else {
-      const emailRegex = /^[a-zA-Z][a-zA-Z0-9_]{5,19}$/;
-      if (!emailRegex.test(username.trim())) {
-        newErrors.username = 'username is invalid';
-        valid = false;
-      }
-    }
-
-    setErrors(newErrors);
-    return valid;
-  };
-  const saveUsername = async () => {
-    if (validate()) {
-      try {
-        const usersRef = firestore().collection('UserDetails');
-        const snapshot = await usersRef.where('username', '==', username).get();
-        if (!snapshot.empty) {
-          Alert.alert('That username is already taken.');
-          return;
-        }
-
-        await usersRef.doc(user?.uid).set({
-          username: username,
-          email: user?.email,
-          createdAt: firestore.FieldValue.serverTimestamp(),
-        });
-
-        await user?.updateProfile({ displayName: username }).then(() => {
-          dispatch(setUsernameStatus(true));
-        });
-
-      } catch (error) {
-        console.error(error);
-        Alert.alert('An error occurred while saving profile.');
-      }
-    }
-  };
-
+const summa = () => {
   return (
-    <View>
-      <TextInput
-        placeholder="Enter your username"
-        value={username}
-        onChangeText={setUsername}
-      />
-      {errors.username ? (
-        <Text style={styles.errorText}>{errors.username}</Text>
-      ) : null}
-      <Text>user id:{user?.uid}</Text>
-      <Button title="Save and Continue" onPress={saveUsername} />
+    <View style={styles.container}>
+      <View style={styles.imageview}>
+        <Image source={image.loginbg} style={styles.images} />
+      </View>
+
+      <View style={[styles.whiteview]}>
+        <Image source={image.logo} style={{ height: 90, width: 90 }} />
+      </View>
+
+      <View style={styles.card}>
+        <UsernameForms />
+      </View>
     </View>
+    // </KeyboardAvoidingView>
   );
 };
 
-export default UsernameScreen;
+export default summa;
+
 const styles = StyleSheet.create({
-  errorText: {
-    color: 'red',
-    marginBottom: 10,
-    marginLeft: 5,
+  container: {
+    flex: 1,
+    flexDirection: 'column',
+    backgroundColor: Colors.loginbg,
+  },
+  forgetpass: {
+    alignSelf: 'flex-end',
+  },
+  imageviewinsideview: {
+    alignSelf: 'center',
+    justifyContent: 'center',
+    paddingBottom: 80,
+  },
+  imageview: {
+    flex: 1,
+    borderBottomLeftRadius: 25,
+    borderBottomRightRadius: 25,
+    overflow: 'hidden',
+    backgroundColor: '#d7d7d746',
+  },
+
+  loinbtnview: {
+    marginTop: 60,
+  },
+  textinput1: {
+    paddingVertical: 15,
+    width: '100%',
+  },
+  textinput2: {
+    paddingVertical: 15,
+  },
+  textinsideview1: {
+    paddingTop: 30,
+    paddingHorizontal: 16,
+  },
+  textinsideview2: {
+    paddingTop: 5,
+    paddingHorizontal: 16,
+  },
+  loginButton: {
+    backgroundColor: Colors.loginclr,
+    borderRadius: 30,
+    alignItems: 'center',
+    width: '100%',
+    paddingVertical: 20,
+  },
+  textinput: {
+    backgroundColor: 'white',
+    borderRadius: 20,
+    height: 45,
+    borderColor: '#000',
+    borderWidth: 1,
+
+    paddingHorizontal: 30,
+  },
+
+  cardinsidecard: {
+    flex: 1,
+    backgroundColor: 'white',
+    width: '100%',
+    height: '100%',
+    borderRadius: 20,
+    shadowColor: '#000000ff',
+    paddingHorizontal: 30,
+    paddingVertical: 10,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+
+  imageview1: {
+    flex: 1,
+    borderBottomLeftRadius: 25,
+    borderBottomRightRadius: 25,
+    overflow: 'hidden',
+    backgroundColor: '#d7d7d746',
+  },
+  images: {
+    height: '100%',
+    width: '100%',
+  },
+  card: {
+    flex: 1,
+    width: '100%',
+    // height: '100%',
+    position: 'absolute',
+    paddingVertical: 250,
+    paddingHorizontal: 20,
+    backgroundColor: '#f6f1f146',
+  },
+  loginTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+
+  whiteview: {
+    flex: 1,
+    backgroundColor: Colors.loginbg,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    paddingBottom: 30,
   },
 });

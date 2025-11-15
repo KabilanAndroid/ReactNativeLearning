@@ -9,7 +9,6 @@ import {
 import React from 'react';
 import { Colors } from '../utils/Colors';
 import { image } from '../utils/Images';
-
 import SignupForms from '../Components/SignupForms';
 
 const SignupScreen = () => {
@@ -21,7 +20,6 @@ const SignupScreen = () => {
       <View style={styles.imageview}>
         <Image source={image.loginbg} style={styles.images} />
       </View>
-
       <View style={styles.whiteview}>
         <Image source={image.logo} style={{ height: 90, width: 90 }} />
       </View>

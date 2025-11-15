@@ -16,13 +16,10 @@ import firestore from '@react-native-firebase/firestore';
 import AppText from '../atoms/AppText';
 import AppTextInput from '../atoms/AppTextInput';
 import LoginButton from '../atoms/LoginButton';
-
-import { setUsernameStatus } from '../redux/UserAction';
 import { useDispatch } from 'react-redux';
+import { setusername } from '../redux/AuthSlice';
 
-
-  const UsernameForms = () => {
-
+const UsernameForms = () => {
   const [username, setUsername] = useState('');
   const dispatch = useDispatch();
   const [errors, setErrors] = useState({
@@ -60,30 +57,29 @@ import { useDispatch } from 'react-redux';
         await usersRef.doc(user?.uid).set({
           username: username,
           email: user?.email,
+          userid:user?.uid,
           createdAt: firestore.FieldValue.serverTimestamp(),
         });
 
         await user?.updateProfile({ displayName: username }).then(() => {
-          dispatch(setUsernameStatus(true));
+          dispatch(setusername());
         });
-
       } catch (error) {
         console.error(error);
         Alert.alert('An error occurred while saving profile.');
       }
     }
-  }
-
+  };
 
   return (
-     <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          style={styles.cardinsidecard}
-        >
-          <ScrollView
-            showsVerticalScrollIndicator={false}
-            keyboardShouldPersistTaps="handled"
-          >
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={styles.cardinsidecard}
+    >
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+      >
         <AppText text={'set username'} type={'LoginText'} />
         <View style={styles.textinsideview1}>
           <AppText text={''} type={'userText'} />
@@ -91,7 +87,7 @@ import { useDispatch } from 'react-redux';
         <View style={styles.textinput1}>
           <AppTextInput
             value={username}
-        onChangeText={setUsername}
+            onChangeText={setUsername}
             placeholder={'username'}
             style={styles.textinput}
           />
@@ -111,10 +107,8 @@ import { useDispatch } from 'react-redux';
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
-
   );
 };
-
 
 export default UsernameForms;
 

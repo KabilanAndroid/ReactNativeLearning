@@ -3,7 +3,7 @@ import React, { FC, memo } from 'react';
 import { Colors } from '../utils/Colors';
 
 type AppTextType = {
-  text: string;
+  text: string ;
   style?: TextStyle;
   type: AppItemType;
   rest?: TextProps;
@@ -47,7 +47,7 @@ const AppText: FC<AppTextType> = ({ text, style, type, rest }) => {
     LoginText: {
       color: Colors.logintxt,
       fontWeight: '900',
-      fontSize: 32,
+      fontSize: 28,
     },
     userText: {
       color: Colors.logintxt,

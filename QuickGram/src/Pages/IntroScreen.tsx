@@ -6,10 +6,11 @@ import { Colors } from '../utils/Colors';
 import AppButton from '../atoms/AppButton';
 import AppText from '../atoms/AppText';
 import { image } from '../utils/Images';
-import { useNavigation } from '@react-navigation/native';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { ScreenType } from '../utils/Types';
 
 const IntroScreen = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp<ScreenType>>();
   console.log('IntroScreen');
   return (
     <View style={styles.container}>
@@ -31,7 +32,7 @@ const IntroScreen = () => {
         text={`Let's Explore`}
         Style={styles.button}
         Onpress={function (): void {
-          navigation.navigate('Login' as never);
+          navigation.navigate('loginscreen');
         }}
       />
     </View>

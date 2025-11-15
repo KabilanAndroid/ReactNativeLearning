@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+/* eslint-disable react-native/no-inline-styles */
 import { useSelector } from 'react-redux';
 import { RootState } from '../QuickGram/src/redux/Store';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -9,7 +9,7 @@ import LoginScreen from './src/Pages/LoginScreen';
 import HomeScreen from './src/Pages/HomeScreen';
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import summa from './src/Pages/summa';
+
 
 import { Colors } from './src/utils/Colors';
 import ChatHomeScreen from './src/Pages/ChatHomeScreen';
@@ -19,20 +19,24 @@ import { image } from './src/utils/Images';
 import RoomCreation from './src/Pages/RoomCreation';
 import SearchScreen from './src/Pages/SearchScreen';
 
-const Stack = createNativeStackNavigator();
-const Tab = createBottomTabNavigator();
+import { ScreenType } from './src/utils/Types';
+import UsernameScreen from './src/Pages/UsernameScreen';
+import NotificationScreen from './src/Pages/NotificationScreen';
+
+const Stack = createNativeStackNavigator<ScreenType>();
+const Tab = createBottomTabNavigator<ScreenType>();
 const AuthStack = () => (
   <Stack.Navigator
-    initialRouteName="Login"
+    initialRouteName='loginscreen'
     screenOptions={{ headerShown: false }}
   >
     <Stack.Screen
-      name="signup"
+      name="signupscreen"
       component={SignupScreen}
       options={{ title: 'Sign Up' }}
     />
     <Stack.Screen
-      name="Login"
+      name="loginscreen"
       component={LoginScreen}
       options={{ title: 'Login' }}
     />
@@ -41,9 +45,9 @@ const AuthStack = () => (
 
 const AppStack = () =>(
   <Stack.Navigator>
-    <Stack.Screen name="HomeTabs" component={MainTabNavigator} options={{ headerShown: false }} />
+    <Stack.Screen name="maintabnavigator" component={MainTabNavigator} options={{ headerShown: false }} />
     <Stack.Screen 
-    name ="chatDiscuss"
+    name ="chatscreen"
     component={ChatScreen}
     options={{ headerShown: false }}
     />
@@ -53,7 +57,7 @@ const AppStack = () =>(
 const MainTabNavigator = () => {
   return (
     <Tab.Navigator
-      initialRouteName="Home"
+      initialRouteName='homescreen'
       screenOptions={{
         headerShown: false,
         headerStyle:{
@@ -69,13 +73,13 @@ const MainTabNavigator = () => {
       }}
     >
       <Tab.Screen
-        name="Home"
+        name="homescreen"
         component={HomeScreen}
         // eslint-disable-next-line react/no-unstable-nested-components
-        options={{ title:'',tabBarInactiveTintColor:'black' ,tabBarIcon: ({size}) => {
+        options={{ title:'',tabBarInactiveTintColor:'black' ,tabBarIcon: () => {
               return (
                 <Image
-                  style={{ width: size, height: size }}
+                  style={{ width: 30, height: 30 }}
                   source={image.home}
                 />
               );
@@ -85,13 +89,13 @@ const MainTabNavigator = () => {
       />
 
 <Tab.Screen
-        name="search"
+        name="searchscreen"
         component={SearchScreen}
         // eslint-disable-next-line react/no-unstable-nested-components
-        options={{ title:'',tabBarInactiveTintColor:'black' ,tabBarIcon: ({size}) => {
+        options={{ title:'',tabBarInactiveTintColor:'black' ,tabBarIcon: () => {
               return (
                 <Image
-                  style={{ width: size, height: size }}
+                  style={{ width: 30, height: 30 }}
                   source={image.seachiconn}
                 />
               );
@@ -101,28 +105,44 @@ const MainTabNavigator = () => {
       />
 
       <Tab.Screen
-        name="chat"
+        name="roomcreation"
         component={RoomCreation}
         // eslint-disable-next-line react/no-unstable-nested-components
-        options={{ title: '',tabBarInactiveTintColor:'black' ,tabBarIcon: ({size}) => {
+        options={{ title: '',tabBarInactiveTintColor:'black' ,tabBarIcon: () => {
               return (
                 <Image
-                  style={{ width: size, height: size }}
-                  source={image.livechat}
+                  style={{ width: 30, height: 30 }}
+                  source={image.post}
                 />
               );
             },}}
         
       />
 
-       <Tab.Screen
-        name="ChatHome"
-        component={ChatHomeScreen}
+      <Tab.Screen
+        name="notificationscreen"
+        component={NotificationScreen}
         // eslint-disable-next-line react/no-unstable-nested-components
-        options={{ title: '',tabBarInactiveTintColor:'black',tabBarIcon: ({size}) => {
+        options={{ title: '',tabBarInactiveTintColor:'black',tabBarIcon: () => {
               return (
                 <Image
-                  style={{ width: size, height: size }}
+                  style={{ width: 30, height: 30 }}
+                  source={image.heart}
+                />
+              );
+            }, }}
+        
+      />
+   
+
+       <Tab.Screen
+        name="chathomescreen"
+        component={ChatHomeScreen}
+        // eslint-disable-next-line react/no-unstable-nested-components
+        options={{ title: '',tabBarInactiveTintColor:'black',tabBarIcon: () => {
+              return (
+                <Image
+                  style={{ width: 30, height: 30 }}
                   source={image.chat}
                 />
               );
@@ -135,7 +155,9 @@ const MainTabNavigator = () => {
 
 const RootNavigator = () => {
   const authState = useSelector((state: RootState) => state.auth);
-  const hasusername = authState.hasusername;
+  
+  
+  const hasusername = authState.hasusernames;
 
   return (
     <Stack.Navigator
@@ -144,9 +166,9 @@ const RootNavigator = () => {
       }}
     >
       {hasusername ? (
-        <Stack.Screen name="MainTabs" component={AppStack} />
+        <Stack.Screen name="appstack" component={AppStack} />
       ) : (
-        <Stack.Screen name="UsernameScreen" component={summa} />
+        <Stack.Screen name="UsernameScreen" component={UsernameScreen} />
       )}
     </Stack.Navigator>
   );
@@ -155,10 +177,8 @@ const RootNavigator = () => {
 const App = () => {
   const authState = useSelector((state: RootState) => state.auth);
   const isLoggedIn = authState.isLoggedIn;
-
-  useEffect(() => {
-    console.log('Authentication state changed:', authState);
-  }, [authState]);
+console.log('isloggedin:',authState.isLoggedIn);
+ 
 
   return (
     <NavigationContainer>

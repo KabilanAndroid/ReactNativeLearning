@@ -2,14 +2,11 @@
 import React from 'react';
 import { View } from 'react-native';
 import AppButton from '../atoms/AppButton';
-import { useNavigation } from '@react-navigation/native';
 import createTwoUserRoom from './room';
 
 function HomeScreen() {
-  const navigation = useNavigation();
-
   const handleCreateRoom = async () => {
-      createTwoUserRoom
+    createTwoUserRoom;
   };
 
   return (
