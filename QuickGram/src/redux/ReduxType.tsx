@@ -3,5 +3,5 @@ export interface StateTypeForRedux {
   hasusernames: boolean;
   userid:string;
   username:string;
-  
+  getting:boolean;
 }

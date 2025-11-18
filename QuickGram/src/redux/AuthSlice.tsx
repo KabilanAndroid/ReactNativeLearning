@@ -6,6 +6,7 @@ const initialState: StateTypeForRedux = {
   hasusernames: false,
   userid: '',
   username: '',
+  getting :false,
 };
 
 export const Authslice = createSlice({
@@ -27,7 +28,11 @@ export const Authslice = createSlice({
     setusernamefalse: state => {
       state.hasusernames = false;
     },
+    setusernameredux:(state, action) =>{
+      state.getting = true;
+      state.username = action.payload
+    }
   },
 });
-export const { setlogin, setusername, setlogout ,setusernamefalse} = Authslice.actions;
+export const { setlogin, setusername, setlogout ,setusernamefalse,setusernameredux} = Authslice.actions;
 export default Authslice.reducer;

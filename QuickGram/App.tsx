@@ -16,7 +16,6 @@ import ChatHomeScreen from './src/Pages/ChatHomeScreen';
 import ChatScreen from './src/Pages/ChatScreen';
 import { Image } from 'react-native';
 import { image } from './src/utils/Images';
-import RoomCreation from './src/Pages/RoomCreation';
 import SearchScreen from './src/Pages/SearchScreen';
 
 import { ScreenType } from './src/utils/Types';
@@ -104,7 +103,7 @@ const MainTabNavigator = () => {
         
       />
 
-      <Tab.Screen
+      {/* <Tab.Screen
         name="roomcreation"
         component={RoomCreation}
         // eslint-disable-next-line react/no-unstable-nested-components
@@ -117,7 +116,7 @@ const MainTabNavigator = () => {
               );
             },}}
         
-      />
+      /> */}
 
       <Tab.Screen
         name="notificationscreen"

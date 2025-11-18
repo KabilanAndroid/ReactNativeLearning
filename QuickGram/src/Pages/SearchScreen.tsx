@@ -1,5 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react/no-unstable-nested-components */
 import { FlatList, Image, StyleSheet, View } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import ChatSearch from '../atoms/ChatSearch';
@@ -8,63 +6,98 @@ import AppText from '../atoms/AppText';
 import { image } from '../utils/Images';
 import Appbackbtn from '../atoms/Appbackbtn';
 import firestore from '@react-native-firebase/firestore';
-import { searchnewtype } from '../utils/Types';
+import { notificationType } from '../utils/Types';
 import { useAppSelector } from '../redux/ReduxHook';
-import auth from '@react-native-firebase/auth';
-const usermain = auth().currentUser;
+import { RequestStatusType } from '../utils/Enum';
 const SearchScreen = () => {
   const [searchitem, setSearchitem] = useState('');
-  const [chatuser, setchatuser] = useState<searchnewtype[]>([]);
+  const [chatuser, setchatuser] = useState<notificationType[]>([]);
   const user = useAppSelector(state => state.auth);
+  /*-------------------------------Getting and displaying global data ---------------------------------- */
 
-
-
+  /*-------------------------------Getting pending data ---------------------------------------- */
   const getsearchitem = async () => {
-    const querySnapshot = await firestore().collection('UserDetails').get();
-    const newMessages = querySnapshot.docs.map(
-      doc =>
-        ({
-          id: doc.id,
-          ...doc.data(),
-        } as searchnewtype),
-    );
+    firestore()
+      .collection('FriendRequest')
+      .where('senderid', '==', user.userid)
+      .onSnapshot(onSnapshot => {
+        const reqdetails = onSnapshot.docs.map(
+          doc =>
+            ({
+              id: doc.id,
+              ...doc.data(),
+            } as notificationType),
+        );
+        console.log('req id :', reqdetails);
+   /*------------------------------- merging and getting as object ---------------------------------- */
+        const mergedDetails = reqdetails.map(item => {
+          console.log("item now -->",item);
+          
+          return {
+            ...item.receiver,
+            status: item.status,
+            reciverid: item.recieverid,
+          };
+        });
+        console.log("merge ->",mergedDetails)
+        const outputObject = mergedDetails.reduce((acc, cur) => {
+          acc[cur.reciverid] = cur.status;
+          return acc;
+        }, {});
+        console.log(outputObject);
 
-     console.log('new new message:', newMessages); 
-    const originalmessage = newMessages?.filter(a => a.id !== user.userid)
-    setchatuser(originalmessage);
+        /*------------------------------------ Getting global data ---------------------------------- */
 
-    console.log('new original:', originalmessage);
+        firestore()
+          .collection('UserDetails')
+          .where('userid', '!=', user?.userid)
+          .onSnapshot(onSnapshot => {
+            const globaluserlist = onSnapshot.docs.map(
+              doc =>
+                ({
+                  id: doc.id,
+                  ...doc.data(),
+                } as notificationType),
+            );
+            const requestUserList = globaluserlist?.map((item, index) => {
+              console.log('my item-->', item.id, outputObject,item);
+              return {
+                ...item,
+                requeststatus: outputObject[item.id] || 0,
+              };
+            });
+            // console.log('users database :', users);
+            setchatuser(requestUserList);
+            console.log('globallist-->', globaluserlist);
+            console.log('new original:', requestUserList);
+          });
+      });
   };
 
-  useEffect(()=>{
-    getsearchitem()
-  },[])
-console.log("i am rendering");
+  /*------------------------------------------ useEffect --------------------------------------------- */
 
- 
+  useEffect(() => {
+    getsearchitem();
+  }, []);
 
+  /*-------------------------------click events in firebase ------------------------------------------ */
   const request = async (recieveid: String) => {
     console.log('item click id :', recieveid);
-
     try {
-      await firestore()
-        .collection('FriendRequest')
-        .doc('request')
-        .collection('allrequest')
-        .add({
-          senderid: user.userid,
-          recieverid: recieveid,
-          sendername:usermain?.displayName,
-          status: 'pending',
-          timestamp: firestore.FieldValue.serverTimestamp(),
-          type: 'friendrequest',
-        });
+      await firestore().collection('FriendRequest').add({
+        senderid: user.userid,
+        recieverid: recieveid,
+        sendername: user?.username,
+        status: 1,
+        timestamp: firestore.FieldValue.serverTimestamp(),
+        type: 'friendrequest',
+      });
     } catch {
       console.log('unknown error:');
     }
   };
-
-  const renderItem = ({ item }: { item: searchnewtype }) => {
+  /*-------------------------------Render item ------------------------------------------------------ */
+  const renderItem = ({ item }: { item: notificationType }) => {
     return (
       <View style={styles.listItem}>
         <Image source={image.profilelogo} style={styles.avatar} />
@@ -72,16 +105,22 @@ console.log("i am rendering");
           <AppText text={item.username} type={'chatpeople'} />
         </View>
         <View style={styles.addfriendview}>
-          <Appbackbtn
-            source={image.addedfrnicn}
-            style={styles.iconstyle}
-            Onpress={() => request(item.id)}
-          />
+          {item.requeststatus === RequestStatusType.pending ? (
+            <AppText text={'pending'} type={'chatpeople'} />
+            
+          
+          ) : item.requeststatus === RequestStatusType.accept ? (
+            <AppText text={'accept'} type={'chatpeople'} />
+          ) : <Appbackbtn
+              source={image.addedfrnicn}
+              style={styles.iconstyle}
+              Onpress={() => request(item.id)}
+            />}
         </View>
       </View>
     );
   };
-
+  /*-------------------------------Return------------------------------------------------------------ */
   return (
     <View style={styles.container}>
       <AppText
@@ -103,9 +142,7 @@ console.log("i am rendering");
     </View>
   );
 };
-
 export default SearchScreen;
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -131,7 +168,6 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     marginRight: 15,
   },
-
   searchbar: {
     backgroundColor: 'white',
     borderRadius: 10,

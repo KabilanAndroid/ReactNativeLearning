@@ -1,46 +1,77 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react-hooks/exhaustive-deps */
-import {  FlatList, Image, StyleSheet, TouchableOpacity, View } from 'react-native';
+import {
+  FlatList,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import React, { useEffect, useState } from 'react';
 import firestore from '@react-native-firebase/firestore';
 import { Colors } from '../utils/Colors';
 import { image } from '../utils/Images';
 import AppText from '../atoms/AppText';
-import { notificationType } from '../utils/Types';
+import { notifiType } from '../utils/Types';
 import { useAppSelector } from '../redux/ReduxHook';
+import { RequestStatusType } from '../utils/Enum';
 
 const NotificationScreen = () => {
-  const [notifications, setnotification] = useState<notificationType[]>([]);
+  const [notifications, setnotification] = useState<notifiType[]>([]);
   const user = useAppSelector(state => state.auth);
   console.log('notifications:', notifications);
-useEffect(() => {
-    notifii();
-  }, []);
-  const notifii = () => {
-    firestore()
+
+  useEffect(() => {
+    const subscriber = firestore()
       .collection('FriendRequest')
-      .doc('request')
-      .collection('allrequest')
-      .orderBy('timestamp', 'asc')
+      .where('recieverid', '==', user.userid)
+      .where('status', '==', RequestStatusType.pending)
       .onSnapshot(querySnapshot => {
-        const not = querySnapshot.docs.map(
+        const notifationusers = querySnapshot.docs.map(
           doc =>
             ({
               id: doc.id,
               ...doc.data(),
-            } as notificationType),
+            } as notifiType),
         );
-        const originalmessage = not?.filter(a => a.recieverid === user.userid);
-        setnotification(originalmessage);
+        setnotification(notifationusers);
+        console.log('firstload:', notifationusers);
+      });
+    return () => subscriber();
+  }, []);
+
+  const createroom = async (getid: string, getname: string) => {
+    await firestore()
+      .collection('chatRooms')
+      .add({
+        createdAt: firestore.FieldValue.serverTimestamp(),
+        users: [
+          {
+            uid: user.userid,
+            displayName: user.username,
+          },
+          {
+            uid: getid,
+            displayName: getname,
+          },
+        ],
       });
   };
-//   useEffect(() => {
-//     notifii();
-//   }, []);
 
+  const handleaccept = async (updatestatus: string | undefined) => {
+    console.log('getting id :', updatestatus);
 
+    await firestore()
+      .collection('FriendRequest')
+      .doc(updatestatus)
+      .update({
+        status: RequestStatusType.accept,
+      });
+  };
 
-  const renderitem = ({ item }: { item: notificationType }) => {
+  const renderitem = ({ item }: { item: notifiType }) => {
+    console.log('render item:', item);
+
     return (
       <View style={styles.listItem}>
         <Image source={image.profilelogo} style={styles.avatar} />
@@ -48,11 +79,27 @@ useEffect(() => {
           <AppText text={item.sendername} type={'chatpeople'} />
         </View>
         <View style={styles.addfriendview}>
-            <TouchableOpacity>
-            <AppText text={'reject'} type={'500-14'} style={{color:'white',backgroundColor:'black',padding:8}}/>
-          </TouchableOpacity>
           <TouchableOpacity>
-            <AppText text={'accept'} type={'500-14'} style={{color:'white',backgroundColor:Colors.loginclr,padding:8}}/>
+            <AppText
+              text={'reject'}
+              type={'500-14'}
+              style={{ color: 'white', backgroundColor: 'black', padding: 8 }}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              handleaccept(item.id), createroom(item.senderid, item.sendername);
+            }}
+          >
+            <AppText
+              text={'accept'}
+              type={'500-14'}
+              style={{
+                color: 'white',
+                backgroundColor: Colors.loginclr,
+                padding: 8,
+              }}
+            />
           </TouchableOpacity>
         </View>
       </View>
@@ -90,8 +137,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   addfriendview: {
-    flexDirection:'row',
-    columnGap:10,
+    flexDirection: 'row',
+    columnGap: 10,
     alignItems: 'flex-end',
   },
   headertextstyle: {

@@ -3,6 +3,23 @@ export type AppType = {
   userId2: () => void;
 };
 
+
+export interface notifiType {
+  id: string
+  timestamp: Timestamp
+  recieverid: string
+  senderid: string
+  type: string
+  status: string
+  sendername: string
+}
+
+export interface Timestamp {
+  seconds: number
+  nanoseconds: number
+}
+
+
 export interface MessageType {
   id: string;
   timestamp: Timestamp;
@@ -102,14 +119,16 @@ export interface CreatedAt {
 
 
 export interface notificationType {
+  receiver: any;
   sendername: string;
   recievename: string;
   username: string;
   id: string
+  requeststatus: number
   timestamp: Timestamp
   type: string
   recieverid: string
-  status: string
+  status: number
   senderid: string
 }
 

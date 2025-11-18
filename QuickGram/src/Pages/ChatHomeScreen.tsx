@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {  useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import AppText from '../atoms/AppText';
 import ChatSearch from '../atoms/ChatSearch';
 import { image } from '../utils/Images';
@@ -17,8 +17,7 @@ import firestore from '@react-native-firebase/firestore';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { Rootofchathome, ScreenType } from '../utils/Types';
 import { useAppSelector } from '../redux/ReduxHook';
-import auth from '@react-native-firebase/auth';
-const usermain = auth().currentUser;
+
 export type usernametype = {
   uid: string;
   displayName: string;
@@ -66,7 +65,7 @@ const ChatListItem = ({
 };
 
 const ChatHomeScreen = () => {
-  const user = useAppSelector((state) => state.auth);
+  const user = useAppSelector(state => state.auth);
   console.log('useselector for user id:', user?.userid);
 
   const [searchitem, setSearchitem] = useState('');
@@ -116,19 +115,21 @@ const ChatHomeScreen = () => {
   useEffect(() => {
     const subscriber = firestore()
       .collection('chatRooms')
+      .where('users', 'array-contains', {
+          uid: user?.userid,
+          displayName: user.username,
+        })
       .onSnapshot(querySnapshot => {
-        const newMessages = querySnapshot.docs.map(
+        const rooms = querySnapshot.docs.map(
           doc =>
             ({
               id: doc.id,
               ...doc.data(),
-            } as Rootofchathome),
+            }as Rootofchathome),
         );
-        const confirmchat = newMessages?.filter(a => a.users === user.userid)
+        setchatuser(rooms);
+      
         
-        setchatuser(confirmchat);
-        console.log('new confirmchat:', confirmchat);
-        console.log('new newMessages:', newMessages);
       });
     return () => subscriber();
   }, []);
@@ -136,55 +137,20 @@ const ChatHomeScreen = () => {
 
 
 
-const  getRoomsForCurrentUser = async() => {
-  console.log("username:",usermain?.displayName);
+
+
+
+
+
+
+
+
+
+
+
+
+
   
-  try {
-
-    const roomsSnapshot = await firestore()
-      .collection('chatRooms')
-      .where('users', 'array-contains', { uid: user?.userid ,displayName:usermain?.displayName }) 
-      .get();
-
-    const rooms = roomsSnapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
-    setchatuser(rooms)
-    console.log('Rooms for current user:', rooms);
-    return rooms;
-
-  } catch (error) {
-    console.error('Error fetching rooms:', error);
-    return [];
-  }
-}
-useEffect(()=>{
-  getRoomsForCurrentUser()
-},[getRoomsForCurrentUser])
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   return (
     <KeyboardAvoidingView
