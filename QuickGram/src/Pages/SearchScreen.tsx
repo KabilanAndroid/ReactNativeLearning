@@ -1,3 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable @typescript-eslint/no-shadow */
+
 import { FlatList, Image, StyleSheet, View } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import ChatSearch from '../atoms/ChatSearch';
@@ -6,16 +9,28 @@ import AppText from '../atoms/AppText';
 import { image } from '../utils/Images';
 import Appbackbtn from '../atoms/Appbackbtn';
 import firestore from '@react-native-firebase/firestore';
-import { notificationType } from '../utils/Types';
+import { notificationType, ScreenType } from '../utils/Types';
 import { useAppSelector } from '../redux/ReduxHook';
 import { RequestStatusType } from '../utils/Enum';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
+import Apptextbutton from '../atoms/Apptextbutton';
 const SearchScreen = () => {
   const [searchitem, setSearchitem] = useState('');
   const [chatuser, setchatuser] = useState<notificationType[]>([]);
   const user = useAppSelector(state => state.auth);
-  /*-------------------------------Getting and displaying global data ---------------------------------- */
+  const navigation = useNavigation<NavigationProp<ScreenType>>();
+  console.log('chatuser:', chatuser);
 
-  /*-------------------------------Getting pending data ---------------------------------------- */
+  const filteredData = chatuser.filter(item => {
+    return item.username.toLowerCase().includes(searchitem.toLowerCase());
+  });
+
+  /*-------------------------------Getting and displaying global data ---------------------------------- */
+  /*-------------------------------Getting pending data for current user ---------------------------------------- */
+  
+
+
+
   const getsearchitem = async () => {
     firestore()
       .collection('FriendRequest')
@@ -29,57 +44,87 @@ const SearchScreen = () => {
             } as notificationType),
         );
         console.log('req id :', reqdetails);
-   /*------------------------------- merging and getting as object ---------------------------------- */
+        /*------------------------------- merging and getting as object for current user ---------------------------------- */
+
         const mergedDetails = reqdetails.map(item => {
-          console.log("item now -->",item);
-          
+          console.log('item now -->', item);
+
           return {
             ...item.receiver,
-            status: item.status,
+            status: item.senderstatus,
             reciverid: item.recieverid,
           };
         });
-        console.log("merge ->",mergedDetails)
+        console.log('merge ->', mergedDetails);
         const outputObject = mergedDetails.reduce((acc, cur) => {
           acc[cur.reciverid] = cur.status;
           return acc;
         }, {});
-        console.log(outputObject);
+        console.log('merging object1:', outputObject);
 
-        /*------------------------------------ Getting global data ---------------------------------- */
+        /*-------------------------------Getting pending data for another user ---------------------------------------- */
 
         firestore()
-          .collection('UserDetails')
-          .where('userid', '!=', user?.userid)
+          .collection('FriendRequest')
+          .where('recieverid', '==', user.userid)
           .onSnapshot(onSnapshot => {
-            const globaluserlist = onSnapshot.docs.map(
+            const reqdetails2 = onSnapshot.docs.map(
               doc =>
                 ({
                   id: doc.id,
                   ...doc.data(),
                 } as notificationType),
             );
-            const requestUserList = globaluserlist?.map((item, index) => {
-              console.log('my item-->', item.id, outputObject,item);
+            console.log('req id2 :', reqdetails2);
+            /*------------------------------- merging and getting as object for another user ---------------------------------- */
+            const mergedDetails2 = reqdetails2.map(item => {
               return {
-                ...item,
-                requeststatus: outputObject[item.id] || 0,
+                ...item.receiver,
+                status: item.receiverstatus,
+                senderid: item.senderid,
               };
             });
-            // console.log('users database :', users);
-            setchatuser(requestUserList);
-            console.log('globallist-->', globaluserlist);
-            console.log('new original:', requestUserList);
+            console.log('merge2 ->', mergedDetails2);
+            const outputObject2 = mergedDetails2.reduce((acc, cur) => {
+              acc[cur.senderid] = cur.status;
+              return acc;
+            }, {});
+            console.log('merging object2:', outputObject2);
+            /*------------------------------------ merging two object ---------------------------------- */
+            const twomergedobj = { ...outputObject, ...outputObject2 };
+
+            /*------------------------------------ Getting global data ---------------------------------- */
+
+            firestore()
+              .collection('UserDetails')
+              .where('userid', '!=', user?.userid)
+              .onSnapshot(onSnapshot => {
+                const globaluserlist = onSnapshot.docs.map(
+                  doc =>
+                    ({
+                      id: doc.id,
+                      ...doc.data(),
+                    } as notificationType),
+                );
+                const requestUserList = globaluserlist?.map(item => {
+                  console.log('my item1-->', item.id, twomergedobj, item);
+                  return {
+                    ...item,
+                    requeststatus: twomergedobj[item.id] || 0,
+                  };
+                });
+                // console.log('users database :', users);
+                setchatuser(requestUserList);
+                console.log('globallist-->', globaluserlist);
+                console.log('new original:', requestUserList);
+              });
           });
       });
   };
 
   /*------------------------------------------ useEffect --------------------------------------------- */
 
-  useEffect(() => {
-    getsearchitem();
-  }, []);
-
+  
   /*-------------------------------click events in firebase ------------------------------------------ */
   const request = async (recieveid: String) => {
     console.log('item click id :', recieveid);
@@ -88,7 +133,8 @@ const SearchScreen = () => {
         senderid: user.userid,
         recieverid: recieveid,
         sendername: user?.username,
-        status: 1,
+        senderstatus: RequestStatusType.pending,
+        receiverstatus: RequestStatusType.acceptOrreject,
         timestamp: firestore.FieldValue.serverTimestamp(),
         type: 'friendrequest',
       });
@@ -96,8 +142,11 @@ const SearchScreen = () => {
       console.log('unknown error:');
     }
   };
+
   /*-------------------------------Render item ------------------------------------------------------ */
   const renderItem = ({ item }: { item: notificationType }) => {
+    console.log('itemid now is ->:', item);
+
     return (
       <View style={styles.listItem}>
         <Image source={image.profilelogo} style={styles.avatar} />
@@ -106,26 +155,39 @@ const SearchScreen = () => {
         </View>
         <View style={styles.addfriendview}>
           {item.requeststatus === RequestStatusType.pending ? (
-            <AppText text={'pending'} type={'chatpeople'} />
-            
-          
+            <AppText text={'requested'} type={'chatpeople'}
+            style={[styles.following,{backgroundColor:Colors.lightReq,color:Colors.white}]} 
+            />
           ) : item.requeststatus === RequestStatusType.accept ? (
-            <AppText text={'accept'} type={'chatpeople'} />
-          ) : <Appbackbtn
-              source={image.addedfrnicn}
+            <AppText text={'following'} type={'chatpeople'} style={styles.following}/>
+          ) : item.requeststatus === RequestStatusType.acceptOrreject ? (
+            <Appbackbtn
+              source={image.goto}
               style={styles.iconstyle}
+              Onpress={() => navigation.navigate('notificationscreen')}
+            />
+          ) : (
+            <Apptextbutton                                                              
+              text={'follow'}
+              textType={'textbutton'}
               Onpress={() => request(item.id)}
-            />}
+              Style={styles.followbtn}
+            />
+          )}
         </View>
       </View>
     );
   };
+  useEffect(() => {
+    getsearchitem()
+    
+  }, []);
   /*-------------------------------Return------------------------------------------------------------ */
   return (
     <View style={styles.container}>
       <AppText
         text={'Search'}
-        type={'LoginText'}
+        type={'heardertext'}
         style={styles.headertextstyle}
       />
       <ChatSearch
@@ -135,7 +197,7 @@ const SearchScreen = () => {
         style={styles.searchbar}
       />
       <FlatList
-        data={chatuser}
+        data={filteredData}
         renderItem={renderItem}
         keyExtractor={(item, index) => index.toString()}
       />
@@ -158,15 +220,27 @@ const styles = StyleSheet.create({
   addfriendview: {
     alignItems: 'flex-end',
   },
+  following:{backgroundColor: Colors.frndchatclr,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 20,},
   headertextstyle: {
     padding: 10,
-    backgroundColor: Colors.introbg,
+    backgroundColor: Colors.headercolor,
+    borderBottomWidth: 2,
+    borderBottomColor: '#f0ebebff',
   },
   avatar: {
     width: 50,
     height: 50,
     borderRadius: 25,
     marginRight: 15,
+  },
+  followbtn: {
+    backgroundColor: Colors.maingreen,
+    paddingHorizontal: 15,
+    paddingVertical: 8,
+    borderRadius: 20,
   },
   searchbar: {
     backgroundColor: 'white',
@@ -182,7 +256,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.introbg,
+    borderBottomWidth: 2,
+    borderBottomColor: '#f0ebebff',
   },
 });

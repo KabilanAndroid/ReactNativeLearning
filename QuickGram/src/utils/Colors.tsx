@@ -1,11 +1,22 @@
 export const Colors ={
     introbg:'#8EBB46',
     introbtn:'#fff',
+    white:'#fff',
     loginbg:'#fff',
     logintxt:'#000000ff',
     loginclr:'#8EBB46',
     chatscnsearchbrclr:'#0dfb20ff',
     chatscnbrclr:'#f0f0f0',
     black:'#000',
-    chatinscreen:'#f2ffe6'
+    chatinscreen:'#f2ffe6',
+    borderbottomcolor:'#f0ebebff',
+    timestampText:'#08361fff',
+    textinputcolor:'#a0d46aff',
+    userchatclr:'#d3f5c8ff',
+    frndchatclr:'#E0E0E0',
+    commonbg:'#a0d46aff',
+    headercolor:'#a0d46aff',
+    maingreen:'#a0d46aff',
+     lightReq:'#7a8d5bff',
+
 }

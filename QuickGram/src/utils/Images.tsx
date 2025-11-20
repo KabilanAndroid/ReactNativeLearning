@@ -6,7 +6,7 @@ export const image ={
     cancelicon:require('../assests/cancelicon.png'),
     profilelogo:require('../assests/profilelogo.png'),
     backarrows:require('../assests/backarrow.png'),
-    whiteimg:require('../assests/rohit.png'),
+    whiteimg:require('../assests/profilelogo.png'),
     chat:require('../assests/chat.png'),
     home:require('../assests/home.png'),
     livechat:require('../assests/livechat.png'),
@@ -18,4 +18,11 @@ export const image ={
     addedfrnicn:require('../assests/addedfrnicn.png'),
     post:require('../assests/post.png'),
     heart:require('../assests/heart.png'),
+    goto:require('../assests/goto.png'),
+    search:require('../assests/search.png'),
+    bell2:require('../assests/bell2.png'),
+    message2:require('../assests/message2.png'),
+    doubletick:require('../assests/doubletick.png'),
+    
+    
 }

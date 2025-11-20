@@ -1,14 +1,16 @@
-import { Text, TextProps, TextStyle, View } from 'react-native';
+import { StyleProp, Text, TextProps, TextStyle, View } from 'react-native';
 import React, { FC, memo } from 'react';
 import { Colors } from '../utils/Colors';
 
 type AppTextType = {
-  text: string ;
-  style?: TextStyle;
+  text: string;
+  style?: StyleProp<TextStyle>;
   type: AppItemType;
   rest?: TextProps;
 };
 export type AppItemType =
+  | 'logoutbtn'
+  | 'heardertext'
   | 'unread'
   | 'timestamptxt'
   | 'lastmessage'
@@ -38,6 +40,9 @@ const AppText: FC<AppTextType> = ({ text, style, type, rest }) => {
     chatpeople: {
       fontSize: 18,
     },
+    heardertext: {
+      fontSize: 30,
+    },
     lastmessage: {
       fontSize: 15,
     },
@@ -48,6 +53,11 @@ const AppText: FC<AppTextType> = ({ text, style, type, rest }) => {
       color: Colors.logintxt,
       fontWeight: '900',
       fontSize: 28,
+    },
+    logoutbtn: {
+      color: 'white',
+      fontWeight: '600',
+      fontSize: 26,
     },
     userText: {
       color: Colors.logintxt,

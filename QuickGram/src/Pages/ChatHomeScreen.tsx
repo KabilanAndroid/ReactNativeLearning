@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react-hooks/exhaustive-deps */
 import {
   FlatList,
@@ -56,8 +57,16 @@ const ChatListItem = ({
           })}
           type="500-14"
         />
-        <View style={styles.unreadview}>
-          <AppText text={countreads?.toString()} type="unread" />
+        <View>
+          {countreads === 0 ? (
+            <AppText text={''} type={'LoginText'} />
+          ) : (
+            <AppText
+              text={countreads?.toString()}
+              type="unread"
+              style={styles.unreadview}
+            />
+          )}
         </View>
       </View>
     </View>
@@ -73,6 +82,14 @@ const ChatHomeScreen = () => {
   console.log('array flatlist', chatuser);
   const navigation = useNavigation<NavigationProp<ScreenType>>();
 
+
+const filteredData = chatuser.filter(item =>{
+  const currname = item.users.find(a => a.uid !== user.userid)?.displayName
+  return(
+     currname?.toLowerCase().includes(searchitem.toLowerCase())
+  )
+}  
+  );
   const renderItem = ({ item }: { item: Rootofchathome; index: number }) => {
     console.log(item);
 
@@ -111,57 +128,45 @@ const ChatHomeScreen = () => {
     );
   };
 
-
   useEffect(() => {
     const subscriber = firestore()
       .collection('chatRooms')
       .where('users', 'array-contains', {
-          uid: user?.userid,
-          displayName: user.username,
-        })
+        uid: user?.userid,
+        displayName: user.username,
+      })
       .onSnapshot(querySnapshot => {
         const rooms = querySnapshot.docs.map(
           doc =>
             ({
               id: doc.id,
               ...doc.data(),
-            }as Rootofchathome),
+            } as Rootofchathome),
         );
         setchatuser(rooms);
-      
-        
       });
     return () => subscriber();
   }, []);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
 
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={styles.container}
     >
-      <AppText
-        text={'Chat'}
-        type={'LoginText'}
-        style={styles.headertextstyle}
-      />
+      <View style={styles.first}>
+        <View style={styles.textview1}>
+          <AppText
+            text={'Chats'}
+            type={'heardertext'}
+            style={styles.headertextstyle}
+          />
+        </View>
+        <View style={styles.imageicon}>
+          <Image source={image.message2} style={styles.message2} />
+          <Image source={image.bell2} style={styles.message2} />
+        </View>
+      </View>
+
       <ChatSearch
         onChangeText={setSearchitem}
         value={searchitem}
@@ -169,7 +174,7 @@ const ChatHomeScreen = () => {
         style={styles.searchbar}
       />
       <FlatList
-        data={chatuser}
+        data={filteredData}
         renderItem={renderItem}
         keyExtractor={(item, index) => index.toString()}
       />
@@ -182,13 +187,28 @@ export default ChatHomeScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.loginbg,
+    // backgroundColor: Colors.loginbg,
   },
+  textview1: { flex: 1, flexDirection: 'row', alignItems: 'center' },
+  imageicon: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    columnGap: 20,
+    alignItems: 'center',
+    marginEnd: 15,
+    
+  },
+  first:{ flexDirection: 'row',borderBottomWidth: 2,
+    borderBottomColor: '#f0ebebff', backgroundColor:Colors.headercolor,},
   unreadview: {
     backgroundColor: '#8acc29ff',
     borderRadius: 10,
     paddingHorizontal: 6,
     paddingVertical: 2,
+  },
+  message2: {
+    height: 28,
+    width: 28,
   },
   textview: {
     flex: 1,
@@ -198,10 +218,15 @@ const styles = StyleSheet.create({
   },
   headertextstyle: {
     padding: 10,
-    backgroundColor: Colors.introbg,
+    // backgroundColor: Colors.introbg,
+  },
+  bottomBorder: {
+    width: '80%', 
+    borderBottomWidth: 2,
+    borderBottomColor: 'blue',
   },
   searchbar: {
-    backgroundColor: 'white',
+    // backgroundColor: 'white',
     borderRadius: 10,
     height: 45,
     borderColor: Colors.black,
@@ -220,7 +245,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.introbg,
+    borderBottomWidth: 2,
+    borderBottomColor: '#f0ebebff',
   },
 });

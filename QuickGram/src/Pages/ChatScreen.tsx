@@ -16,10 +16,10 @@ import Appbackbtn from '../atoms/Appbackbtn';
 import AppTextInput from '../atoms/AppTextInput';
 import AppImage from '../atoms/AppImage';
 import firestore from '@react-native-firebase/firestore';
-import { Colors } from '../utils/Colors';
 import { MessageType, ScreenType } from '../utils/Types';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { useAppSelector } from '../redux/ReduxHook';
+import { Colors } from '../utils/Colors';
 
 
 
@@ -52,7 +52,7 @@ const ChatScreen = () => {
       keyboardDidShowListener.remove();
     };
   }, []);
-  const keyboardOffset = keybrd ? 30 : 0;
+  const keyboardOffset = keybrd ? 24 : 0;
 
   useEffect(() => {
     const subscriber = firestore()
@@ -88,7 +88,6 @@ const ChatScreen = () => {
         .collection('chatRooms')
         .doc(routeData?.discussionid?.toString())
         .collection('messages')
-
         .orderBy('timestamp', 'desc')
         .startAfter(lastvisible)
         .limit(20)
@@ -167,22 +166,31 @@ const ChatScreen = () => {
   const renderMessage = ({ item }: any) => (
     <View
       style={{
+        flex:1,
+        flexDirection:'column',
         alignSelf: item.senderId === user?.userid ? 'flex-end' : 'flex-start',
         margin: 5,
-        marginRight: item.senderId === user?.userid ? 5 : 200,
-        marginLeft: item.senderId === user?.userid ? 200 : 5,
+        backgroundColor:item.senderId === user?.userid? Colors.userchatclr : Colors.frndchatclr,
+        maxWidth:'80%',
+        borderRadius: 10,
+        paddingHorizontal:12,
+        paddingVertical:4,                                                                                                         
+        marginRight: item.senderId === user?.userid ? 10 : null,
+        marginLeft: item.senderId === user?.userid ? null : 10,
       }}
     >
+      <View style={{flex:1}}>
       <Text
         style={{
-          backgroundColor:
-            item.senderId === user?.userid? '#d3f5c8ff' : '#E0E0E0',
-          padding: 10,
-          borderRadius: 10,
+          padding: 5,
+          fontSize:14,
         }}
       >
         {item.text}
       </Text>
+      </View>
+      <View style={{flex:1,alignItems: 'flex-end',flexDirection:'row',columnGap:5}}>
+        
       <AppText
         text={item.timestamp?.toDate()?.toLocaleTimeString('en-US', {
           hour: 'numeric',
@@ -191,8 +199,17 @@ const ChatScreen = () => {
         })}
         type={'timestamptxt'}
         style={styles.timestampText}
+        
       />
-    </View>
+      
+      
+      <Image source={image.doubletick} style={{height:15,width:15}}/>
+      
+      </View>
+      
+     
+      </View>
+    
   );
 
   return (
@@ -233,12 +250,12 @@ const ChatScreen = () => {
       />
 
       <View style={styles.view2}>
-        <AppText text={''} type={'chatpeople'} />
+        
         <View style={styles.textinputview}>
           <AppTextInput
             onChangeText={setNewMessage}
             value={newMessage}
-            placeholder={'message'}
+            placeholder={'Message...'}
             style={styles.textinput}
           />
           <Appbackbtn
@@ -265,8 +282,15 @@ const styles = StyleSheet.create({
   },
   heaaderstyle: {
     flexDirection: 'row',
-    backgroundColor: Colors.introbg,
-    padding: 6,
+    
+    //  borderBottomWidth: 1,
+     backgroundColor: Colors.headercolor,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    borderBottomWidth: 0,
+    shadowRadius: 3,
+    padding: 15,
     columnGap: 100,
   },
   callicon: {
@@ -275,9 +299,9 @@ const styles = StyleSheet.create({
   },
   timestampText: {
     fontSize: 10,
-    color: '#08361fff',
-    marginTop: 3,
-    alignSelf: 'flex-end',
+    color: Colors.timestampText,
+    // marginLeft: 3,
+    // alignItems: 'flex-end',
   },
   view2sub: {
     flexDirection: 'row',
@@ -297,21 +321,28 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     width: '100%',
-    paddingVertical: 20,
-    backgroundColor: Colors.introbg,
+    paddingVertical: 10,
+    backgroundColor: Colors.textinputcolor,
+    shadowColor: '#1e1b1bff',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    borderBottomWidth: 0,
+    shadowRadius: 3,
     justifyContent: 'space-around',
   },
   textinput: {
     backgroundColor: 'white',
-    borderRadius: 20,
-    height: 45,
+    borderRadius: 10,
+    marginStart:10,
+    height: 55,
     width: 320,
-    borderColor: '#55cd1dff',
+    borderColor: '#90988dff',
     borderWidth: 1,
   },
   sendiconstyle: {
-    height: 36,
-    width: 36,
+    height: 32,
+    transform:[{'rotate':'330deg'}],
+    width: 32,
   },
   avatar: {
     width: 50,

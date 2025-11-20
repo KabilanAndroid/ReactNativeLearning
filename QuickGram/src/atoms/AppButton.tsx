@@ -13,7 +13,7 @@ type AppButtonType = {
 
 const AppButton: FC<AppButtonType> = ({Style,Onpress,text}) => {
   return <TouchableOpacity style={Style} onPress={Onpress} >
-  <AppText text={text}  type={'buttonText'}/>
+  <AppText text={text} type='buttonText'/>
   
     
   </TouchableOpacity>;

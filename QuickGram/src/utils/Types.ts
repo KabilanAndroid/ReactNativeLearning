@@ -119,6 +119,8 @@ export interface CreatedAt {
 
 
 export interface notificationType {
+  receiverstatus: number;
+  senderstatus: number;
   receiver: any;
   sendername: string;
   recievename: string;
@@ -139,3 +141,39 @@ export interface Timestamp {
 
 
 
+export interface readsType {
+  id: string
+  users: User[]
+  lasttime: Lasttime
+  unreaduser: Unreaduser
+  createdAt: CreatedAt
+  lastmessage: string
+}
+
+export interface User {
+  displayName: string
+  uid: string
+}
+
+export interface Lasttime {
+  seconds: number
+  nanoseconds: number
+}
+
+export interface Unreaduser {
+  F3akieJ7JeY4Gt2XmjtD0ozDMOI3: F3akieJ7JeY4Gt2XmjtD0ozDmoi3
+  EycuRSeh21QhvL1ueMbnQIAhqNm2: EycuRseh21QhvL1ueMbnQiahqNm2
+}
+
+export interface F3akieJ7JeY4Gt2XmjtD0ozDmoi3 {
+  unreadcount: number
+}
+
+export interface EycuRseh21QhvL1ueMbnQiahqNm2 {
+  unreadcount: number
+}
+
+export interface CreatedAt {
+  seconds: number
+  nanoseconds: number
+}

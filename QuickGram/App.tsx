@@ -59,12 +59,31 @@ const MainTabNavigator = () => {
       initialRouteName='homescreen'
       screenOptions={{
         headerShown: false,
+        tabBarActiveBackgroundColor: Colors.white,
         headerStyle:{
           backgroundColor:Colors.introbg
         },
+        tabBarItemStyle: {
+          overflow: 'hidden',
+          borderRadius:20,
+          marginHorizontal: 10, 
+          marginVertical: 5, 
+        },
+       
         tabBarStyle: {
-          backgroundColor:Colors.introbg,
+          marginBottom:0.5,
+          height: 70, 
+          marginHorizontal:5,
+          borderRadius:30,
+          backgroundColor:Colors.maingreen,
+         
+         
+        },
+          tabBarIconStyle: {
           
+          flex: 1,
+          alignItems: 'center',
+          justifyContent: 'center',
         },
         tabBarHideOnKeyboard: true,
         
@@ -75,10 +94,10 @@ const MainTabNavigator = () => {
         name="homescreen"
         component={HomeScreen}
         // eslint-disable-next-line react/no-unstable-nested-components
-        options={{ title:'',tabBarInactiveTintColor:'black' ,tabBarIcon: () => {
+        options={{ title:'Home',tabBarActiveTintColor:'#5b63b7', tabBarInactiveTintColor:Colors.white ,tabBarIcon: () => {
               return (
                 <Image
-                  style={{ width: 30, height: 30 }}
+                  style={{ width: 40, height: 40 }}
                   source={image.home}
                 />
               );
@@ -91,11 +110,11 @@ const MainTabNavigator = () => {
         name="searchscreen"
         component={SearchScreen}
         // eslint-disable-next-line react/no-unstable-nested-components
-        options={{ title:'',tabBarInactiveTintColor:'black' ,tabBarIcon: () => {
+        options={{ title:'Search',tabBarActiveTintColor:'#5b63b7', tabBarInactiveTintColor:Colors.white,tabBarIcon: () => {
               return (
                 <Image
-                  style={{ width: 30, height: 30 }}
-                  source={image.seachiconn}
+                  style={{ width: 25, height: 25 }}
+                  source={image.search}
                 />
               );
             },
@@ -122,7 +141,7 @@ const MainTabNavigator = () => {
         name="notificationscreen"
         component={NotificationScreen}
         // eslint-disable-next-line react/no-unstable-nested-components
-        options={{ title: '',tabBarInactiveTintColor:'black',tabBarIcon: () => {
+        options={{ title: 'Notification',tabBarActiveTintColor:'#5b63b7', tabBarInactiveTintColor:Colors.white,tabBarIcon: () => {
               return (
                 <Image
                   style={{ width: 30, height: 30 }}
@@ -138,7 +157,7 @@ const MainTabNavigator = () => {
         name="chathomescreen"
         component={ChatHomeScreen}
         // eslint-disable-next-line react/no-unstable-nested-components
-        options={{ title: '',tabBarInactiveTintColor:'black',tabBarIcon: () => {
+        options={{ title: 'Chat',tabBarActiveTintColor:'#5b63b7', tabBarInactiveTintColor:Colors.white,tabBarIcon: () => {
               return (
                 <Image
                   style={{ width: 30, height: 30 }}
