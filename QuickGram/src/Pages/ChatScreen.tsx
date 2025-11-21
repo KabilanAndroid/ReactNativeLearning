@@ -16,22 +16,25 @@ import Appbackbtn from '../atoms/Appbackbtn';
 import AppTextInput from '../atoms/AppTextInput';
 import AppImage from '../atoms/AppImage';
 import firestore from '@react-native-firebase/firestore';
-import { MessageType, ScreenType } from '../utils/Types';
-import { RouteProp, useRoute } from '@react-navigation/native';
+import { MessageseenType, MessageType, ScreenType } from '../utils/Types';
+import {
+  
+  RouteProp,
+  
+  useRoute,
+} from '@react-navigation/native';
 import { useAppSelector } from '../redux/ReduxHook';
 import { Colors } from '../utils/Colors';
-
-
 
 const ChatScreen = () => {
   const [lastvisible, setlastvisible] = useState<Partial<MessageType>>();
   const [messages, setMessages] = useState<MessageType[]>([]);
   const [keybrd, setKeyboardVisible] = useState(Boolean);
   const [newMessage, setNewMessage] = useState('');
-  const user = useAppSelector((state) => state.auth);
+  const user = useAppSelector(state => state.auth);
   const route = useRoute<RouteProp<ScreenType>>();
   const routeData = route.params;
-  console.log('routeparam:', routeData);
+  console.log('routeparam:', messages);
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -115,11 +118,25 @@ const ChatScreen = () => {
     }
   };
 
+  const bluetick = async () => {
+    const batch = firestore().batch();
+    const querySnapshot = await firestore()
+      .collection('chatRooms')
+      .doc(routeData?.discussionid)
+      .collection('messages')
+      .where('recieverId', '==', user.userid)
+      .where('senderId', '==', routeData?.oppositeid)
+      .where('status', '==', 'delivered')
+      .get();
+    querySnapshot.forEach(documentSnapshot => {
+      batch.update(documentSnapshot.ref, { [`status`]: 'seen' });
+    });
+    return batch.commit();
+  };
   const sendMessage = async () => {
     if (newMessage.trim() === '' || !user) {
       return;
     }
-
     try {
       await firestore()
         .collection('chatRooms')
@@ -128,6 +145,8 @@ const ChatScreen = () => {
         .add({
           text: newMessage,
           senderId: user?.userid,
+          status: 'delivered',
+          recieverId: routeData?.oppositeid,
           timestamp: firestore.FieldValue.serverTimestamp(),
         });
       setNewMessage('');
@@ -135,6 +154,10 @@ const ChatScreen = () => {
     } catch (error) {
       console.error('Error sending message:', error);
     }
+  };
+  const last = () => {
+    bluetick();
+    reset();
   };
   const calltwo = () => {
     sendlastmessage();
@@ -148,6 +171,8 @@ const ChatScreen = () => {
       .update({
         lasttime: firestore.FieldValue.serverTimestamp(),
         [`unreaduser.${user?.userid}.unreadcount`]: 0,
+        [`unreaduser.${user.userid}.lasttimestamp`]:
+          firestore.FieldValue.serverTimestamp(),
       });
   };
 
@@ -160,57 +185,77 @@ const ChatScreen = () => {
         lasttime: firestore.FieldValue.serverTimestamp(),
         [`unreaduser.${routeData?.oppositeid}.unreadcount`]:
           firestore.FieldValue.increment(1),
+        [`unreaduser.${user.userid}.lasttimestamp`]:
+          firestore.FieldValue.serverTimestamp(),
       });
   };
 
-  const renderMessage = ({ item }: any) => (
-    <View
-      style={{
-        flex:1,
-        flexDirection:'column',
-        alignSelf: item.senderId === user?.userid ? 'flex-end' : 'flex-start',
-        margin: 5,
-        backgroundColor:item.senderId === user?.userid? Colors.userchatclr : Colors.frndchatclr,
-        maxWidth:'80%',
-        borderRadius: 10,
-        paddingHorizontal:12,
-        paddingVertical:4,                                                                                                         
-        marginRight: item.senderId === user?.userid ? 10 : null,
-        marginLeft: item.senderId === user?.userid ? null : 10,
-      }}
-    >
-      <View style={{flex:1}}>
-      <Text
+  const renderMessage = ({ item }: { item: MessageseenType }) => {
+    console.log('loggggg:', routeData?.currlastime.toDate().toLocaleTimeString('en-US', {
+              hour: 'numeric',
+              minute: 'numeric',
+              hour12: true,
+            }));
+
+    return (
+      <View
         style={{
-          padding: 5,
-          fontSize:14,
+          flex: 1,
+          flexDirection: 'column',
+          alignSelf: item.senderId === user?.userid ? 'flex-end' : 'flex-start',
+          margin: 5,
+          backgroundColor:
+            item.senderId === user?.userid
+              ? Colors.userchatclr
+              : Colors.frndchatclr,
+          maxWidth: '80%',
+          borderRadius: 10,
+          paddingHorizontal: 12,
+          paddingVertical: 4,
+          marginRight: item.senderId === user?.userid ? 10 : null,
+          marginLeft: item.senderId === user?.userid ? null : 10,
         }}
       >
-        {item.text}
-      </Text>
-      </View>
-      <View style={{flex:1,alignItems: 'flex-end',flexDirection:'row',columnGap:5}}>
+        <View style={{ flex: 1 }}>
+          <Text
+            style={{
+              padding: 5,
+              fontSize: 14,
+            }}
+          >
+            {item.text}
+          </Text>
+        </View>
+        <View
+          style={{
+            flex: 1,
+            alignSelf: 'flex-end',
+            flexDirection: 'row',
+            columnGap: 5,
+          }}
+        >
+          <AppText
+            text={item.timestamp?.toDate()?.toLocaleTimeString('en-US', {
+              hour: 'numeric',
+              minute: 'numeric',
+              hour12: true,
+            })}
+            type={'timestamptxt'}
+            style={styles.timestampText}
+          />
+          
+          {item.senderId === user?.userid &&<Image
         
-      <AppText
-        text={item.timestamp?.toDate()?.toLocaleTimeString('en-US', {
-          hour: 'numeric',
-          minute: 'numeric',
-          hour12: true,
-        })}
-        type={'timestamptxt'}
-        style={styles.timestampText}
-        
-      />
-      
-      
-      <Image source={image.doubletick} style={{height:15,width:15}}/>
-      
+            source={image.doubletick}
+            style={{ height: 20, width: 20 }}
+            {...(item.status === 'seen' && {
+              tintColor: '#3d77e2ff',
+            })}
+          />}
+        </View>
       </View>
-      
-     
-      </View>
-    
-  );
+    );
+  };
 
   return (
     <KeyboardAvoidingView
@@ -224,13 +269,20 @@ const ChatScreen = () => {
             Style={styles.backbtnstyle}
             source={image.backarrows}
             style={styles.backbtnstyle1}
-            Onpress={function (): void {
-              throw new Error('Function not implemented.');
-            }}
+            Onpress={() => console.log('back')}
           />
+          
           <Image source={image.whiteimg} style={styles.avatar} />
+          <View>
           <AppText text={routeData?.chatnamescrn!} type={'chatpeople'} />
+          <AppText text={`last seen ${routeData?.currlastime.toDate().toLocaleTimeString('en-US', {
+              hour: 'numeric',
+              minute: 'numeric',
+              hour12: true,
+            })}`} type={'500-14'} />
         </View>
+        </View>
+       
 
         <View style={styles.view2sub}>
           <AppImage source={image.videoicon} style={styles.callicon} />
@@ -244,13 +296,12 @@ const ChatScreen = () => {
         renderItem={renderMessage}
         keyExtractor={item => item.id}
         onEndReached={loadMoreMessages}
-        onStartReached={reset}
+        onStartReached={last}
         onEndReachedThreshold={0.5}
         inverted
       />
 
       <View style={styles.view2}>
-        
         <View style={styles.textinputview}>
           <AppTextInput
             onChangeText={setNewMessage}
@@ -282,9 +333,9 @@ const styles = StyleSheet.create({
   },
   heaaderstyle: {
     flexDirection: 'row',
-    
+
     //  borderBottomWidth: 1,
-     backgroundColor: Colors.headercolor,
+    backgroundColor: Colors.headercolor,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
@@ -333,7 +384,7 @@ const styles = StyleSheet.create({
   textinput: {
     backgroundColor: 'white',
     borderRadius: 10,
-    marginStart:10,
+    marginStart: 10,
     height: 55,
     width: 320,
     borderColor: '#90988dff',
@@ -341,7 +392,7 @@ const styles = StyleSheet.create({
   },
   sendiconstyle: {
     height: 32,
-    transform:[{'rotate':'330deg'}],
+    transform: [{ rotate: '330deg' }],
     width: 32,
   },
   avatar: {

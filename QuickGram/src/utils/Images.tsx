@@ -22,7 +22,7 @@ export const image ={
     search:require('../assests/search.png'),
     bell2:require('../assests/bell2.png'),
     message2:require('../assests/message2.png'),
-    doubletick:require('../assests/doubletick.png'),
+    doubletick:require('../assests/tick.png'),
     
     
 }

@@ -15,21 +15,25 @@ export interface notifiType {
 }
 
 export interface Timestamp {
+  
+
   seconds: number
   nanoseconds: number
 }
 
 
 export interface MessageType {
-  id: string;
-  timestamp: Timestamp;
-  text: string;
-  senderId: string;
+  id: string
+  timestamp: Timestamp
+  recieverId: string
+  text: string
+  status: string
+  senderId: string
 }
 
 export interface Timestamp {
-  seconds: number;
-  nanoseconds: number;
+  seconds: number
+  nanoseconds: number
 }
 
 export interface Rootofchathome {
@@ -40,6 +44,7 @@ export interface Rootofchathome {
   lastmessage: string;
   unreaduser: {
     [key: string]: {
+      lasttimestamp: any;
       unreadcount: number;
     };
   };
@@ -76,6 +81,7 @@ export type ScreenType = {
     discussionid: string;
     chatnamescrn: string | undefined;
     oppositeid: string | undefined;
+    currlastime:string
   };
   UsernameScreen: undefined;
   homescreen: undefined;
@@ -177,3 +183,19 @@ export interface CreatedAt {
   seconds: number
   nanoseconds: number
 }
+
+export interface MessageseenType {
+  id: string
+  timestamp: Timestamp
+  recieverId: string
+  text: string
+  status: string
+  senderId: string
+}
+
+export interface Timestamp {
+  seconds: number
+  nanoseconds: number
+}
+
+

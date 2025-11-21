@@ -101,6 +101,11 @@ const filteredData = chatuser.filter(item =>{
     )?.uid;
     console.log('user id is:', user?.userid);
     let countread;
+    const time = item?.users?.find(
+      (a: { uid: string }) => a.uid !== user?.userid,
+    )?.uid;
+    const currlastime = item.unreaduser?.[time]?.lasttimestamp
+
     if (user?.userid) {
       countread = item.unreaduser?.[user?.userid]?.unreadcount || 0;
     }
@@ -116,6 +121,7 @@ const filteredData = chatuser.filter(item =>{
             discussionid: item.id,
             chatnamescrn: chatname,
             oppositeid: oppositeuserid,
+            currlastime:currlastime
           })
         }
       >
