@@ -19,6 +19,7 @@ import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { Rootofchathome, ScreenType } from '../utils/Types';
 import { useAppSelector } from '../redux/ReduxHook';
 
+
 export type usernametype = {
   uid: string;
   displayName: string;
@@ -46,7 +47,7 @@ const ChatListItem = ({
             numberOfLines: 200,
           }}
         />
-        <AppText text={usermessage?.lastmessage} type="lastmessage" />
+        <AppText text={usermessage?.lastmessage} type="500-14" />
       </View>
       <View style={styles.timeview}>
         <AppText
@@ -82,14 +83,10 @@ const ChatHomeScreen = () => {
   console.log('array flatlist', chatuser);
   const navigation = useNavigation<NavigationProp<ScreenType>>();
 
-
-const filteredData = chatuser.filter(item =>{
-  const currname = item.users.find(a => a.uid !== user.userid)?.displayName
-  return(
-     currname?.toLowerCase().includes(searchitem.toLowerCase())
-  )
-}  
-  );
+  const filteredData = chatuser.filter(item => {
+    const currname = item.users.find(a => a.uid !== user.userid)?.displayName;
+    return currname?.toLowerCase().includes(searchitem.toLowerCase());
+  });
   const renderItem = ({ item }: { item: Rootofchathome; index: number }) => {
     console.log(item);
 
@@ -104,16 +101,13 @@ const filteredData = chatuser.filter(item =>{
     const time = item?.users?.find(
       (a: { uid: string }) => a.uid !== user?.userid,
     )?.uid;
-    const currlastime = item.unreaduser?.[time]?.lasttimestamp
+    const currlastime = item.unreaduser?.[time]?.lasttimestamp;
 
     if (user?.userid) {
       countread = item.unreaduser?.[user?.userid]?.unreadcount || 0;
     }
-
     console.log('countread are:', countread);
-
     const chatmessage = item;
-
     return (
       <TouchableOpacity
         onPress={() =>
@@ -121,7 +115,7 @@ const filteredData = chatuser.filter(item =>{
             discussionid: item.id,
             chatnamescrn: chatname,
             oppositeid: oppositeuserid,
-            currlastime:currlastime
+            currlastime: currlastime,
           })
         }
       >
@@ -193,7 +187,7 @@ export default ChatHomeScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // backgroundColor: Colors.loginbg,
+    backgroundColor: Colors.white,
   },
   textview1: { flex: 1, flexDirection: 'row', alignItems: 'center' },
   imageicon: {
@@ -202,10 +196,13 @@ const styles = StyleSheet.create({
     columnGap: 20,
     alignItems: 'center',
     marginEnd: 15,
-    
   },
-  first:{ flexDirection: 'row',borderBottomWidth: 2,
-    borderBottomColor: '#f0ebebff', backgroundColor:Colors.headercolor,},
+  first: {
+    flexDirection: 'row',
+    borderBottomWidth: 2,
+    borderBottomColor: '#f0ebebff',
+    backgroundColor: Colors.headercolor,
+  },
   unreadview: {
     backgroundColor: '#8acc29ff',
     borderRadius: 10,
@@ -227,7 +224,7 @@ const styles = StyleSheet.create({
     // backgroundColor: Colors.introbg,
   },
   bottomBorder: {
-    width: '80%', 
+    width: '80%',
     borderBottomWidth: 2,
     borderBottomColor: 'blue',
   },

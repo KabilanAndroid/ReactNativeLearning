@@ -23,6 +23,6 @@ export const image ={
     bell2:require('../assests/bell2.png'),
     message2:require('../assests/message2.png'),
     doubletick:require('../assests/tick.png'),
-    
-    
+    edit:require('../assests/edit.png'),
+    delete:require('../assests/delete.png'),
 }

@@ -9,6 +9,7 @@ type AppTextType = {
   rest?: TextProps;
 };
 export type AppItemType =
+  | 'edittext'
   | 'logoutbtn'
   | 'heardertext'
   | 'unread'
@@ -53,6 +54,10 @@ const AppText: FC<AppTextType> = ({ text, style, type, rest }) => {
       color: Colors.logintxt,
       fontWeight: '900',
       fontSize: 28,
+    },
+    edittext: {
+      color: 'black',
+      fontSize: 22,
     },
     logoutbtn: {
       color: 'white',

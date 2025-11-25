@@ -14,6 +14,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Colors } from './src/utils/Colors';
 import ChatHomeScreen from './src/Pages/ChatHomeScreen';
 import ChatScreen from './src/Pages/ChatScreen';
+
 import { Image } from 'react-native';
 import { image } from './src/utils/Images';
 import SearchScreen from './src/Pages/SearchScreen';
@@ -167,6 +168,7 @@ const MainTabNavigator = () => {
             }, }}
         
       />
+      
     </Tab.Navigator>
   );
 };

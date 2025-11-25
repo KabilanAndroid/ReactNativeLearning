@@ -3,37 +3,34 @@ export type AppType = {
   userId2: () => void;
 };
 
-
 export interface notifiType {
-  id: string
-  timestamp: Timestamp
-  recieverid: string
-  senderid: string
-  type: string
-  status: string
-  sendername: string
+  id: string;
+  timestamp: Timestamp;
+  recieverid: string;
+  senderid: string;
+  type: string;
+  status: string;
+  sendername: string;
 }
 
 export interface Timestamp {
-  
-
-  seconds: number
-  nanoseconds: number
+  seconds: number;
+  nanoseconds: number;
 }
-
 
 export interface MessageType {
-  id: string
-  timestamp: Timestamp
-  recieverId: string
-  text: string
-  status: string
-  senderId: string
+  id: string;
+  timestamp: Timestamp;
+  recieverId: string;
+  text: string;
+  status: string;
+  senderId: string;
+  deleted:boolean;
 }
 
 export interface Timestamp {
-  seconds: number
-  nanoseconds: number
+  seconds: number;
+  nanoseconds: number;
 }
 
 export interface Rootofchathome {
@@ -61,7 +58,8 @@ export interface CreatedAt {
 }
 
 export interface Lasttime {
-  toDate: any;
+  [x: string]: any;
+  
   seconds: number;
   nanoseconds: number;
 }
@@ -75,13 +73,14 @@ export interface F3akieJ7JeY4Gt2XmjtD0ozDmoi3 {
 }
 
 export type ScreenType = {
+  
   signupscreen: undefined;
   loginscreen: undefined;
   chatscreen: {
     discussionid: string;
     chatnamescrn: string | undefined;
     oppositeid: string | undefined;
-    currlastime:string
+    currlastime: string;
   };
   UsernameScreen: undefined;
   homescreen: undefined;
@@ -90,39 +89,34 @@ export type ScreenType = {
   chathomescreen: undefined;
   appstack: undefined;
   maintabnavigator: undefined;
-  notificationscreen:undefined;
+  notificationscreen: undefined;
 };
 
 export interface SearchType {
-  id: string
-  email: string
-  username: string
-  createdAt: CreatedAt
+  id: string;
+  email: string;
+  username: string;
+  createdAt: CreatedAt;
 }
 
 export interface CreatedAt {
-  seconds: number
-  nanoseconds: number
+  seconds: number;
+  nanoseconds: number;
 }
-
-
-
 
 export interface searchnewtype {
-  id: string
-  email: string
-  username: string
-  createdAt: CreatedAt
-  dob?: string
-  gender?: string
+  id: string;
+  email: string;
+  username: string;
+  createdAt: CreatedAt;
+  dob?: string;
+  gender?: string;
 }
 
 export interface CreatedAt {
-  seconds: number
-  nanoseconds: number
+  seconds: number;
+  nanoseconds: number;
 }
-
-
 
 export interface notificationType {
   receiverstatus: number;
@@ -131,71 +125,68 @@ export interface notificationType {
   sendername: string;
   recievename: string;
   username: string;
-  id: string
-  requeststatus: number
-  timestamp: Timestamp
-  type: string
-  recieverid: string
-  status: number
-  senderid: string
+  id: string;
+  requeststatus: number;
+  timestamp: Timestamp;
+  type: string;
+  recieverid: string;
+  status: number;
+  senderid: string;
 }
 
 export interface Timestamp {
-  seconds: number
-  nanoseconds: number
+  seconds: number;
+  nanoseconds: number;
 }
 
-
-
 export interface readsType {
-  id: string
-  users: User[]
-  lasttime: Lasttime
-  unreaduser: Unreaduser
-  createdAt: CreatedAt
-  lastmessage: string
+  id: string;
+  users: User[];
+  lasttime: Lasttime;
+  unreaduser: Unreaduser;
+  createdAt: CreatedAt;
+  lastmessage: string;
 }
 
 export interface User {
-  displayName: string
-  uid: string
+  displayName: string;
+  uid: string;
 }
 
 export interface Lasttime {
-  seconds: number
-  nanoseconds: number
+  seconds: number;
+  nanoseconds: number;
 }
 
 export interface Unreaduser {
-  F3akieJ7JeY4Gt2XmjtD0ozDMOI3: F3akieJ7JeY4Gt2XmjtD0ozDmoi3
-  EycuRSeh21QhvL1ueMbnQIAhqNm2: EycuRseh21QhvL1ueMbnQiahqNm2
+  F3akieJ7JeY4Gt2XmjtD0ozDMOI3: F3akieJ7JeY4Gt2XmjtD0ozDmoi3;
+  EycuRSeh21QhvL1ueMbnQIAhqNm2: EycuRseh21QhvL1ueMbnQiahqNm2;
 }
 
 export interface F3akieJ7JeY4Gt2XmjtD0ozDmoi3 {
-  unreadcount: number
+  unreadcount: number;
 }
 
 export interface EycuRseh21QhvL1ueMbnQiahqNm2 {
-  unreadcount: number
+  unreadcount: number;
 }
 
 export interface CreatedAt {
-  seconds: number
-  nanoseconds: number
+  seconds: number;
+  nanoseconds: number;
 }
 
 export interface MessageseenType {
-  id: string
-  timestamp: Timestamp
-  recieverId: string
-  text: string
-  status: string
-  senderId: string
+  id: string;
+  timestamp: Timestamp;
+  recieverId: string;
+  text: string;
+  status: string;
+  deleted:boolean;
+  senderId: string;
 }
 
 export interface Timestamp {
-  seconds: number
-  nanoseconds: number
+  seconds: number;
+  nanoseconds: number;
 }
-
-
