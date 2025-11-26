@@ -11,6 +11,7 @@ import { Colors } from '../utils/Colors';
 import { image } from '../utils/Images';
 import SignupForms from '../Components/SignupForms';
 
+/*---------------------------------------signupscreen--------------------------------------------------*/
 const SignupScreen = () => {
   return (
     <KeyboardAvoidingView

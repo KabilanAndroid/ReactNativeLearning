@@ -9,6 +9,7 @@ import { image } from '../utils/Images';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { ScreenType } from '../utils/Types';
 
+/*--------------------------------------Introscreen---------------------------------------------------*/
 const IntroScreen = () => {
   const navigation = useNavigation<NavigationProp<ScreenType>>();
   console.log('IntroScreen');

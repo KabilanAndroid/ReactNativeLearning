@@ -10,7 +10,7 @@ import { searchnewtype } from '../utils/Types';
 import AppText from '../atoms/AppText';
 import { Colors } from '../utils/Colors';
 import Apptextbutton from '../atoms/Apptextbutton';
-import { Modal, Portal,  Button, PaperProvider } from 'react-native-paper';
+import { Modal, Portal,   PaperProvider } from 'react-native-paper';
 import { image } from '../utils/Images';
 
 const UserDetailsScreen = () => {

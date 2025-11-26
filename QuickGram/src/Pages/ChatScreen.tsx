@@ -1,47 +1,37 @@
 /* eslint-disable react-native/no-inline-styles */
 import {
-  Alert,
-  Animated,
-  FlatList,
-  Image,
-  Keyboard,
-  KeyboardAvoidingView,
+  Alert,Animated,FlatList,Keyboard,KeyboardAvoidingView,
   Platform,
   StyleSheet,
-  Text,
   TouchableHighlight,
-  View,
 } from 'react-native';
 import React, { useEffect, useRef, useState } from 'react';
-import AppText from '../atoms/AppText';
-import { image } from '../utils/Images';
-import Appbackbtn from '../atoms/Appbackbtn';
-import AppTextInput from '../atoms/AppTextInput';
-import AppImage from '../atoms/AppImage';
 import firestore from '@react-native-firebase/firestore';
 import { MessageseenType, MessageType, ScreenType } from '../utils/Types';
-import {
-  NavigationProp,
-  RouteProp,
-  useNavigation,
-  useRoute,
-} from '@react-navigation/native';
+import { RouteProp, useRoute } from '@react-navigation/native';
 import { useAppSelector } from '../redux/ReduxHook';
 import { Colors } from '../utils/Colors';
+import HearderStyle from '../atoms/HearderStyle';
+import ChatBubble from '../atoms/ChatBubble';
+import ChatInput from '../atoms/ChatInput';
+
+/*--------------------------------------Chatscreen----------------------------------------- */
+
 const ChatScreen = () => {
   const [lastvisible, setlastvisible] = useState<Partial<MessageType>>();
   const [messages, setMessages] = useState<MessageType[]>([]);
   const [keybrd, setKeyboardVisible] = useState(Boolean);
   const [newMessage, setNewMessage] = useState('');
   const [editing, setediting] = useState(false);
-  const chatid = useRef('');
+  const chatid = useRef<string | undefined>('');
   const lastid = useRef('');
-  const navigation = useNavigation<NavigationProp<ScreenType>>();
   const user = useAppSelector(state => state.auth);
   const [highlightColor, setHighlightColor] = useState('#c2e7e6ff');
   const route = useRoute<RouteProp<ScreenType>>();
   const routeData = route.params;
-  console.log('routeparam:', messages);
+
+  /*-------------------------------------Keyboard and touch handling------------------------------------------ */
+
   const handlePressIn = () => {
     setHighlightColor('#c2e7e6ff');
   };
@@ -75,6 +65,9 @@ const ChatScreen = () => {
       useNativeDriver: true,
     }).start();
   }, [fadeAnim]);
+
+  /*-------------------------------------first load of message in chat------------------------------------------ */
+
   useEffect(() => {
     const subscriber = firestore()
       .collection('chatRooms')
@@ -100,6 +93,9 @@ const ChatScreen = () => {
       });
     return () => subscriber();
   }, [routeData]);
+
+  /*---------------------------------------load more message of pagination---------------------------------------- */
+
   const loadMoreMessages = async () => {
     try {
       if (!lastvisible) return;
@@ -132,10 +128,7 @@ const ChatScreen = () => {
     }
   };
 
-  useEffect(() => {
-    getfinalid();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+/*-----------------------------------bluetick operation-------------------------------------------- */
 
   const bluetick = async () => {
     const batch = firestore().batch();
@@ -152,12 +145,15 @@ const ChatScreen = () => {
     });
     return batch.commit();
   };
+
+/*------------------------------------ Sending new message------------------------------------------- */
+  
   const sendMessage = async () => {
     getfinalid();
     if (newMessage.trim() === '' || !user) {
       return;
     }
-
+  /*-------------------------editing message-------------------------- */
     if (editing) {
       if (chatid.current === lastid.current) {
         await firestore()
@@ -173,7 +169,6 @@ const ChatScreen = () => {
           });
         setNewMessage('');
       }
-
       await firestore()
         .collection('chatRooms')
         .doc(routeData?.discussionid)
@@ -186,6 +181,7 @@ const ChatScreen = () => {
 
       setNewMessage('');
       setediting(false);
+  /*--------------------------------------------------------------------- */
     } else {
       await firestore()
         .collection('chatRooms')
@@ -204,6 +200,9 @@ const ChatScreen = () => {
       console.log('Message sent successfully!');
     }
   };
+
+  /*---------------------------------calling functions---------------------------------------------- */
+
   const last = () => {
     bluetick();
     reset();
@@ -213,6 +212,12 @@ const ChatScreen = () => {
     sendMessage();
   };
 
+/*------------------------------------getting final id------------------------------------------- */
+
+  useEffect(() => {
+    getfinalid();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const getfinalid = async () => {
     const querySnapshot = await firestore()
       .collection('chatRooms')
@@ -233,6 +238,8 @@ const ChatScreen = () => {
     console.log('fsdioninsdi:', moreMessages);
   };
 
+/*-------------------------------------resetting read count------------------------------------------ */
+
   const reset = async () => {
     await firestore()
       .collection('chatRooms')
@@ -243,6 +250,8 @@ const ChatScreen = () => {
           firestore.FieldValue.serverTimestamp(),
       });
   };
+
+/*------------------------------------delete operation------------------------------------------- */
 
   const handledelete = (
     currmessage: string | undefined,
@@ -304,10 +313,9 @@ const ChatScreen = () => {
     );
   };
 
+/*-------------------------------------last message ------------------------------------------ */
+
   const sendlastmessage = async () => {
-    // if (!newMessage.trim() === '' || !user) {
-    //   Alert.alert('enter a message')
-    // }
     if (!newMessage.trim()) {
     } else {
       await firestore()
@@ -324,6 +332,8 @@ const ChatScreen = () => {
     }
   };
 
+/*------------------------------------rendering message in chat------------------------------------------- */
+
   const renderMessage = ({ item }: { item: MessageseenType }) => {
     const currid = item.senderId === user.userid;
 
@@ -337,154 +347,16 @@ const ChatScreen = () => {
             onPressOut={handlePressOut}
             onLongPress={() => handledelete(item.id, item.text)}
           >
-            <View
-              style={{
-                flex: 1,
-                flexDirection: 'column',
-                alignSelf:
-                  item.senderId === user?.userid ? 'flex-end' : 'flex-start',
-                margin: 5,
-                backgroundColor:
-                  item.senderId === user?.userid
-                    ? Colors.userchatclr
-                    : Colors.frndchatclr,
-                maxWidth: '80%',
-                borderRadius: 10,
-                paddingHorizontal: 12,
-                paddingVertical: 4,
-                marginRight: item.senderId === user?.userid ? 10 : null,
-                marginLeft: item.senderId === user?.userid ? null : 10,
-              }}
-            >
-              <View style={{ flex: 1 }}>
-                {item.deleted ? (
-                  <Text
-                    style={{
-                      padding: 5,
-                      fontSize: 14,
-                      color: '#000000ff',
-                    }}
-                  >
-                    You deleted this message
-                  </Text>
-                ) : (
-                  <Text
-                    style={{
-                      padding: 5,
-                      fontSize: 14,
-                    }}
-                  >
-                    {item.text}
-                  </Text>
-                )}
-              </View>
-              <View
-                style={{
-                  flex: 1,
-                  alignSelf: 'flex-end',
-                  flexDirection: 'row',
-                  columnGap: 5,
-                }}
-              >
-                <AppText
-                  text={item.timestamp?.toDate()?.toLocaleTimeString('en-US', {
-                    hour: 'numeric',
-                    minute: 'numeric',
-                    hour12: true,
-                  })}
-                  type={'timestamptxt'}
-                  style={styles.timestampText}
-                />
-
-                {item.senderId === user?.userid && (
-                  <Image
-                    source={item.deleted ? null : image.doubletick}
-                    style={{ height: 20, width: 20 }}
-                    {...(item.status === 'seen' && {
-                      tintColor: '#3d77e2ff',
-                    })}
-                  />
-                )}
-              </View>
-            </View>
+            <ChatBubble item={item} />
           </TouchableHighlight>
         </KeyboardAvoidingView>
       );
     } else {
-      return (
-        <View
-          style={{
-            flex: 1,
-            flexDirection: 'column',
-            alignSelf:
-              item.senderId === user?.userid ? 'flex-end' : 'flex-start',
-            margin: 5,
-            backgroundColor:
-              item.senderId === user?.userid
-                ? Colors.userchatclr
-                : Colors.frndchatclr,
-            maxWidth: '80%',
-            borderRadius: 10,
-            paddingHorizontal: 12,
-            paddingVertical: 4,
-            marginRight: item.senderId === user?.userid ? 10 : null,
-            marginLeft: item.senderId === user?.userid ? null : 10,
-          }}
-        >
-          <View style={{ flex: 1 }}>
-            {item.deleted ? (
-              <Text
-                style={{
-                  padding: 5,
-                  fontSize: 14,
-                  color: '#000000ff',
-                }}
-              >
-                🚫 this message was deleted!
-              </Text>
-            ) : (
-              <Text
-                style={{
-                  padding: 5,
-                  fontSize: 14,
-                }}
-              >
-                {item.text}
-              </Text>
-            )}
-          </View>
-          <View
-            style={{
-              flex: 1,
-              alignSelf: 'flex-end',
-              flexDirection: 'row',
-              columnGap: 5,
-            }}
-          >
-            <AppText
-              text={item.timestamp?.toDate()?.toLocaleTimeString('en-US', {
-                hour: 'numeric',
-                minute: 'numeric',
-                hour12: true,
-              })}
-              type={'timestamptxt'}
-              style={styles.timestampText}
-            />
-
-            {item.senderId === user?.userid && (
-              <Image
-                source={item.deleted ? null : image.doubletick}
-                style={{ height: 20, width: 20 }}
-                {...(item.status === 'seen' && {
-                  tintColor: '#3d77e2ff',
-                })}
-              />
-            )}
-          </View>
-        </View>
-      );
+      return <ChatBubble item={item} />;
     }
   };
+
+/*-------------------------------------Return------------------------------------------ */
 
   return (
     <KeyboardAvoidingView
@@ -492,40 +364,7 @@ const ChatScreen = () => {
       style={styles.container}
       keyboardVerticalOffset={keyboardOffset}
     >
-       <View style={styles.heaaderstyle}>
-        <View style={styles.view1sub}>
-          <Appbackbtn
-            Style={styles.backbtnstyle}
-            source={image.backarrows}
-            style={styles.backbtnstyle1}
-            Onpress={() => navigation.goBack()}
-          />
-
-          <Image source={image.whiteimg} style={styles.avatar} />
-          <View style={{ }}>
-            <AppText text={routeData?.chatnamescrn!} type={'chatpeople'} />
-            {routeData?.currlastime ? (
-              <AppText
-                text={`last seen ${routeData?.currlastime
-                  ?.toDate()
-                  ?.toLocaleTimeString('en-US', {
-                    hour: 'numeric',
-                    minute: 'numeric',
-                    hour12: true,
-                  })}`}
-                type={'500-14'}
-              />
-            ) : null}
-          
-        </View>
-        </View>
-
-        <View style={styles.view2sub}>
-          <AppImage source={image.videoicon} style={styles.callicon} />
-          <AppImage source={image.callicon} style={styles.callicon} />
-          <AppImage source={image.threedot} style={styles.callicon} />
-        </View>
-      </View>
+      <HearderStyle />
 
       <FlatList
         data={messages}
@@ -537,24 +376,18 @@ const ChatScreen = () => {
         inverted
       />
 
-      <View style={styles.view2}>
-        <View style={styles.textinputview}>
-          <AppTextInput
-            onChangeText={setNewMessage}
-            value={newMessage}
-            placeholder={'Message...'}
-            style={styles.textinput}
-          />
-          <Appbackbtn
-            Onpress={editing ? sendMessage : calltwo}
-            source={image.sendicon}
-            style={styles.sendiconstyle}
-          />
-        </View>
-      </View>
+      <ChatInput
+        setNewMessage={setNewMessage}
+        newMessage={newMessage}
+        editing={editing}
+        sendMessage={sendMessage}
+        calltwo={calltwo}
+      />
     </KeyboardAvoidingView>
   );
 };
+
+/*------------------------------------------------------------------------------- */
 
 export default ChatScreen;
 
@@ -562,86 +395,5 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.white,
-  },
-  view1sub: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  heaaderstyle: {
-    flexDirection: 'row',
-
-    backgroundColor: Colors.headercolor,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    borderBottomWidth: 0,
-    shadowRadius: 3,
-    padding: 15,
-    columnGap: 100,
-  },
-  callicon: {
-    height: 26,
-    width: 26,
-  },
-  timestampText: {
-    fontSize: 10,
-    color: Colors.timestampText,
-  },
-  view2sub: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    columnGap: 15,
-    justifyContent: 'flex-end',
-  },
-  view2: {
-    justifyContent: 'flex-end',
-    alignItems: 'flex-end',
-  },
-  backbtnstyle1: {
-    height: 36,
-    width: 36,
-  },
-  textinputview: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    width: '100%',
-    paddingVertical: 10,
-    backgroundColor: Colors.textinputcolor,
-    shadowColor: '#1e1b1bff',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    borderBottomWidth: 0,
-    shadowRadius: 3,
-    justifyContent: 'space-around',
-  },
-  textinput: {
-    backgroundColor: 'white',
-    borderRadius: 10,
-    marginStart: 10,
-    height: 55,
-    width: 320,
-    borderColor: '#90988dff',
-    borderWidth: 1,
-  },
-  sendiconstyle: {
-    height: 32,
-    transform: [{ rotate: '330deg' }],
-    width: 32,
-  },
-  avatar: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    marginRight: 15,
-  },
-  backarrrowview: {
-    width: 2,
-    height: 24,
-    backgroundColor: 'white',
-  },
-  backbtnstyle: {
-    paddingVertical: 5,
-    paddingHorizontal: 1,
   },
 });

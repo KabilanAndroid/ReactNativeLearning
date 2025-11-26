@@ -6,6 +6,7 @@ import { image } from '../utils/Images';
 
 import LoginForms from '../Components/LoginForms';
 
+/*----------------------------------------Loginscreen-------------------------------------------------*/
 const LoginScreen = () => {
   return (
     <View style={styles.container}>

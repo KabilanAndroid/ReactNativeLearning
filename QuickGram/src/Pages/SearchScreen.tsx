@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-shadow */
-
 import { FlatList, Image, StyleSheet, View } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import ChatSearch from '../atoms/ChatSearch';
@@ -14,6 +13,9 @@ import { useAppSelector } from '../redux/ReduxHook';
 import { RequestStatusType } from '../utils/Enum';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import Apptextbutton from '../atoms/Apptextbutton';
+
+/*-------------------------------------search screen------------------------------------------ */
+
 const SearchScreen = () => {
   const [searchitem, setSearchitem] = useState('');
   const [chatuser, setchatuser] = useState<notificationType[]>([]);
@@ -28,9 +30,6 @@ const SearchScreen = () => {
   /*-------------------------------Getting and displaying global data ---------------------------------- */
   /*-------------------------------Getting pending data for current user ---------------------------------------- */
   
-
-
-
   const getsearchitem = async () => {
     firestore()
       .collection('FriendRequest')

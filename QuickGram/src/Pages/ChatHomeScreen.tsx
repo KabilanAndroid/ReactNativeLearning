@@ -1,4 +1,3 @@
-/* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react-hooks/exhaustive-deps */
 import {
   FlatList,
@@ -18,13 +17,12 @@ import firestore from '@react-native-firebase/firestore';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { Rootofchathome, ScreenType } from '../utils/Types';
 import { useAppSelector } from '../redux/ReduxHook';
-
-
+import HomeChatView from '../atoms/HomeChatView';
 export type usernametype = {
   uid: string;
   displayName: string;
 };
-
+/*----------------------------------------renderlist-------------------------------------------------*/
 const ChatListItem = ({
   username,
   usermessage,
@@ -35,7 +33,6 @@ const ChatListItem = ({
   countreads: number;
 }) => {
   console.log('users:', username);
-
   return (
     <View style={styles.listItem}>
       <Image source={image.profilelogo} style={styles.avatar} />
@@ -74,22 +71,24 @@ const ChatListItem = ({
   );
 };
 
+/*-----------------------------------------chatHome------------------------------------------------*/
+
 const ChatHomeScreen = () => {
   const user = useAppSelector(state => state.auth);
   console.log('useselector for user id:', user?.userid);
-
   const [searchitem, setSearchitem] = useState('');
   const [chatuser, setchatuser] = useState<Rootofchathome[]>([]);
   console.log('array flatlist', chatuser);
   const navigation = useNavigation<NavigationProp<ScreenType>>();
-
   const filteredData = chatuser.filter(item => {
     const currname = item.users.find(a => a.uid !== user.userid)?.displayName;
     return currname?.toLowerCase().includes(searchitem.toLowerCase());
   });
+
+  /*-----------------------------------------Render item------------------------------------------------*/
+
   const renderItem = ({ item }: { item: Rootofchathome; index: number }) => {
     console.log(item);
-
     const chatname = item?.users?.find(
       (a: { uid: string }) => a.uid !== user?.userid,
     )?.displayName;
@@ -102,12 +101,12 @@ const ChatHomeScreen = () => {
       (a: { uid: string }) => a.uid !== user?.userid,
     )?.uid;
     const currlastime = item.unreaduser?.[time]?.lasttimestamp;
-
     if (user?.userid) {
       countread = item.unreaduser?.[user?.userid]?.unreadcount || 0;
     }
     console.log('countread are:', countread);
     const chatmessage = item;
+    /*-----------------------------------------Return------------------------------------------------*/
     return (
       <TouchableOpacity
         onPress={() =>
@@ -128,6 +127,8 @@ const ChatHomeScreen = () => {
     );
   };
 
+  /*-----------------------------------------Show chat list------------------------------------------------*/
+
   useEffect(() => {
     const subscriber = firestore()
       .collection('chatRooms')
@@ -147,26 +148,14 @@ const ChatHomeScreen = () => {
       });
     return () => subscriber();
   }, []);
+  /*-------------------------------------------Return----------------------------------------------*/
 
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={styles.container}
     >
-      <View style={styles.first}>
-        <View style={styles.textview1}>
-          <AppText
-            text={'Chats'}
-            type={'heardertext'}
-            style={styles.headertextstyle}
-          />
-        </View>
-        <View style={styles.imageicon}>
-          <Image source={image.message2} style={styles.message2} />
-          <Image source={image.bell2} style={styles.message2} />
-        </View>
-      </View>
-
+      <HomeChatView/>
       <ChatSearch
         onChangeText={setSearchitem}
         value={searchitem}
@@ -176,32 +165,17 @@ const ChatHomeScreen = () => {
       <FlatList
         data={filteredData}
         renderItem={renderItem}
-        keyExtractor={(item, index) => index.toString()}
+        keyExtractor={(item) => item.id.toString()}
       />
     </KeyboardAvoidingView>
   );
 };
-
+/*-----------------------------------------------------------------------------------------*/
 export default ChatHomeScreen;
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.white,
-  },
-  textview1: { flex: 1, flexDirection: 'row', alignItems: 'center' },
-  imageicon: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    columnGap: 20,
-    alignItems: 'center',
-    marginEnd: 15,
-  },
-  first: {
-    flexDirection: 'row',
-    borderBottomWidth: 2,
-    borderBottomColor: '#f0ebebff',
-    backgroundColor: Colors.headercolor,
   },
   unreadview: {
     backgroundColor: '#8acc29ff',
@@ -209,19 +183,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 6,
     paddingVertical: 2,
   },
-  message2: {
-    height: 28,
-    width: 28,
-  },
   textview: {
     flex: 1,
   },
   timeview: {
     alignItems: 'flex-end',
-  },
-  headertextstyle: {
-    padding: 10,
-    // backgroundColor: Colors.introbg,
   },
   bottomBorder: {
     width: '80%',
