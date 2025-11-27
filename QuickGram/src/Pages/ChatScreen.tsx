@@ -29,7 +29,7 @@ const ChatScreen = () => {
   const [highlightColor, setHighlightColor] = useState('#c2e7e6ff');
   const route = useRoute<RouteProp<ScreenType>>();
   const routeData = route.params;
-
+  
   /*-------------------------------------Keyboard and touch handling------------------------------------------ */
 
   const handlePressIn = () => {
@@ -128,6 +128,14 @@ const ChatScreen = () => {
     }
   };
 
+  // ?.toLocaleTimeString('en-US', {
+  //           hour: 'numeric',
+  //           minute: 'numeric',
+  //           hour12: true,
+  //         })
+/*-----------------------------------bluetick operation-------------------------------------------- */
+  
+    
 /*-----------------------------------bluetick operation-------------------------------------------- */
 
   const bluetick = async () => {
@@ -334,11 +342,17 @@ const ChatScreen = () => {
 
 /*------------------------------------rendering message in chat------------------------------------------- */
 
-  const renderMessage = ({ item }: { item: MessageseenType }) => {
+  const renderMessage = ({ item,index }: { item: MessageseenType,index:number }) => {
     const currid = item.senderId === user.userid;
-
+     
+    
+     const previousItem = messages[index+1] 
+     
+     
+    
     if (currid && item.deleted === false) {
       return (
+        
         <KeyboardAvoidingView>
           <TouchableHighlight
             underlayColor={highlightColor}
@@ -346,13 +360,14 @@ const ChatScreen = () => {
             onPressIn={handlePressIn}
             onPressOut={handlePressOut}
             onLongPress={() => handledelete(item.id, item.text)}
+            
           >
-            <ChatBubble item={item} />
+          <ChatBubble item={item} previousItem={previousItem} />
           </TouchableHighlight>
         </KeyboardAvoidingView>
       );
     } else {
-      return <ChatBubble item={item} />;
+      return <ChatBubble item={item} previousItem={previousItem}/>;
     }
   };
 
