@@ -15,7 +15,7 @@ import { Colors } from './src/utils/Colors';
 import ChatHomeScreen from './src/Pages/ChatHomeScreen';
 import ChatScreen from './src/Pages/ChatScreen';
 
-import { Image } from 'react-native';
+import { Dimensions, Image } from 'react-native';
 import { image } from './src/utils/Images';
 import SearchScreen from './src/Pages/SearchScreen';
 
@@ -25,6 +25,7 @@ import NotificationScreen from './src/Pages/NotificationScreen';
 
 const Stack = createNativeStackNavigator<ScreenType>();
 const Tab = createBottomTabNavigator<ScreenType>();
+const { width, height } = Dimensions.get('window');
 const AuthStack = () => (
   <Stack.Navigator
     initialRouteName='loginscreen'
@@ -72,12 +73,12 @@ const MainTabNavigator = () => {
         },
        
         tabBarStyle: {
-          marginBottom:0.5,
+          marginBottom:15,
           height: 70, 
-          marginHorizontal:5,
+          marginHorizontal:20,
           borderRadius:30,
           backgroundColor:Colors.maingreen,
-         
+          
          
         },
           tabBarIconStyle: {
@@ -85,6 +86,7 @@ const MainTabNavigator = () => {
           flex: 1,
           alignItems: 'center',
           justifyContent: 'center',
+          
         },
         tabBarHideOnKeyboard: true,
         

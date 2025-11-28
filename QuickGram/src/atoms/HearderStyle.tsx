@@ -1,5 +1,5 @@
 import {  Image, StyleSheet,  View } from 'react-native'
-import React from 'react'
+import React, { memo } from 'react'
 import Appbackbtn from './Appbackbtn'
 import AppText from './AppText'
 import { Colors } from '../utils/Colors'
@@ -50,7 +50,7 @@ const HearderStyle = () => {
   )
 }
 
-export default HearderStyle
+export default memo(HearderStyle)
 
 const styles = StyleSheet.create({
 

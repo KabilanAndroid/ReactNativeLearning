@@ -1,5 +1,5 @@
 import { Image, StyleSheet, View } from 'react-native';
-import React from 'react';
+import React, { memo } from 'react';
 import AppText from './AppText';
 import { image } from '../utils/Images';
 import { Colors } from '../utils/Colors';
@@ -22,7 +22,7 @@ const HomeChatView = () => {
   );
 };
 
-export default HomeChatView;
+export default memo(HomeChatView);
 
 const styles = StyleSheet.create({
   first: {

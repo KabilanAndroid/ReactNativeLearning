@@ -1,5 +1,5 @@
 import { Image, StyleSheet, View } from 'react-native';
-import React, { FC } from 'react';
+import React, { FC, memo } from 'react';
 import AppText from './AppText';
 import Apptextbutton from './Apptextbutton';
 import { Colors } from '../utils/Colors';
@@ -41,7 +41,7 @@ const NotificationList: FC<NotificationListType> = ({
   );
 };
 
-export default NotificationList;
+export default memo(NotificationList);
 
 const styles = StyleSheet.create({
   listItem: {
@@ -49,9 +49,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 10,
     padding: 15,
-    borderBottomWidth: 2,
+    borderWidth:1,
+    borderBottomWidth:1,
+    borderRadius:20,
     backgroundColor: Colors.white,
-    borderBottomColor: '#f0ebebff',
+   marginHorizontal:10,
   },
   avatar: {
     width: 50,

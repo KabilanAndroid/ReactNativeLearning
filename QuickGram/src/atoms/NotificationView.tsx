@@ -1,5 +1,5 @@
 import { Image, StyleSheet,  View } from 'react-native'
-import React from 'react'
+import React, { memo } from 'react'
 import AppText from './AppText'
 import { Colors } from '../utils/Colors'
 import { image } from '../utils/Images'
@@ -22,7 +22,7 @@ const NotificationView = () => {
   )
 }
 
-export default NotificationView
+export default memo(NotificationView)
 
 const styles = StyleSheet.create({
 

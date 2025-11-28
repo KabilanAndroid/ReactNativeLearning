@@ -9,19 +9,20 @@ import {
   View,
 } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import AppText from '../atoms/AppText';
 import ChatSearch from '../atoms/ChatSearch';
-import { image } from '../utils/Images';
 import { Colors } from '../utils/Colors';
 import firestore from '@react-native-firebase/firestore';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { Rootofchathome, ScreenType } from '../utils/Types';
 import { useAppSelector } from '../redux/ReduxHook';
 import HomeChatView from '../atoms/HomeChatView';
+import ChatHomedatewise from '../atoms/ChatHomedatewise';
+
 export type usernametype = {
   uid: string;
   displayName: string;
 };
+
 /*----------------------------------------renderlist-------------------------------------------------*/
 const ChatListItem = ({
   username,
@@ -33,41 +34,9 @@ const ChatListItem = ({
   countreads: number;
 }) => {
   console.log('users:', username);
+
   return (
-    <View style={styles.listItem}>
-      <Image source={image.profilelogo} style={styles.avatar} />
-      <View style={styles.textview}>
-        <AppText
-          text={username}
-          type={'chatpeople'}
-          rest={{
-            numberOfLines: 200,
-          }}
-        />
-        <AppText text={usermessage?.lastmessage} type="500-14" />
-      </View>
-      <View style={styles.timeview}>
-        <AppText
-          text={usermessage?.lasttime?.toDate()?.toLocaleTimeString('en-US', {
-            hour: 'numeric',
-            minute: 'numeric',
-            hour12: true,
-          })}
-          type="500-14"
-        />
-        <View>
-          {countreads === 0 ? (
-            <AppText text={''} type={'LoginText'} />
-          ) : (
-            <AppText
-              text={countreads?.toString()}
-              type="unread"
-              style={styles.unreadview}
-            />
-          )}
-        </View>
-      </View>
-    </View>
+   <ChatHomedatewise usermessage={usermessage} countreads={countreads} username={username}/>
   );
 };
 
@@ -155,7 +124,7 @@ const ChatHomeScreen = () => {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={styles.container}
     >
-      <HomeChatView/>
+      <HomeChatView />
       <ChatSearch
         onChangeText={setSearchitem}
         value={searchitem}
@@ -165,7 +134,7 @@ const ChatHomeScreen = () => {
       <FlatList
         data={filteredData}
         renderItem={renderItem}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={item => item.id.toString()}
       />
     </KeyboardAvoidingView>
   );
@@ -175,7 +144,7 @@ export default ChatHomeScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.white,
+    // backgroundColor: Colors.white,
   },
   unreadview: {
     backgroundColor: '#8acc29ff',
@@ -195,9 +164,11 @@ const styles = StyleSheet.create({
     borderBottomColor: 'blue',
   },
   searchbar: {
-    // backgroundColor: 'white',
+    backgroundColor: 'white',
     borderRadius: 10,
     height: 45,
+    borderBottomWidth:1,
+    borderBottomColor:Colors.black,
     borderColor: Colors.black,
     borderWidth: 1,
     marginHorizontal: 10,

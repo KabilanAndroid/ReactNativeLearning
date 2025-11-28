@@ -1,5 +1,5 @@
 import { TouchableOpacity, ViewStyle } from 'react-native';
-import React, { FC } from 'react';
+import React, { FC, memo } from 'react';
 import AppText, { AppItemType } from './AppText';
 
 type AppTextButtonType = {
@@ -16,4 +16,4 @@ const Apptextbutton: FC<AppTextButtonType> = ({ text, Style, Onpress ,textType='
   );
 };
 
-export default Apptextbutton;
+export default memo(Apptextbutton);

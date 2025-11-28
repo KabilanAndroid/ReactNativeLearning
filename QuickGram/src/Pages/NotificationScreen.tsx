@@ -97,7 +97,7 @@ export default NotificationScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.white,
+    // backgroundColor: Colors.white,
   },
   iconstyle: {
     height: 28,
@@ -109,6 +109,7 @@ const styles = StyleSheet.create({
     height: 45,
     borderColor: Colors.black,
     borderWidth: 1,
+    
     marginHorizontal: 10,
     marginVertical: 10,
     paddingHorizontal: 30,

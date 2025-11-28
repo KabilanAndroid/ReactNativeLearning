@@ -25,4 +25,6 @@ export const image ={
     doubletick:require('../assests/tick.png'),
     edit:require('../assests/edit.png'),
     delete:require('../assests/delete.png'),
+    triangle:require('../assests/triangle.png'),
+    chatetriangle:require('../assests/chatetriangle.png'),
 }

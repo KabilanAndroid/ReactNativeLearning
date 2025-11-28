@@ -1,5 +1,5 @@
 import {  TextInput, TextInputProps, View, ViewStyle } from 'react-native';
-import React, { FC } from 'react';
+import React, { FC, memo } from 'react';
 
 type AppTextInputType = {
   onChangeText: (text:string) => void;
@@ -28,6 +28,6 @@ const AppTextInput: FC<AppTextInputType> = ({
   );
 };
 
-export default AppTextInput;
+export default memo(AppTextInput);
 
 

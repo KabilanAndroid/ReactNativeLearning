@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-shadow */
-import { FlatList, Image, StyleSheet, View } from 'react-native';
+import { FlatList, Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import ChatSearch from '../atoms/ChatSearch';
 import { Colors } from '../utils/Colors';
@@ -13,6 +13,7 @@ import { useAppSelector } from '../redux/ReduxHook';
 import { RequestStatusType } from '../utils/Enum';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import Apptextbutton from '../atoms/Apptextbutton';
+import SearchView from '../atoms/SearchView';
 
 /*-------------------------------------search screen------------------------------------------ */
 
@@ -20,7 +21,6 @@ const SearchScreen = () => {
   const [searchitem, setSearchitem] = useState('');
   const [chatuser, setchatuser] = useState<notificationType[]>([]);
   const user = useAppSelector(state => state.auth);
-  const navigation = useNavigation<NavigationProp<ScreenType>>();
   console.log('chatuser:', chatuser);
 
   const filteredData = chatuser.filter(item => {
@@ -43,6 +43,7 @@ const SearchScreen = () => {
             } as notificationType),
         );
         console.log('req id :', reqdetails);
+
         /*------------------------------- merging and getting as object for current user ---------------------------------- */
 
         const mergedDetails = reqdetails.map(item => {
@@ -147,34 +148,7 @@ const SearchScreen = () => {
     console.log('itemid now is ->:', item);
 
     return (
-      <View style={styles.listItem}>
-        <Image source={image.profilelogo} style={styles.avatar} />
-        <View style={styles.textview}>
-          <AppText text={item.username} type={'chatpeople'} />
-        </View>
-        <View style={styles.addfriendview}>
-          {item.requeststatus === RequestStatusType.pending ? (
-            <AppText text={'requested'} type={'chatpeople'}
-            style={[styles.following,{backgroundColor:Colors.lightReq,color:Colors.white}]} 
-            />
-          ) : item.requeststatus === RequestStatusType.accept ? (
-            <AppText text={'following'} type={'chatpeople'} style={styles.following}/>
-          ) : item.requeststatus === RequestStatusType.acceptOrreject ? (
-            <Appbackbtn
-              source={image.goto}
-              style={styles.iconstyle}
-              Onpress={() => navigation.navigate('notificationscreen')}
-            />
-          ) : (
-            <Apptextbutton                                                              
-              text={'follow'}
-              textType={'textbutton'}
-              Onpress={() => request(item.id)}
-              Style={styles.followbtn}
-            />
-          )}
-        </View>
-      </View>
+      <SearchView item={item} callback={()=>{request(item.id)}}/>
     );
   };
   useEffect(() => {
@@ -207,41 +181,18 @@ export default SearchScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.white,
+    // backgroundColor: Colors.white,
   },
-  iconstyle: {
-    height: 28,
-    width: 28,
-  },
-  textview: {
-    flex: 1,
-    flexDirection: 'row',
-  },
-  addfriendview: {
-    alignItems: 'flex-end',
-  },
-  following:{backgroundColor: Colors.frndchatclr,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 20,},
+
+  
   headertextstyle: {
-    padding: 10,
-    backgroundColor: Colors.headercolor,
-    borderBottomWidth: 2,
-    borderBottomColor: '#f0ebebff',
-  },
-  avatar: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    marginRight: 15,
-  },
-  followbtn: {
-    backgroundColor: Colors.maingreen,
-    paddingHorizontal: 15,
-    paddingVertical: 8,
-    borderRadius: 20,
-  },
+        padding: 10,
+        backgroundColor: Colors.headercolor,
+        // borderBottomWidth: 2,
+        // borderBottomColor: '#f0ebebff',
+      },
+ 
+
   searchbar: {
     backgroundColor: 'white',
     borderRadius: 10,
@@ -252,11 +203,5 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     paddingHorizontal: 30,
   },
-  listItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 15,
-    borderBottomWidth: 2,
-    borderBottomColor: '#f0ebebff',
-  },
+  
 });

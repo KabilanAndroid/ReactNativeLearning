@@ -1,5 +1,5 @@
 import { StyleSheet, View } from 'react-native'
-import React, { Dispatch, FC, SetStateAction } from 'react'
+import React, { Dispatch, FC, memo, SetStateAction } from 'react'
 import AppTextInput from './AppTextInput'
 import Appbackbtn from './Appbackbtn'
 import { Colors } from '../utils/Colors'
@@ -33,7 +33,7 @@ const ChatInput:FC<ChatInputType> = ({setNewMessage,newMessage,editing,sendMessa
   )
 }
 
-export default ChatInput
+export default memo(ChatInput);
 
 const styles = StyleSheet.create({
      view2: {

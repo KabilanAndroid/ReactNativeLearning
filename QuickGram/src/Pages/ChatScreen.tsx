@@ -6,6 +6,7 @@ import {
   Keyboard,
   KeyboardAvoidingView,
   Platform,
+  Pressable,
   StyleSheet,
   TouchableHighlight,
   TouchableOpacity,
@@ -22,6 +23,7 @@ import ChatBubble from '../atoms/ChatBubble';
 import ChatInput from '../atoms/ChatInput';
 import { Chip } from 'react-native-paper';
 import AppText from '../atoms/AppText';
+import ChatDateWise from '../atoms/ChatDateWise';
 
 /*--------------------------------------Chatscreen----------------------------------------- */
 
@@ -33,6 +35,7 @@ const ChatScreen = () => {
   const [editing, setediting] = useState(false);
   const chatid = useRef<string | undefined>('');
   const lastid = useRef('');
+  const [selectedItemId, setSelectedItemId] = useState(null);
   const user = useAppSelector(state => state.auth);
   const [highlightColor, setHighlightColor] = useState('#c2e7e6ff');
   const route = useRoute<RouteProp<ScreenType>>();
@@ -348,7 +351,9 @@ const ChatScreen = () => {
         });
     }
   };
-
+ const handleLongPress = (itemId) => {
+    setSelectedItemId(itemId);
+  };
   /*------------------------------------rendering message in chat------------------------------------------- */
   const getdate = (date: {
     getFullYear: () => any;
@@ -371,81 +376,49 @@ const ChatScreen = () => {
     var dateToday = new Date();
     var yesterday = new Date();
     yesterday.setDate(dateToday?.getDate() - 1);
-
     const curr_date = item?.timestamp?.toDate();
+
+    
     const previous = previousItem?.timestamp?.toDate();
 
     console.log(
       'curent ->',
       item?.text,
-      
+
       'prev->',
       previousItem?.text,
-      
+
       getdate(curr_date) == getdate(yesterday),
     );
-const isNewDay =
-    !previous || getdate(curr_date) !== getdate(previous);
+    const isNewDay = !previous || getdate(curr_date) !== getdate(previous);
 
-  let label = null;
-  if (isNewDay) {
-    if (getdate(curr_date) === getdate(dateToday)) label = "Today";
-    else if (getdate(curr_date) === getdate(yesterday)) label = "Yesterday";
-    else label = getdate(curr_date);
-  }
-    if (currid && item.deleted === false) {
-      return (
-      <View style={{}}>
-        <View style={{alignItems:'center'}}>
-            {
-             getdate(curr_date) !== getdate(previous) ? (
-              getdate(curr_date) === getdate(dateToday) ? (
-                <Chip mode="outlined">Today</Chip>
-                
-              ) : getdate(curr_date) === getdate(yesterday) ? (
-                <Chip mode="outlined">Yesterday</Chip>
-              ) : (
-                <Chip mode="outlined">{getdate(curr_date)}</Chip>
-              
-              )
-            ) : null
-            }
-            </View>
-          <TouchableHighlight
-            underlayColor={highlightColor}
-            activeOpacity={0.6}
+    let label = null;
+    if (isNewDay) {
+      if (getdate(curr_date) === getdate(dateToday)) label = 'Today';
+      else if (getdate(curr_date) === getdate(yesterday)) label = 'Yesterday';
+      else label = getdate(curr_date);
+    }
+    const isSelected = item.id === selectedItemId
+    return(
+    (currid && item.deleted === false)? (<View style={{}}>
+          <ChatDateWise item={item} previousItem={previousItem} />
+          <Pressable
+            style={[styles.new, isSelected && styles.selectedItem]}
             onPressIn={handlePressIn}
             onPressOut={handlePressOut}
-            onLongPress={() => handledelete(item.id, item.text)}
+            onLongPress={() => {handledelete(item.id, item.text), handleLongPress(item.id)}}
           >
             <ChatBubble item={item} previousItem={previousItem} />
-          </TouchableHighlight>
+          </Pressable>
         </View>
-      );
-    } else {
-      return (
-     <View style={{ }}>
-      <View style={{alignItems:'center'}}>
-           {
-            getdate(curr_date) !== getdate(previous) ? (
-             getdate(curr_date) === getdate(dateToday) ? (
-               <Chip mode="outlined">Today</Chip>
-               
-             ) : getdate(curr_date) === getdate(yesterday) ? (
-               <Chip mode="outlined">Yesterday</Chip>
-             ) : (
-               <Chip mode="outlined">{getdate(curr_date)}</Chip>
-             
-             )
-           ) : null
-           }
-           </View>
+        ):(
+        <View style={{}}>
+          <ChatDateWise item={item} previousItem={previousItem} />
           <ChatBubble item={item} previousItem={previousItem} />
         </View>
-      );
-    }
-  };
-
+      )
+    )
+  }
   /*-------------------------------------Return------------------------------------------ */
 
   return (
@@ -485,5 +458,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.white,
+  },
+  new:{
+    backgroundColor:Colors.white
+  },
+  selectedItem: {
+    backgroundColor: 'red', 
   },
 });
