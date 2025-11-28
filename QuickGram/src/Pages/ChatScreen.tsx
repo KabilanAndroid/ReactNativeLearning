@@ -405,7 +405,7 @@ const isNewDay =
               ) : getdate(curr_date) === getdate(yesterday) ? (
                 <Chip mode="outlined">Yesterday</Chip>
               ) : (
-                <></>
+                <Chip mode="outlined">{getdate(curr_date)}</Chip>
               
               )
             ) : null
