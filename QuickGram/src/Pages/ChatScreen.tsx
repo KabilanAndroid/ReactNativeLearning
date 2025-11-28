@@ -1,11 +1,17 @@
 /* eslint-disable react-native/no-inline-styles */
 import {
-  Alert,Animated,FlatList,Keyboard,KeyboardAvoidingView,
+  Alert,
+  Animated,
+  FlatList,
+  Keyboard,
+  KeyboardAvoidingView,
   Platform,
   StyleSheet,
   TouchableHighlight,
+  TouchableOpacity,
+  View,
 } from 'react-native';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { Fragment, useEffect, useRef, useState } from 'react';
 import firestore from '@react-native-firebase/firestore';
 import { MessageseenType, MessageType, ScreenType } from '../utils/Types';
 import { RouteProp, useRoute } from '@react-navigation/native';
@@ -14,6 +20,8 @@ import { Colors } from '../utils/Colors';
 import HearderStyle from '../atoms/HearderStyle';
 import ChatBubble from '../atoms/ChatBubble';
 import ChatInput from '../atoms/ChatInput';
+import { Chip } from 'react-native-paper';
+import AppText from '../atoms/AppText';
 
 /*--------------------------------------Chatscreen----------------------------------------- */
 
@@ -29,7 +37,7 @@ const ChatScreen = () => {
   const [highlightColor, setHighlightColor] = useState('#c2e7e6ff');
   const route = useRoute<RouteProp<ScreenType>>();
   const routeData = route.params;
-  
+
   /*-------------------------------------Keyboard and touch handling------------------------------------------ */
 
   const handlePressIn = () => {
@@ -133,10 +141,9 @@ const ChatScreen = () => {
   //           minute: 'numeric',
   //           hour12: true,
   //         })
-/*-----------------------------------bluetick operation-------------------------------------------- */
-  
-    
-/*-----------------------------------bluetick operation-------------------------------------------- */
+  /*-----------------------------------bluetick operation-------------------------------------------- */
+
+  /*-----------------------------------bluetick operation-------------------------------------------- */
 
   const bluetick = async () => {
     const batch = firestore().batch();
@@ -154,14 +161,14 @@ const ChatScreen = () => {
     return batch.commit();
   };
 
-/*------------------------------------ Sending new message------------------------------------------- */
-  
+  /*------------------------------------ Sending new message------------------------------------------- */
+
   const sendMessage = async () => {
     getfinalid();
     if (newMessage.trim() === '' || !user) {
       return;
     }
-  /*-------------------------editing message-------------------------- */
+    /*-------------------------editing message-------------------------- */
     if (editing) {
       if (chatid.current === lastid.current) {
         await firestore()
@@ -189,7 +196,7 @@ const ChatScreen = () => {
 
       setNewMessage('');
       setediting(false);
-  /*--------------------------------------------------------------------- */
+      /*--------------------------------------------------------------------- */
     } else {
       await firestore()
         .collection('chatRooms')
@@ -220,7 +227,7 @@ const ChatScreen = () => {
     sendMessage();
   };
 
-/*------------------------------------getting final id------------------------------------------- */
+  /*------------------------------------getting final id------------------------------------------- */
 
   useEffect(() => {
     getfinalid();
@@ -246,7 +253,7 @@ const ChatScreen = () => {
     console.log('fsdioninsdi:', moreMessages);
   };
 
-/*-------------------------------------resetting read count------------------------------------------ */
+  /*-------------------------------------resetting read count------------------------------------------ */
 
   const reset = async () => {
     await firestore()
@@ -259,12 +266,14 @@ const ChatScreen = () => {
       });
   };
 
-/*------------------------------------delete operation------------------------------------------- */
+  /*------------------------------------delete operation------------------------------------------- */
 
   const handledelete = (
     currmessage: string | undefined,
     currtext: React.SetStateAction<string>,
   ) => {
+    console.log('callinglll');
+
     setNewMessage('');
     Alert.alert(
       'modify',
@@ -321,7 +330,7 @@ const ChatScreen = () => {
     );
   };
 
-/*-------------------------------------last message ------------------------------------------ */
+  /*-------------------------------------last message ------------------------------------------ */
 
   const sendlastmessage = async () => {
     if (!newMessage.trim()) {
@@ -340,38 +349,104 @@ const ChatScreen = () => {
     }
   };
 
-/*------------------------------------rendering message in chat------------------------------------------- */
+  /*------------------------------------rendering message in chat------------------------------------------- */
+  const getdate = (date: {
+    getFullYear: () => any;
+    getMonth: () => any;
+    getDate: () => any;
+  }) => {
+    return `${date?.getFullYear()}-${date?.getMonth()}-${date?.getDate()}`;
+  };
 
-  const renderMessage = ({ item,index }: { item: MessageseenType,index:number }) => {
+  const renderMessage = ({
+    item,
+    index,
+  }: {
+    item: MessageseenType;
+    index: number;
+  }) => {
     const currid = item.senderId === user.userid;
-     
-    
-     const previousItem = messages[index+1] 
-     
-     
-    
+
+    const previousItem = messages[index + 1];
+    var dateToday = new Date();
+    var yesterday = new Date();
+    yesterday.setDate(dateToday?.getDate() - 1);
+
+    const curr_date = item?.timestamp?.toDate();
+    const previous = previousItem?.timestamp?.toDate();
+
+    console.log(
+      'curent ->',
+      item?.text,
+      
+      'prev->',
+      previousItem?.text,
+      
+      getdate(curr_date) == getdate(yesterday),
+    );
+const isNewDay =
+    !previous || getdate(curr_date) !== getdate(previous);
+
+  let label = null;
+  if (isNewDay) {
+    if (getdate(curr_date) === getdate(dateToday)) label = "Today";
+    else if (getdate(curr_date) === getdate(yesterday)) label = "Yesterday";
+    else label = getdate(curr_date);
+  }
     if (currid && item.deleted === false) {
       return (
-        
-        <KeyboardAvoidingView>
+      <View style={{}}>
+        <View style={{alignItems:'center'}}>
+            {
+             getdate(curr_date) !== getdate(previous) ? (
+              getdate(curr_date) === getdate(dateToday) ? (
+                <Chip mode="outlined">Today</Chip>
+                
+              ) : getdate(curr_date) === getdate(yesterday) ? (
+                <Chip mode="outlined">Yesterday</Chip>
+              ) : (
+                <></>
+              
+              )
+            ) : null
+            }
+            </View>
           <TouchableHighlight
             underlayColor={highlightColor}
             activeOpacity={0.6}
             onPressIn={handlePressIn}
             onPressOut={handlePressOut}
             onLongPress={() => handledelete(item.id, item.text)}
-            
           >
-          <ChatBubble item={item} previousItem={previousItem} />
+            <ChatBubble item={item} previousItem={previousItem} />
           </TouchableHighlight>
-        </KeyboardAvoidingView>
+        </View>
       );
     } else {
-      return <ChatBubble item={item} previousItem={previousItem}/>;
+      return (
+     <View style={{ }}>
+      <View style={{alignItems:'center'}}>
+           {
+            getdate(curr_date) !== getdate(previous) ? (
+             getdate(curr_date) === getdate(dateToday) ? (
+               <Chip mode="outlined">Today</Chip>
+               
+             ) : getdate(curr_date) === getdate(yesterday) ? (
+               <Chip mode="outlined">Yesterday</Chip>
+             ) : (
+               <Chip mode="outlined">{getdate(curr_date)}</Chip>
+             
+             )
+           ) : null
+           }
+           </View>
+          <ChatBubble item={item} previousItem={previousItem} />
+        </View>
+      );
     }
   };
 
-/*-------------------------------------Return------------------------------------------ */
+  /*-------------------------------------Return------------------------------------------ */
 
   return (
     <KeyboardAvoidingView

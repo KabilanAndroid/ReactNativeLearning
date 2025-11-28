@@ -20,7 +20,6 @@ const getdate = (date: {
 }) => {
   return `${date?.getFullYear()}-${date?.getMonth()}-${date?.getDate()}`;
 };
-
 const ChatBubble: FC<ChatBubbleType> = ({ item, previousItem }) => {
   var dateToday = new Date();
   var yesterday = new Date();
@@ -28,30 +27,22 @@ const ChatBubble: FC<ChatBubbleType> = ({ item, previousItem }) => {
 
   const curr_date = item?.timestamp?.toDate();
   const previous = previousItem?.timestamp?.toDate();
-  console.log(
-    'curr->',
-    getdate(curr_date),
-    item?.text,
-    'prev->',
-    getdate(previous),
-    previousItem?.text,
-  );
-  console.log('test->', getdate(curr_date) === getdate(dateToday));
-
   const user = useAppSelector(state => state.auth);
   return (
-    <View style={{ alignItems: 'center' ,marginTop:2}}>
-      {getdate(curr_date) !== getdate(previous) ? (
-        getdate(curr_date) == getdate(dateToday) ? (
-          <Chip mode='outlined'  >Today</Chip>
-        ) : getdate(curr_date) == getdate(yesterday) ? (
-          <Chip mode='outlined' >Yesterday</Chip>
-        ) : (
-          <Chip mode='outlined' >{getdate(curr_date)}</Chip>
+    // <View style={{ alignItems: 'center', marginTop: 2 }}>
+    //   {
+    //    getdate(curr_date) !== getdate(previous) ? (
+    //     getdate(curr_date) === getdate(dateToday) ? (
+    //       <Chip mode="outlined">Today</Chip>
           
-        )
-      ) : null}
-
+    //     ) : getdate(curr_date) === getdate(yesterday) ? (
+    //       <Chip mode="outlined">Yesterday</Chip>
+    //     ) : (
+    //       <></>
+        
+    //     )
+    //   ) : null
+    //   }
       <View
         style={[
           styles.rendermessageview,
@@ -120,7 +111,8 @@ const ChatBubble: FC<ChatBubbleType> = ({ item, previousItem }) => {
           )}
         </View>
       </View>
-    </View>
+      
+    // </View>
   );
 };
 
