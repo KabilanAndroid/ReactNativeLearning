@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
      following:{backgroundColor: Colors.frndchatclr,
         paddingHorizontal: 10,
         paddingVertical: 4,
-        borderRadius: 20,},
+        borderRadius: 10,},
       headertextstyle: {
         padding: 10,
         backgroundColor: Colors.headercolor,

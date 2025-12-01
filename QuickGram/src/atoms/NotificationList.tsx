@@ -36,6 +36,7 @@ const NotificationList: FC<NotificationListType> = ({
           textType="500-14"
           Style={styles.rejectbtn}
           Onpress={handlereject}
+          textstyle={{color:Colors.white}}
         />
       </View>
     </View>

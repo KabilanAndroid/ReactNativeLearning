@@ -31,4 +31,8 @@ export const image ={
     addpost:require('../assests/addpost.png'),
     add:require('../assests/add.png'),
     cancel:require('../assests/cancel.png'),
+    comment:require('../assests/comment.png'),  
+    share:require('../assests/share.png'),  
+    like:require('../assests/like.png'),  
+    dislike:require('../assests/dislike.png'),  
 }

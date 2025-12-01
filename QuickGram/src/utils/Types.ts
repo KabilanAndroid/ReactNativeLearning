@@ -193,15 +193,13 @@ export interface Timestamp {
 }
 
 
-
-
-
 export interface RenderPost {
   id: string
   SenderId: string
-  SenderName: string
   Text: string
   PostTime: PostTime
+  likedBy: string[]
+  SenderName: string
 }
 
 export interface PostTime {

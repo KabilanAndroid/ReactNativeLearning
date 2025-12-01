@@ -22,6 +22,7 @@ import { ScreenType } from './src/utils/Types';
 import UsernameScreen from './src/Pages/UsernameScreen';
 import NotificationScreen from './src/Pages/NotificationScreen';
 import PostScreen from './src/Pages/PostScreen';
+import { overlay } from 'react-native-paper';
 
 const Stack = createNativeStackNavigator<ScreenType>();
 const Tab = createBottomTabNavigator<ScreenType>();
@@ -71,22 +72,22 @@ const MainTabNavigator = () => {
       screenOptions={{
         headerShown: false,
         tabBarActiveBackgroundColor: Colors.white,
-        headerStyle: {
-          backgroundColor: Colors.introbg,
-        },
+
         tabBarItemStyle: {
           overflow: 'hidden',
           borderRadius: 20,
           marginHorizontal: 10,
           marginVertical: 5,
+          
         },
 
         tabBarStyle: {
-          marginBottom: 15,
+          marginVertical:10,
           height: 70,
-          marginHorizontal: 20,
+          marginHorizontal: 5,
           borderRadius: 30,
           backgroundColor: Colors.maingreen,
+          
         },
         tabBarIconStyle: {
           flex: 1,
