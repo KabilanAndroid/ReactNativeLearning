@@ -8,8 +8,6 @@ import {
   Platform,
   Pressable,
   StyleSheet,
-  TouchableHighlight,
-  TouchableOpacity,
   View,
 } from 'react-native';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
@@ -21,8 +19,6 @@ import { Colors } from '../utils/Colors';
 import HearderStyle from '../atoms/HearderStyle';
 import ChatBubble from '../atoms/ChatBubble';
 import ChatInput from '../atoms/ChatInput';
-import { Chip } from 'react-native-paper';
-import AppText from '../atoms/AppText';
 import ChatDateWise from '../atoms/ChatDateWise';
 
 /*--------------------------------------Chatscreen----------------------------------------- */
@@ -35,7 +31,7 @@ const ChatScreen = () => {
   const [editing, setediting] = useState(false);
   const chatid = useRef<string | undefined>('');
   const lastid = useRef('');
-  const [selectedItemId, setSelectedItemId] = useState(null);
+  const [selectedItemId, setSelectedItemId] = useState('');
   const user = useAppSelector(state => state.auth);
   const [highlightColor, setHighlightColor] = useState('#c2e7e6ff');
   const route = useRoute<RouteProp<ScreenType>>();
@@ -284,11 +280,13 @@ const ChatScreen = () => {
       [
         {
           text: 'Cancel',
-          onPress: () => console.log('Deletion cancelled'),
+          onPress: () => setSelectedItemId(''),
           style: 'cancel',
+          
         },
         {
           text: 'Delete',
+          
           onPress: async () => {
             console.log('curentselect :', currmessage);
             console.log('curentidlast :', lastid);
@@ -304,6 +302,7 @@ const ChatScreen = () => {
                   [`unreaduser.${user.userid}.lasttimestamp`]:
                     firestore.FieldValue.serverTimestamp(),
                 });
+                setSelectedItemId('')
             }
 
             await firestore()
@@ -321,15 +320,16 @@ const ChatScreen = () => {
         {
           text: 'Edit',
           onPress: async () => {
+            setSelectedItemId('')
             setediting(true),
               setNewMessage(currtext),
               (chatid.current = currmessage);
-            // sendMessage();
+            
           },
         },
       ],
 
-      { cancelable: true },
+      { cancelable: false },
     );
   };
 
@@ -351,7 +351,7 @@ const ChatScreen = () => {
         });
     }
   };
- const handleLongPress = (itemId) => {
+ const handleLongPress = (itemId: string | React.SetStateAction<null>) => {
     setSelectedItemId(itemId);
   };
   /*------------------------------------rendering message in chat------------------------------------------- */
@@ -463,6 +463,6 @@ const styles = StyleSheet.create({
     backgroundColor:Colors.white
   },
   selectedItem: {
-    backgroundColor: 'red', 
+    backgroundColor: '#c3dce3ff', 
   },
 });

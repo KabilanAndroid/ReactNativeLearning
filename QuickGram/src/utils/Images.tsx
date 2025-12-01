@@ -27,4 +27,8 @@ export const image ={
     delete:require('../assests/delete.png'),
     triangle:require('../assests/triangle.png'),
     chatetriangle:require('../assests/chatetriangle.png'),
+    logout:require('../assests/logout.png'),
+    addpost:require('../assests/addpost.png'),
+    add:require('../assests/add.png'),
+    cancel:require('../assests/cancel.png'),
 }

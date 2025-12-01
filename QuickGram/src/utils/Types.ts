@@ -74,6 +74,7 @@ export interface F3akieJ7JeY4Gt2XmjtD0ozDmoi3 {
 
 export type ScreenType = {
   
+  postscreen :undefined;
   signupscreen: undefined;
   loginscreen: undefined;
   chatscreen: {
@@ -189,4 +190,21 @@ export interface MessageseenType {
 export interface Timestamp {
   seconds: number;
   nanoseconds: number;
+}
+
+
+
+
+
+export interface RenderPost {
+  id: string
+  SenderId: string
+  SenderName: string
+  Text: string
+  PostTime: PostTime
+}
+
+export interface PostTime {
+  seconds: number
+  nanoseconds: number
 }

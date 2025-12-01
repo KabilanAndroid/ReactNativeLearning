@@ -29,6 +29,7 @@ const NotificationList: FC<NotificationListType> = ({
           textType={'500-14'}
           Style={styles.confirmbtn}
           Onpress={callback}
+          textstyle={{color:Colors.white}}
         />
         <Apptextbutton
           text={'delete'}
@@ -77,7 +78,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   rejectbtn: {
-    color: 'white',
+    color:'white',
     backgroundColor: 'red',
     padding: 8,
     borderRadius: 10,

@@ -95,7 +95,7 @@ const AppText: FC<AppTextType> = ({ text, style, type, rest }) => {
 
   return (
     <View>
-      <Text numberOfLines={1} style={[style, AppType[type]]} {...rest}>
+      <Text numberOfLines={1} style={[ AppType[type],style]} {...rest}>
         {text}
       </Text>
     </View>

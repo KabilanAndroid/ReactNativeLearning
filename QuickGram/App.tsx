@@ -10,7 +10,6 @@ import HomeScreen from './src/Pages/HomeScreen';
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
-
 import { Colors } from './src/utils/Colors';
 import ChatHomeScreen from './src/Pages/ChatHomeScreen';
 import ChatScreen from './src/Pages/ChatScreen';
@@ -22,13 +21,14 @@ import SearchScreen from './src/Pages/SearchScreen';
 import { ScreenType } from './src/utils/Types';
 import UsernameScreen from './src/Pages/UsernameScreen';
 import NotificationScreen from './src/Pages/NotificationScreen';
+import PostScreen from './src/Pages/PostScreen';
 
 const Stack = createNativeStackNavigator<ScreenType>();
 const Tab = createBottomTabNavigator<ScreenType>();
 const { width, height } = Dimensions.get('window');
 const AuthStack = () => (
   <Stack.Navigator
-    initialRouteName='loginscreen'
+    initialRouteName="loginscreen"
     screenOptions={{ headerShown: false }}
   >
     <Stack.Screen
@@ -44,141 +44,128 @@ const AuthStack = () => (
   </Stack.Navigator>
 );
 
-const AppStack = () =>(
+const AppStack = () => (
   <Stack.Navigator>
-    <Stack.Screen name="maintabnavigator" component={MainTabNavigator} options={{ headerShown: false }} />
-    <Stack.Screen 
-    name ="chatscreen"
-    component={ChatScreen}
-    options={{ headerShown: false }}
+    <Stack.Screen
+      name="maintabnavigator"
+      component={MainTabNavigator}
+      options={{ headerShown: false }}
+    />
+    <Stack.Screen
+      name="postscreen"
+      component={PostScreen}
+      options={{ headerShown: false }}
+    />
+    <Stack.Screen
+      name="chatscreen"
+      component={ChatScreen}
+      options={{ headerShown: false }}
     />
   </Stack.Navigator>
-)
+);
 
 const MainTabNavigator = () => {
   return (
     <Tab.Navigator
-      initialRouteName='homescreen'
+      initialRouteName="homescreen"
       screenOptions={{
         headerShown: false,
         tabBarActiveBackgroundColor: Colors.white,
-        headerStyle:{
-          backgroundColor:Colors.introbg
+        headerStyle: {
+          backgroundColor: Colors.introbg,
         },
         tabBarItemStyle: {
           overflow: 'hidden',
-          borderRadius:20,
-          marginHorizontal: 10, 
-          marginVertical: 5, 
+          borderRadius: 20,
+          marginHorizontal: 10,
+          marginVertical: 5,
         },
-       
+
         tabBarStyle: {
-          marginBottom:15,
-          height: 70, 
-          marginHorizontal:20,
-          borderRadius:30,
-          backgroundColor:Colors.maingreen,
-          
-         
+          marginBottom: 15,
+          height: 70,
+          marginHorizontal: 20,
+          borderRadius: 30,
+          backgroundColor: Colors.maingreen,
         },
-          tabBarIconStyle: {
-          
+        tabBarIconStyle: {
           flex: 1,
           alignItems: 'center',
           justifyContent: 'center',
-          
         },
         tabBarHideOnKeyboard: true,
-        
-       
       }}
     >
       <Tab.Screen
         name="homescreen"
         component={HomeScreen}
         // eslint-disable-next-line react/no-unstable-nested-components
-        options={{ title:'Home',tabBarActiveTintColor:'#5b63b7', tabBarInactiveTintColor:Colors.white ,tabBarIcon: () => {
-              return (
-                <Image
-                  style={{ width: 40, height: 40 }}
-                  source={image.home}
-                />
-              );
-            },
-          }}
-        
+        options={{
+          title: 'Home',
+          tabBarActiveTintColor: '#5b63b7',
+          tabBarInactiveTintColor: Colors.white,
+          tabBarIcon: () => {
+            return (
+              <Image style={{ width: 40, height: 40 }} source={image.home} />
+            );
+          },
+        }}
       />
 
-<Tab.Screen
+      <Tab.Screen
         name="searchscreen"
         component={SearchScreen}
         // eslint-disable-next-line react/no-unstable-nested-components
-        options={{ title:'Search',tabBarActiveTintColor:'#5b63b7', tabBarInactiveTintColor:Colors.white,tabBarIcon: () => {
-              return (
-                <Image
-                  style={{ width: 25, height: 25 }}
-                  source={image.search}
-                />
-              );
-            },
-          }}
-        
+        options={{
+          title: 'Search',
+          tabBarActiveTintColor: '#5b63b7',
+          tabBarInactiveTintColor: Colors.white,
+          tabBarIcon: () => {
+            return (
+              <Image style={{ width: 25, height: 25 }} source={image.search} />
+            );
+          },
+        }}
       />
-
-      {/* <Tab.Screen
-        name="roomcreation"
-        component={RoomCreation}
-        // eslint-disable-next-line react/no-unstable-nested-components
-        options={{ title: '',tabBarInactiveTintColor:'black' ,tabBarIcon: () => {
-              return (
-                <Image
-                  style={{ width: 30, height: 30 }}
-                  source={image.post}
-                />
-              );
-            },}}
-        
-      /> */}
 
       <Tab.Screen
         name="notificationscreen"
         component={NotificationScreen}
         // eslint-disable-next-line react/no-unstable-nested-components
-        options={{ title: 'Notification',tabBarActiveTintColor:'#5b63b7', tabBarInactiveTintColor:Colors.white,tabBarIcon: () => {
-              return (
-                <Image
-                  style={{ width: 30, height: 30 }}
-                  source={image.heart}
-                />
-              );
-            }, }}
-        
+        options={{
+          title: 'Notification',
+          tabBarActiveTintColor: '#5b63b7',
+          tabBarInactiveTintColor: Colors.white,
+          tabBarIcon: () => {
+            return (
+              <Image style={{ width: 30, height: 30 }} source={image.heart} />
+            );
+          },
+        }}
       />
-   
 
-       <Tab.Screen
+      <Tab.Screen
         name="chathomescreen"
         component={ChatHomeScreen}
         // eslint-disable-next-line react/no-unstable-nested-components
-        options={{ title: 'Chat',tabBarActiveTintColor:'#5b63b7', tabBarInactiveTintColor:Colors.white,tabBarIcon: () => {
-              return (
-                <Image
-                  style={{ width: 30, height: 30 }}
-                  source={image.chat}
-                />
-              );
-            }, }}
-        
+        options={{
+          title: 'Chat',
+          tabBarActiveTintColor: '#5b63b7',
+          tabBarInactiveTintColor: Colors.white,
+          tabBarIcon: () => {
+            return (
+              <Image style={{ width: 30, height: 30 }} source={image.chat} />
+            );
+          },
+        }}
       />
-      
     </Tab.Navigator>
   );
 };
 
 const RootNavigator = () => {
   const authState = useSelector((state: RootState) => state.auth);
-  
-  
+
   const hasusername = authState.hasusernames;
 
   return (
@@ -199,8 +186,7 @@ const RootNavigator = () => {
 const App = () => {
   const authState = useSelector((state: RootState) => state.auth);
   const isLoggedIn = authState.isLoggedIn;
-console.log('isloggedin:',authState.isLoggedIn);
- 
+  console.log('isloggedin:', authState.isLoggedIn);
 
   return (
     <NavigationContainer>

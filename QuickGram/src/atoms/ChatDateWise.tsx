@@ -44,5 +44,5 @@ var dateToday = new Date();
 export default ChatDateWise
 
 const styles = StyleSheet.create({
-    container:{alignItems:'center',marginTop:10}
+    container:{alignSelf:'center',marginVertical:3}
 })

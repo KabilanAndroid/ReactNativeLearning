@@ -12,11 +12,9 @@ type ChatBubbleType = {
 };
 
 const ChatBubble: FC<ChatBubbleType> = ({ item, previousItem }) => {
-  const currentnow = useMemo(() => {
-    item.senderId === user?.userid
-  }, []);
   const user = useAppSelector(state => state.auth);
   return (
+    
     <View
       style={[
         styles.rendermessageview,
@@ -28,12 +26,12 @@ const ChatBubble: FC<ChatBubbleType> = ({ item, previousItem }) => {
               ? Colors.userchatclr
               : Colors.frndchatclr,
 
-          marginRight: item.senderId === user?.userid ? 10 : null,
-          marginLeft: item.senderId === user?.userid ? null : 10,
-          borderTopLeftRadius: item.senderId === user?.userid ? 10 : 0,
-          borderBottomStartRadius: item.senderId === user?.userid ? 10:10,
-          borderBottomEndRadius: item.senderId === user?.userid ? 10:10,
-          borderTopEndRadius: item.senderId === user?.userid ? 0:10,
+          marginRight: item.senderId === user?.userid ? 15 : null,
+          marginLeft: item.senderId === user?.userid ? null : 15,
+          borderTopLeftRadius: item.senderId === user?.userid ? 8 : 0,
+          borderBottomStartRadius: item.senderId === user?.userid ? 8:8,
+          borderBottomEndRadius: item.senderId === user?.userid ? 8:8,
+          borderTopEndRadius: item.senderId === user?.userid ? 0:8,
           // borderTopRightRadius: item.senderId === user?.userid ? 0:10,
         },
       ]}
@@ -90,7 +88,33 @@ const ChatBubble: FC<ChatBubbleType> = ({ item, previousItem }) => {
           />
         )}
       </View>
+      {item.senderId === user?.userid ? <Image
+                  source={image.chatetriangle}
+                  resizeMode="cover"
+                  style={{
+                    height: 20,
+                    width: 20,
+                    transform:[{rotate:'360deg'}],
+                    tintColor: Colors.userchatclr,
+                    position: 'absolute',
+                    end:-10
+                  }}
+                /> : <Image
+                  source={image.chatetriangle}
+                  resizeMode="cover"
+                  style={{
+                    height: 20,
+                    
+                    width: 20,
+                    transform:[{rotate:'90deg'}],
+                    tintColor: Colors.frndchatclr,
+                    position: 'absolute',
+                    start:-10
+                  }}
+                /> }
+      
     </View>
+    
   );
 };
 

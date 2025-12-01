@@ -5,14 +5,10 @@ import React, { useEffect, useState } from 'react';
 import ChatSearch from '../atoms/ChatSearch';
 import { Colors } from '../utils/Colors';
 import AppText from '../atoms/AppText';
-import { image } from '../utils/Images';
-import Appbackbtn from '../atoms/Appbackbtn';
 import firestore from '@react-native-firebase/firestore';
-import { notificationType, ScreenType } from '../utils/Types';
+import { notificationType} from '../utils/Types';
 import { useAppSelector } from '../redux/ReduxHook';
 import { RequestStatusType } from '../utils/Enum';
-import { NavigationProp, useNavigation } from '@react-navigation/native';
-import Apptextbutton from '../atoms/Apptextbutton';
 import SearchView from '../atoms/SearchView';
 
 /*-------------------------------------search screen------------------------------------------ */
