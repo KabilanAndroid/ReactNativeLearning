@@ -73,7 +73,7 @@ export interface F3akieJ7JeY4Gt2XmjtD0ozDmoi3 {
 }
 
 export type ScreenType = {
-  
+  commentscreen:undefined;
   postscreen :undefined;
   signupscreen: undefined;
   loginscreen: undefined;
@@ -193,6 +193,8 @@ export interface Timestamp {
 }
 
 
+
+
 export interface RenderPost {
   id: string
   SenderId: string
@@ -200,9 +202,37 @@ export interface RenderPost {
   PostTime: PostTime
   likedBy: string[]
   SenderName: string
+  comments: Comment[]
 }
 
 export interface PostTime {
+  seconds: number
+  nanoseconds: number
+}
+
+export interface Comment {
+  text: string
+  commentbyid: string
+  commentname: string
+  commenttime: Commenttime
+}
+
+export interface Commenttime {
+  seconds: number
+  nanoseconds: number
+}
+
+
+
+export interface RenderComment {
+  id: string
+  text: string
+  commentbyid: string
+  commentname: string
+  commenttime: Commenttime
+}
+
+export interface Commenttime {
   seconds: number
   nanoseconds: number
 }

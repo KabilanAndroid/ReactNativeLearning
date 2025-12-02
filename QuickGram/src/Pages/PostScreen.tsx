@@ -13,12 +13,15 @@ import Postusername from '../atoms/Postusername';
 import firestore from '@react-native-firebase/firestore';
 import { useAppSelector } from '../redux/ReduxHook';
 import PostTexttInput from '../atoms/PostTexttInput';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { ScreenType } from '../utils/Types';
 
 
 
 const PostScreen = () => {
   const [tweet, settweet] = useState('');
   const user = useAppSelector(state => state.auth);
+    const navigation = useNavigation<NavigationProp<ScreenType>>();
   let show = false
   if (tweet.trim().length > 1){
     show = true
@@ -45,6 +48,7 @@ const PostScreen = () => {
         PostTime: new Date(),
       });
       settweet('')
+      navigation.goBack()
     
   };
 

@@ -1,5 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react-native/no-inline-styles */
 import React, { useEffect, useState } from 'react';
 import {
   View,
@@ -20,12 +18,13 @@ import { Colors } from '../utils/Colors';
 import { image } from '../utils/Images';
 import AppImage from '../atoms/AppImage';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
-
 const UserDetailsScreen = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation<NavigationProp<ScreenType>>();
   const user = useAppSelector(state => state.auth);
   const [renderpost, setrenderpost] = useState<RenderPost[]>();
+  const [visible,setvisible] = useState<boolean>(false);
+  const [selectedItem, setSelectedItem] = useState('');
   const handleLogout = async () => {
     try {
       dispatch(setlogout());
@@ -34,7 +33,6 @@ const UserDetailsScreen = () => {
       console.error('Error signing out:', error);
     }
   };
-
   useEffect(() => {
     getsearchitem();
   }, []);
@@ -47,15 +45,15 @@ const UserDetailsScreen = () => {
           ...doc.data(),
         } as searchnewtype),
     );
-    console.log('new new message:', newMessages);
     const originalmessage = newMessages?.find(
       a => a.id === user.userid,
     )?.username;
-    console.log('username is:', originalmessage);
     dispatch(setusernameredux(originalmessage));
-    console.log('new original:', originalmessage);
   };
-
+  const openmodel =(docid: string)=>{
+    setSelectedItem(docid)
+    setvisible(true)
+  }
   const renderflatlistpost = ({
     item,
     index,
@@ -64,8 +62,6 @@ const UserDetailsScreen = () => {
     index: number;
   }) => {
     const posttext = item.Text;
-    console.log('time post->', item?.PostTime);
-    console.log('liked->', item?.likedBy);
     const dateInMilliseconds = item?.PostTime?.seconds * 1000;
     const like = async (id: string | undefined,liked: string | string[]) => {
       if(liked?.includes(user.userid)){
@@ -85,8 +81,6 @@ const UserDetailsScreen = () => {
         });
     }
       }
-      
-
     const timeAgo = moment(dateInMilliseconds).fromNow();
     return (
       <View
@@ -156,15 +150,16 @@ const UserDetailsScreen = () => {
               />
             )}
           </TouchableOpacity>
-          <AppText text={item?.likedBy?.length} type={'lastmessage'} style={{color:Colors.black}}/>
+          <AppText text={item?.likedBy?.length.toString()} type={'lastmessage'} style={{color:Colors.black}}/>
           </View>
+          <TouchableOpacity onPress={()=>navigation.navigate('commentscreen')}>
           <AppImage source={image.comment} style={styles.imagestyle} />
+          </TouchableOpacity>
           <AppImage source={image.share} style={styles.imagestyle} />
         </View>
       </View>
     );
   };
-
   useEffect(() => {
     const subscriber = firestore()
       .collection('Post')
@@ -183,7 +178,6 @@ const UserDetailsScreen = () => {
       });
     return () => subscriber();
   }, []);
-
   return (
     <View style={styles.container}>
       <View style={styles.textview}>
@@ -192,6 +186,7 @@ const UserDetailsScreen = () => {
           type={'heardertext'}
           style={styles.headertextstyle}
         />
+        
         <TouchableOpacity onPress={() => handleLogout()}>
           <AppImage source={image.logout} style={styles.logout} />
         </TouchableOpacity>

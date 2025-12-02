@@ -22,7 +22,9 @@ import { ScreenType } from './src/utils/Types';
 import UsernameScreen from './src/Pages/UsernameScreen';
 import NotificationScreen from './src/Pages/NotificationScreen';
 import PostScreen from './src/Pages/PostScreen';
-import { overlay } from 'react-native-paper';
+import CommentScreen from './src/Pages/CommentScreen';
+
+
 
 const Stack = createNativeStackNavigator<ScreenType>();
 const Tab = createBottomTabNavigator<ScreenType>();
@@ -57,10 +59,20 @@ const AppStack = () => (
       component={PostScreen}
       options={{ headerShown: false }}
     />
+    
     <Stack.Screen
       name="chatscreen"
       component={ChatScreen}
       options={{ headerShown: false }}
+    />
+    <Stack.Screen
+      name="commentscreen"
+      component={CommentScreen}
+      options={{ 
+        headerShown: false ,
+        'animation':'slide_from_bottom',
+        presentation:'transparentModal'
+      }}
     />
   </Stack.Navigator>
 );
