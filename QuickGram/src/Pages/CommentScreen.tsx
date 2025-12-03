@@ -1,118 +1,167 @@
 import {
-    Dimensions,
+  FlatList,
   Keyboard,
   KeyboardAvoidingView,
   Platform,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View,
 } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import AppTextInput from '../atoms/AppTextInput';
-import AppImage from '../atoms/AppImage';
-import { image } from '../utils/Images';
 import AppText from '../atoms/AppText';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
-import { ScreenType } from '../utils/Types';
+import { Rendercomment, ScreenType } from '../utils/Types';
+import { useAppRoute } from '../navigation/NavigationHook';
+import firestore from '@react-native-firebase/firestore';
+import { useAppSelector } from '../redux/ReduxHook';
+import moment from 'moment';
+import CommentHeader from '../atoms/CommentHeader';
+import CommentInput from '../atoms/CommentInput';
 
 const CommentScreen = () => {
   // const height = useHeaderHeight()
+  const route = useAppRoute<'commentscreen'>();
+  const routeData = route.params;
+  const user = useAppSelector(state => state.auth);
+  console.log('routeparam:', routeData.docid);
+  const [comments, setcomments] = useState<Rendercomment[]>();
   const navigation = useNavigation<NavigationProp<ScreenType>>();
-const [keybrd, setKeyboardVisible] = useState(Boolean);
+  const [keybrd, setKeyboardVisible] = useState(Boolean);
+  const [sendcommentstate, setsendcommentstate] = useState('');
 
-   useEffect(() => {
-      const keyboardDidShowListener = Keyboard.addListener(
-        'keyboardDidShow',
-        () => {
-          setKeyboardVisible(true);
-        },
-      );
-      const keyboardDidHideListener = Keyboard.addListener(
-        'keyboardDidHide',
-        () => {
-          setKeyboardVisible(false);
-        },
-      );
-      return () => {
-        keyboardDidHideListener.remove();
-        keyboardDidShowListener.remove();
-      };
-    }, []);
-    const keyboardOffset = keybrd ? 24 : 0;
-    
-  return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={{ flex: 1 }}
-    //   keyboardVerticalOffset={Platform.OS === 'ios' ? 60 : 0}
-    keyboardVerticalOffset={keyboardOffset}
-    >
-      <View style={styles.centeredView}>
-        <View style={styles.modalView}>
-          <View
-            style={{
-            
-              flexDirection: 'row',
-              paddingVertical: 12,
-              marginHorizontal: 0,
-              borderBottomWidth: 1,
-              justifyContent: 'space-around',
-              borderBottomColor: '#e3e0e0ff',
-            }}
-          >
-            <TouchableOpacity onPress={() => navigation.goBack()}>
-              <AppImage
-                source={image.backarrows}
-                style={{ height: 30, width: 30 }}
+  let show = false;
+  if (sendcommentstate.trim().length > 1) {
+    show = true;
+  } else {
+    show = false;
+  }
+  console.log('get->>', comments);
+
+  const renderitem = ({
+    item,
+    index,
+  }: {
+    item: Rendercomment;
+    index: number;
+  }) => {
+    const dateInMilliseconds = item?.commenttime?.seconds * 1000;
+    const timeAgo = moment(dateInMilliseconds).fromNow();
+    return (
+      <KeyboardAvoidingView>
+        <View style={styles.renderitemmain}>
+          <View style={styles.renderiteminsideview}>
+            <View style={styles.renderinsideview1}>
+              <AppText
+                text={item?.commentname}
+                type={'lastmessage'}
+                style={{ textDecorationLine: 'underline' }}
               />
-            </TouchableOpacity>
-            <AppText
-              text={'Comments'}
-              type={'lastmessage'}
-              style={{ fontSize: 20 }}
-            />
-            <AppImage
-              source={image.threedot}
-              style={{
-                height: 30,
-                width: 30,
-                transform: [{ rotate: '90deg' }],
-              }}
-            />
-          </View>
-          <View style={{ marginHorizontal: 30, paddingVertical: 10 }}></View>
-          <View style={{ flex: 1, justifyContent: 'flex-end' }}>
-            <View style={{ justifyContent: 'flex-end', height: 70 }}>
-              <View
-                style={{
-                  flex: 1,
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  columnGap: 20,
-                  borderTopWidth: 1,                  
-                  borderTopColor: '#e3e0e0ff',
-                }}
-              >
-                <AppTextInput
-                  onChangeText={function (text: string): void {
-                    throw new Error('Function not implemented.');
-                  }}
-                  value={''}
-                  placeholder={''}
-                  style={{ borderWidth: 1, borderRadius: 20, width: 300 }}
-                />
-                <TouchableOpacity onPress={() => console.log('')}>
-                  <AppImage
-                    source={image.sendicon}
-                    style={{ height: 30, width: 30 }}
-                  />
-                </TouchableOpacity>
-              </View>
+              <AppText text={timeAgo} type={'lastmessage'} />
             </View>
+            <AppText text={item?.text} type={'lastmessage'} />
           </View>
         </View>
+      </KeyboardAvoidingView>
+    );
+  };
+
+  const sendcomments = () => {
+    firestore()
+      .collection('Post')
+      .doc(routeData?.docid?.toString())
+      .collection('comments')
+      .add({
+        commentbyid: user?.userid,
+        commentname: user?.username,
+        commenttime: new Date(),
+        text: sendcommentstate,
+      });
+    setsendcommentstate('');
+  };
+
+  const increasecount = async () => {
+    await firestore()
+      .collection('Post')
+      .doc(routeData?.docid?.toString())
+      .update({
+        count: firestore.FieldValue.increment(1),
+      });
+  };
+
+  const sendcomment = () => {
+    sendcomments();
+    increasecount();
+  };
+  useEffect(() => {
+    const subscriber = firestore()
+      .collection('Post')
+      .doc(routeData?.docid?.toString())
+      .collection('comments')
+      .orderBy('commenttime', 'asc')
+      .onSnapshot(querySnapshot => {
+        const getcomment = querySnapshot.docs.map(
+          doc =>
+            ({
+              id: doc.id,
+              ...doc.data(),
+            } as Rendercomment),
+        );
+        setcomments(getcomment);
+        console.log('getcomment:->', getcomment);
+      });
+    return () => subscriber();
+  }, [routeData]);
+
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      'keyboardDidShow',
+      () => {
+        setKeyboardVisible(true);
+      },
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      'keyboardDidHide',
+      () => {
+        setKeyboardVisible(false);
+      },
+    );
+    return () => {
+      keyboardDidHideListener.remove();
+      keyboardDidShowListener.remove();
+    };
+  }, []);
+  const keyboardOffset = keybrd ? 24 : 0;
+
+  return (
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'android' ? 'height' : 'position'}
+      style={styles.centeredView}
+      keyboardVerticalOffset={keyboardOffset}
+    >
+      <View style={{ flex: 1 }}>
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={{ flex: 1 }}
+        ></TouchableOpacity>
+      </View>
+      <View style={styles.modalView}>
+        <CommentHeader callback={() => navigation.goBack()} />
+
+        <FlatList
+          data={comments}
+          renderItem={renderitem}
+          contentContainerStyle={{
+            flexGrow: 1,
+          }}
+          keyExtractor={item => item.id}
+        />
+
+        <CommentInput
+          setsendcommentstate={setsendcommentstate}
+          sendcommentstate={sendcommentstate}
+          sendcoment={sendcomment}
+          show={show}
+        />
       </View>
     </KeyboardAvoidingView>
   );
@@ -132,11 +181,12 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   modalView: {
+    flex: 1,
     backgroundColor: 'white',
     borderTopEndRadius: 30,
     borderTopStartRadius: 30,
-    maxHeight: '80%',
-    minHeight: '50%',
+    maxHeight: '60%',
+    // minHeight: '10%',
     shadowColor: '#000',
     shadowOpacity: 0.25,
     shadowRadius: 4,
@@ -156,4 +206,14 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     textAlign: 'center',
   },
+
+  icon: { height: 30, width: 30 },
+
+  renderitemmain: { paddingVertical: 5, marginHorizontal: 20 },
+  renderiteminsideview: {
+    height: 50,
+    borderBottomWidth: 1,
+    borderBottomColor: '#dcd9d9ff',
+  },
+  renderinsideview1: { flexDirection: 'row', columnGap: 10 },
 });

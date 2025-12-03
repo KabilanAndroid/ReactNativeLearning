@@ -18,13 +18,13 @@ import { Colors } from '../utils/Colors';
 import { image } from '../utils/Images';
 import AppImage from '../atoms/AppImage';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
+import Homeheader from '../atoms/Homeheader';
+import HomeFlatList from '../atoms/HomeFlatList';
 const UserDetailsScreen = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation<NavigationProp<ScreenType>>();
   const user = useAppSelector(state => state.auth);
   const [renderpost, setrenderpost] = useState<RenderPost[]>();
-  const [visible,setvisible] = useState<boolean>(false);
-  const [selectedItem, setSelectedItem] = useState('');
   const handleLogout = async () => {
     try {
       dispatch(setlogout());
@@ -50,10 +50,6 @@ const UserDetailsScreen = () => {
     )?.username;
     dispatch(setusernameredux(originalmessage));
   };
-  const openmodel =(docid: string)=>{
-    setSelectedItem(docid)
-    setvisible(true)
-  }
   const renderflatlistpost = ({
     item,
     index,
@@ -62,99 +58,66 @@ const UserDetailsScreen = () => {
     index: number;
   }) => {
     const posttext = item.Text;
-    const dateInMilliseconds = item?.PostTime?.seconds * 1000;
-    const like = async (id: string | undefined,liked: string | string[]) => {
-      if(liked?.includes(user.userid)){
+
+    const like = async (id: string | undefined, liked: string | string[]) => {
+      if (liked?.includes(user.userid)) {
         await firestore()
-        .collection('Post')
-        .doc(id)
-        .update({
-          likedBy: firestore.FieldValue.arrayRemove(user.userid)
-        });
-    }
-    else{
-      await firestore()
-        .collection('Post')
-        .doc(id)
-        .update({
-          likedBy: firestore.FieldValue.arrayUnion(user.userid),
-        });
-    }
+          .collection('Post')
+          .doc(id)
+          .update({
+            likedBy: firestore.FieldValue.arrayRemove(user.userid),
+          });
+      } else {
+        await firestore()
+          .collection('Post')
+          .doc(id)
+          .update({
+            likedBy: firestore.FieldValue.arrayUnion(user.userid),
+          });
       }
-    const timeAgo = moment(dateInMilliseconds).fromNow();
+    };
+
     return (
-      <View
-        style={{
-          backgroundColor: 'white',
-          padding: 15,
-          borderRadius: 5,
-          marginHorizontal: 10,
-          paddingVertical: 10,
-          marginVertical: 5,
-          borderWidth: 1,
-          borderBottomWidth: 1,
-        }}
-      >
-        <View
-          style={{ flexDirection: 'row', alignItems: 'center', columnGap: 10 }}
-        >
-          {item.SenderId === user.userid ? (
-            <AppText
-              text={'You'}
-              type={'lastmessage'}
-              style={{
-                fontSize: 18,
-                textDecorationLine: 'underline',
-                fontWeight: '700',
-              }}
-            />
-          ) : (
-            <AppText
-              text={item.SenderName}
-              type={'lastmessage'}
-              style={{
-                fontSize: 18,
-                textDecorationLine: 'underline',
-                fontWeight: '700',
-              }}
-            />
-          )}
-          <AppText text={timeAgo} type={'lastmessage'} />
-        </View>
+      <View style={styles.rendermain}>
+        <HomeFlatList item={item} />
         <AppText
           text={posttext}
           type={'lastmessage'}
-          style={{ color: 'black', marginTop: 10, marginStart: 0 }}
+          style={styles.renderposttext}
           rest={{
             numberOfLines: 0,
           }}
         />
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            marginTop: 30,
-          }}
-        >
-          <View style={{flexDirection:'row',alignItems:'center',columnGap:5}}>
-          <TouchableOpacity onPress={() => like(item.id,item?.likedBy)}>
-            {item?.likedBy?.includes(user?.userid) ? (
-              <AppImage
-                source={image.like}
-                style={{ height: 26, width: 26, tintColor: '#ff0000ff' }}
-              />
-            ) : (
-              <AppImage
-                source={image.dislike}
-                style={{ height: 26, width: 26 }}
-              />
-            )}
-          </TouchableOpacity>
-          <AppText text={item?.likedBy?.length.toString()} type={'lastmessage'} style={{color:Colors.black}}/>
+        <View style={styles.renderview2}>
+          <View style={styles.renderview2insideview}>
+            <TouchableOpacity onPress={() => like(item.id, item?.likedBy)}>
+              {item?.likedBy?.includes(user?.userid) ? (
+                <AppImage
+                  source={image.like}
+                  style={[styles.likeicon, { tintColor: '#ff0000ff' }]}
+                />
+              ) : (
+                <AppImage source={image.dislike} style={styles.likeicon} />
+              )}
+            </TouchableOpacity>
+            <AppText
+              text={item?.likedBy?.length.toString()}
+              type={'lastmessage'}
+              style={{ color: Colors.black }}
+            />
           </View>
-          <TouchableOpacity onPress={()=>navigation.navigate('commentscreen')}>
-          <AppImage source={image.comment} style={styles.imagestyle} />
-          </TouchableOpacity>
+          <View style={styles.renderview2insideview}>
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate('commentscreen', {
+                  docid: item?.id,
+                })
+              }
+            >
+              <AppImage source={image.comment} style={styles.imagestyle} />
+            </TouchableOpacity>
+            <AppText text={item?.count?.toString()} type={'lastmessage'} />
+          </View>
           <AppImage source={image.share} style={styles.imagestyle} />
         </View>
       </View>
@@ -180,17 +143,7 @@ const UserDetailsScreen = () => {
   }, []);
   return (
     <View style={styles.container}>
-      <View style={styles.textview}>
-        <AppText
-          text={'Home'}
-          type={'heardertext'}
-          style={styles.headertextstyle}
-        />
-        
-        <TouchableOpacity onPress={() => handleLogout()}>
-          <AppImage source={image.logout} style={styles.logout} />
-        </TouchableOpacity>
-      </View>
+      <Homeheader logout={handleLogout} />
       <FlatList
         data={renderpost}
         renderItem={renderflatlistpost}
@@ -239,19 +192,9 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.commonbg,
     alignSelf: 'center',
   },
-  logout: { height: 40, width: 40 },
-  textview: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    borderBottomWidth: 2,
-    alignItems: 'center',
-    borderBottomColor: Colors.borderbottomcolor,
-    backgroundColor: Colors.headercolor,
-  },
+
   logoutbtnview: { flex: 1, alignItems: 'flex-end', paddingTop: 20 },
-  headertextstyle: {
-    padding: 10,
-  },
+
   logoutbtn: {
     borderRadius: 10,
     backgroundColor: Colors.commonbg,
@@ -259,4 +202,27 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginEnd: 10,
   },
+  rendermain: {
+    backgroundColor: 'white',
+    padding: 15,
+    borderRadius: 0,
+    marginHorizontal: 0,
+    paddingVertical: 10,
+    marginVertical: 0,
+    // borderWidth: 1,
+    borderBottomWidth: 1,
+  },
+
+  renderposttext: { color: 'black', marginTop: 10, marginStart: 10 },
+  renderview2: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 30,
+  },
+  renderview2insideview: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    columnGap: 5,
+  },
+  likeicon: { height: 26, width: 26 },
 });

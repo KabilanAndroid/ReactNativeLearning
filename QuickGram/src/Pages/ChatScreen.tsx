@@ -10,16 +10,16 @@ import {
   StyleSheet,
   View,
 } from 'react-native';
-import React, { Fragment, useEffect, useRef, useState } from 'react';
+import React, {  useEffect, useRef, useState } from 'react';
 import firestore from '@react-native-firebase/firestore';
-import { MessageseenType, MessageType, ScreenType } from '../utils/Types';
-import { RouteProp, useRoute } from '@react-navigation/native';
+import { MessageseenType, MessageType } from '../utils/Types';
 import { useAppSelector } from '../redux/ReduxHook';
 import { Colors } from '../utils/Colors';
 import HearderStyle from '../atoms/HearderStyle';
 import ChatBubble from '../atoms/ChatBubble';
 import ChatInput from '../atoms/ChatInput';
 import ChatDateWise from '../atoms/ChatDateWise';
+import { useAppRoute } from '../navigation/NavigationHook';
 
 /*--------------------------------------Chatscreen----------------------------------------- */
 
@@ -34,7 +34,7 @@ const ChatScreen = () => {
   const [selectedItemId, setSelectedItemId] = useState('');
   const user = useAppSelector(state => state.auth);
   const [highlightColor, setHighlightColor] = useState('#c2e7e6ff');
-  const route = useRoute<RouteProp<ScreenType>>();
+  const route = useAppRoute<'chatscreen'>()
   const routeData = route.params;
 
   /*-------------------------------------Keyboard and touch handling------------------------------------------ */

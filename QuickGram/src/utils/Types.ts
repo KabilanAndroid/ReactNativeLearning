@@ -73,18 +73,21 @@ export interface F3akieJ7JeY4Gt2XmjtD0ozDmoi3 {
 }
 
 export type ScreenType = {
-  commentscreen:undefined;
+  
   postscreen :undefined;
+  introscreen:undefined;
   signupscreen: undefined;
   loginscreen: undefined;
   chatscreen: {
     discussionid: string;
-    chatnamescrn: string | undefined;
+    chatnamescrn: string | undefined ;
     oppositeid: string | undefined;
     currlastime: string;
   };
-  UsernameScreen: undefined;
-  homescreen: undefined;
+  commentscreen:{
+    docid:string ;
+  }
+
   searchscreen: undefined;
   roomcreation: undefined;
   chathomescreen: undefined;
@@ -199,6 +202,7 @@ export interface RenderPost {
   id: string
   SenderId: string
   Text: string
+  count: number
   PostTime: PostTime
   likedBy: string[]
   SenderName: string
@@ -224,7 +228,7 @@ export interface Commenttime {
 
 
 
-export interface RenderComment {
+export interface Rendercomment {
   id: string
   text: string
   commentbyid: string

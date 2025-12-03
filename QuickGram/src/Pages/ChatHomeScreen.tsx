@@ -69,7 +69,7 @@ const ChatHomeScreen = () => {
     const time = item?.users?.find(
       (a: { uid: string }) => a.uid !== user?.userid,
     )?.uid;
-    const currlastime = item.unreaduser?.[time]?.lasttimestamp;
+    const currlastime = item.unreaduser?.[time!]?.lasttimestamp;
     if (user?.userid) {
       countread = item.unreaduser?.[user?.userid]?.unreadcount || 0;
     }

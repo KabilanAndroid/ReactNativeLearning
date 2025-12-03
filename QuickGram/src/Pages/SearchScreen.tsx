@@ -154,11 +154,13 @@ const SearchScreen = () => {
   /*-------------------------------Return------------------------------------------------------------ */
   return (
     <View style={styles.container}>
+      <View style={styles.header}>
       <AppText
         text={'Search'}
         type={'heardertext'}
         style={styles.headertextstyle}
       />
+      </View>
       <ChatSearch
         onChangeText={setSearchitem}
         value={searchitem}
@@ -180,10 +182,11 @@ const styles = StyleSheet.create({
     // backgroundColor: Colors.white,
   },
 
-  
+  header:{justifyContent:'center',backgroundColor:Colors.headercolor},
   headertextstyle: {
         padding: 10,
-        backgroundColor: Colors.headercolor,
+        alignSelf:'center',
+        // backgroundColor: Colors.headercolor,
         // borderBottomWidth: 2,
         // borderBottomColor: '#f0ebebff',
       },

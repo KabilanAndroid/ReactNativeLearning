@@ -22,6 +22,9 @@ const ChatInput:FC<ChatInputType> = ({setNewMessage,newMessage,editing,sendMessa
             value={newMessage}
             placeholder={'Message...'}
             style={styles.textinput}
+            props={{
+              multiline:true
+            }}
           />
           <Appbackbtn
             Onpress={editing ? sendMessage : calltwo}
@@ -45,6 +48,7 @@ const styles = StyleSheet.create({
       alignItems: 'center',
       width: '100%',
       paddingVertical: 10,
+      // paddingBottom:70,
       backgroundColor: Colors.textinputcolor,
       shadowColor: '#1e1b1bff',
       shadowOffset: { width: 0, height: 2 },

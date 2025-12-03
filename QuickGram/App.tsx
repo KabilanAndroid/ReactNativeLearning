@@ -23,6 +23,7 @@ import UsernameScreen from './src/Pages/UsernameScreen';
 import NotificationScreen from './src/Pages/NotificationScreen';
 import PostScreen from './src/Pages/PostScreen';
 import CommentScreen from './src/Pages/CommentScreen';
+import IntroScreen from './src/Pages/IntroScreen';
 
 
 
@@ -31,7 +32,7 @@ const Tab = createBottomTabNavigator<ScreenType>();
 const { width, height } = Dimensions.get('window');
 const AuthStack = () => (
   <Stack.Navigator
-    initialRouteName="loginscreen"
+    initialRouteName='introscreen'
     screenOptions={{ headerShown: false }}
   >
     <Stack.Screen
@@ -43,6 +44,11 @@ const AuthStack = () => (
       name="loginscreen"
       component={LoginScreen}
       options={{ title: 'Login' }}
+    />
+    <Stack.Screen
+      name="introscreen"
+      component={IntroScreen}
+      options={{ title: 'Intro' }}
     />
   </Stack.Navigator>
 );

@@ -27,21 +27,20 @@ export default memo(HomeChatView);
 const styles = StyleSheet.create({
   first: {
     flexDirection: 'row',
-    borderBottomWidth: 2,
-    borderBottomColor: '#f0ebebff',
+    padding:10,
     backgroundColor: Colors.headercolor,
   },
-  textview1: { flex: 1, flexDirection: 'row', alignItems: 'center' },
+  textview1: { flex:1, flexDirection: 'row',justifyContent:'flex-end' },
   headertextstyle: {
-    padding: 10,
+    // padding: 10,
     // backgroundColor: Colors.introbg,
   },
   imageicon: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    columnGap: 20,
-    alignItems: 'center',
-    marginEnd: 15,
+    flex:1,
+    flexDirection:'row',
+    justifyContent:'flex-end',
+    alignItems:'center',
+    columnGap:20
   },
   message2: {
     height: 28,

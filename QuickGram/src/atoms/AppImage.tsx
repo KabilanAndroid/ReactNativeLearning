@@ -1,8 +1,8 @@
-import { Image, ImageSourcePropType, ImageStyle } from 'react-native'
+import { Image, ImageSourcePropType, ImageStyle, StyleProp } from 'react-native'
 import React, { FC, memo, useMemo } from 'react'
 type AppImgType = {
     source:ImageSourcePropType,
-    style?: ImageStyle;
+    style?: StyleProp<ImageStyle>;
 }
 const AppImage:FC <AppImgType> = ({source,style}) => {
   return (
