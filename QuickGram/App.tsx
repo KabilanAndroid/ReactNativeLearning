@@ -3,21 +3,16 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../QuickGram/src/redux/Store';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
-
 import SignupScreen from './src/Pages/SignupScreen';
 import LoginScreen from './src/Pages/LoginScreen';
 import HomeScreen from './src/Pages/HomeScreen';
-
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-
 import { Colors } from './src/utils/Colors';
 import ChatHomeScreen from './src/Pages/ChatHomeScreen';
 import ChatScreen from './src/Pages/ChatScreen';
-
 import { Dimensions, Image } from 'react-native';
 import { image } from './src/utils/Images';
 import SearchScreen from './src/Pages/SearchScreen';
-
 import { ScreenType } from './src/utils/Types';
 import UsernameScreen from './src/Pages/UsernameScreen';
 import NotificationScreen from './src/Pages/NotificationScreen';
@@ -90,22 +85,21 @@ const MainTabNavigator = () => {
       screenOptions={{
         headerShown: false,
         tabBarActiveBackgroundColor: Colors.white,
-
         tabBarItemStyle: {
           overflow: 'hidden',
           borderRadius: 20,
           marginHorizontal: 10,
           marginVertical: 5,
-          
         },
-
+        // styl:{
+        //   backgroundColor:'red'
+        // },
         tabBarStyle: {
           marginVertical:10,
           height: 70,
           marginHorizontal: 5,
           borderRadius: 30,
           backgroundColor: Colors.maingreen,
-          
         },
         tabBarIconStyle: {
           flex: 1,

@@ -202,8 +202,10 @@ export interface RenderPost {
   id: string
   SenderId: string
   Text: string
+  color:string
   count: number
   PostTime: PostTime
+  commentby:string[]
   likedBy: string[]
   SenderName: string
   comments: Comment[]

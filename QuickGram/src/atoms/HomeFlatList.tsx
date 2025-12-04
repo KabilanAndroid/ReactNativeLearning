@@ -5,22 +5,25 @@ import { useAppSelector } from '../redux/ReduxHook';
 import { RenderPost } from '../utils/Types';
 import moment from 'moment';
 
-type HomeFlatListType ={
-    item:RenderPost;
-}
+type HomeFlatListType = {
+  item: RenderPost;
+};
 
-const HomeFlatList:FC<HomeFlatListType> = ({item}) => {
+const HomeFlatList: FC<HomeFlatListType> = ({ item }) => {
+  const dateInMilliseconds = item?.PostTime?.seconds * 1000;
+  const user = useAppSelector(state => state.auth);
+  const timeAgo = moment(dateInMilliseconds).fromNow();
 
-    const dateInMilliseconds = item?.PostTime?.seconds * 1000;
-    const user = useAppSelector(state => state.auth);
-    const timeAgo = moment(dateInMilliseconds).fromNow();
   return (
     <View style={styles.renderview1}>
+      <View style={{ width: 3, height: 30, backgroundColor: item?.color }}>
+        <AppText text={''} type={'lastmessage'} />
+      </View>
       {item.SenderId === user.userid ? (
         <AppText
           text={'You'}
           type={'lastmessage'}
-          style={styles.renderusername}
+          style={[styles.renderusername, { color: '#262c3c' }]}
         />
       ) : (
         <AppText
@@ -29,7 +32,16 @@ const HomeFlatList:FC<HomeFlatListType> = ({item}) => {
           style={styles.renderusername}
         />
       )}
-      <AppText text={timeAgo} type={'lastmessage'} />
+      <AppText
+        text={`@${item.SenderName}`}
+        type={'lastmessage'}
+        style={{ color: '#a2a8b5' }}
+      />
+      <AppText
+        text={timeAgo}
+        type={'lastmessage'}
+        style={{ color: '#a2a8b5' }}
+      />
     </View>
   );
 };
@@ -37,10 +49,14 @@ const HomeFlatList:FC<HomeFlatListType> = ({item}) => {
 export default HomeFlatList;
 
 const styles = StyleSheet.create({
-    renderview1:{ flexDirection: 'row', alignItems: 'center', columnGap: 10 },
-      renderusername:{
-                fontSize: 18,
-                textDecorationLine: 'underline',
-                fontWeight: '700',
-              },
+  renderview1: {
+    paddingTop: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    columnGap: 10,
+  },
+  renderusername: {
+    fontSize: 18,
+    fontWeight: '700',
+  },
 });

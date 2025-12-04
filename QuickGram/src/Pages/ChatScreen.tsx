@@ -93,9 +93,7 @@ const ChatScreen = () => {
         setMessages(newMessages);
         console.log('firstload:', newMessages);
         const firstloadlast = querySnapshot.docs[querySnapshot.docs.length - 1];
-
         console.log('first final :', firstloadlast);
-
         setlastvisible(firstloadlast);
       });
     return () => subscriber();
@@ -106,7 +104,6 @@ const ChatScreen = () => {
   const loadMoreMessages = async () => {
     try {
       if (!lastvisible) return;
-
       const querySnapshot = await firestore()
         .collection('chatRooms')
         .doc(routeData?.discussionid?.toString())

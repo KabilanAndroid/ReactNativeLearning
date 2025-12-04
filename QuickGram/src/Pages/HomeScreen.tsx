@@ -6,6 +6,9 @@ import {
   TouchableOpacity,
   FlatList,
   Text,
+  Modal,
+  Alert,
+  Pressable,
 } from 'react-native';
 import moment from 'moment';
 import { useDispatch } from 'react-redux';
@@ -20,11 +23,14 @@ import AppImage from '../atoms/AppImage';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import Homeheader from '../atoms/Homeheader';
 import HomeFlatList from '../atoms/HomeFlatList';
+import Models from '../atoms/Models';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 const UserDetailsScreen = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation<NavigationProp<ScreenType>>();
   const user = useAppSelector(state => state.auth);
   const [renderpost, setrenderpost] = useState<RenderPost[]>();
+  const [modalVisible, setModalVisible] = useState(false);
   const handleLogout = async () => {
     try {
       dispatch(setlogout());
@@ -78,47 +84,125 @@ const UserDetailsScreen = () => {
     };
 
     return (
-      <View style={styles.rendermain}>
-        <HomeFlatList item={item} />
-        <AppText
-          text={posttext}
-          type={'lastmessage'}
-          style={styles.renderposttext}
-          rest={{
-            numberOfLines: 0,
-          }}
-        />
-        <View style={styles.renderview2}>
-          <View style={styles.renderview2insideview}>
-            <TouchableOpacity onPress={() => like(item.id, item?.likedBy)}>
+      
+      <View style={styles.top}>
+        
+        <View style={styles.rendermain}>
+          <HomeFlatList item={item} />
+          <AppText
+            text={posttext}
+            type={'lastmessage'}
+            style={styles.renderposttext}
+            rest={{
+              numberOfLines: 0,
+            }}
+          />
+          <View style={styles.renderview2}>
+            <View style={styles.renderview2insideview}>
               {item?.likedBy?.includes(user?.userid) ? (
-                <AppImage
-                  source={image.like}
-                  style={[styles.likeicon, { tintColor: '#ff0000ff' }]}
+                <View
+                  style={{
+                    padding: 10,
+                    borderRadius: 15,
+                    backgroundColor: '#fdf2f8',
+                  }}
+                >
+                  <TouchableOpacity
+                    onPress={() => like(item.id, item?.likedBy)}
+                  >
+                    <AppImage
+                      source={image.like}
+                      style={[styles.likeicon, { tintColor: '#f7329aff' }]}
+                    />
+                  </TouchableOpacity>
+                </View>
+              ) : (
+                <View
+                  style={{
+                    padding: 10,
+                    // borderRadius: 20,
+                  }}
+                >
+                  <TouchableOpacity
+                    onPress={() => like(item.id, item?.likedBy)}
+                  >
+                    <AppImage source={image.dislike} style={styles.likeicon} />
+                  </TouchableOpacity>
+                </View>
+              )}
+              
+              <TouchableOpacity onPress={()=>setModalVisible(true)} >
+              {item?.likedBy?.includes(user?.userid) ? (
+                
+                <AppText
+                  text={item?.likedBy?.length.toString()}
+                  type={'lastmessage'}
+                  style={{ color: '#F7329A' }}
                 />
               ) : (
-                <AppImage source={image.dislike} style={styles.likeicon} />
+                <AppText
+                  text={item?.likedBy?.length.toString()}
+                  type={'lastmessage'}
+                  style={{ color: Colors.black }}
+                />
               )}
-            </TouchableOpacity>
-            <AppText
-              text={item?.likedBy?.length.toString()}
-              type={'lastmessage'}
-              style={{ color: Colors.black }}
-            />
+              </TouchableOpacity>
+            </View>
+            <View style={styles.renderview2insideview}>
+              {item?.commentby?.includes(user?.userid) ? (
+                <View
+                  style={{
+                    padding: 10,
+                    backgroundColor: '#eff6ff',
+                    borderRadius: 15,
+                  }}
+                >
+                  <TouchableOpacity
+                    onPress={() =>
+                      navigation.navigate('commentscreen', {
+                        docid: item?.id,
+                      })
+                    }
+                  >
+                    <AppImage
+                      source={image.comment}
+                      style={[styles.imagestyle, { tintColor: '#428dff' }]}
+                    />
+                  </TouchableOpacity>
+                </View>
+              ) : (
+                <View
+                  style={{
+                    padding: 10,
+                  }}
+                >
+                  <TouchableOpacity
+                    onPress={() =>
+                      navigation.navigate('commentscreen', {
+                        docid: item?.id,
+                      })
+                    }
+                  >
+                    <AppImage
+                      source={image.comment}
+                      style={styles.imagestyle}
+                    />
+                  </TouchableOpacity>
+                </View>
+              )}
+
+              {item?.commentby?.includes(user?.userid) ? (
+                <AppText
+                  text={item?.count?.toString()}
+                  type={'lastmessage'}
+                  style={{ color: '#428dff' }}
+                />
+              ) : (
+                <AppText text={item?.count?.toString()} type={'lastmessage'} />
+              )}
+            </View>
+            <AppImage source={image.share} style={styles.imagestyle} />
           </View>
-          <View style={styles.renderview2insideview}>
-            <TouchableOpacity
-              onPress={() =>
-                navigation.navigate('commentscreen', {
-                  docid: item?.id,
-                })
-              }
-            >
-              <AppImage source={image.comment} style={styles.imagestyle} />
-            </TouchableOpacity>
-            <AppText text={item?.count?.toString()} type={'lastmessage'} />
-          </View>
-          <AppImage source={image.share} style={styles.imagestyle} />
         </View>
       </View>
     );
@@ -142,6 +226,8 @@ const UserDetailsScreen = () => {
     return () => subscriber();
   }, []);
   return (
+    <SafeAreaProvider>
+      <Models modalVisible={modalVisible} setModalVisible={setModalVisible} item={''} />
     <View style={styles.container}>
       <Homeheader logout={handleLogout} />
       <FlatList
@@ -159,6 +245,7 @@ const UserDetailsScreen = () => {
         </TouchableOpacity>
       </View>
     </View>
+    </SafeAreaProvider>
   );
 };
 export default UserDetailsScreen;
@@ -205,12 +292,10 @@ const styles = StyleSheet.create({
   rendermain: {
     backgroundColor: 'white',
     padding: 15,
-    borderRadius: 0,
-    marginHorizontal: 0,
+    borderRadius: 20,
     paddingVertical: 10,
-    marginVertical: 0,
-    // borderWidth: 1,
-    borderBottomWidth: 1,
+    elevation: 10,
+    opacity: 20,
   },
 
   renderposttext: { color: 'black', marginTop: 10, marginStart: 10 },
@@ -218,6 +303,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginTop: 30,
+    alignItems:'center'
   },
   renderview2insideview: {
     flexDirection: 'row',
@@ -225,4 +311,7 @@ const styles = StyleSheet.create({
     columnGap: 5,
   },
   likeicon: { height: 26, width: 26 },
+  top: { paddingVertical: 5, marginHorizontal: 10 },
+
+  
 });

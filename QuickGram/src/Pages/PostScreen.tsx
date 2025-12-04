@@ -22,6 +22,9 @@ const PostScreen = () => {
   const [tweet, settweet] = useState('');
   const user = useAppSelector(state => state.auth);
     const navigation = useNavigation<NavigationProp<ScreenType>>();
+     const red = [ 'black', 'red', 'blue', 'brown', 'green', 'violet', 'yellow', 'orange', 'aqua', 'indigo', 'maroon', 'teal', 'turquoise', 'burgundy', 'skyblue' , 'beige']
+        const number = Math.random()*10;
+        const arrange = Math.ceil(number)
   let show = false
   if (tweet.trim().length > 1){
     show = true
@@ -35,6 +38,7 @@ const PostScreen = () => {
       SenderId: user.userid,
       SenderName: user.username,
       PostTime: new Date(),
+      color:red[arrange]
     });
 
     await firestore()
@@ -46,6 +50,7 @@ const PostScreen = () => {
         SenderId: user.userid,
         SenderName: user.username,
         PostTime: new Date(),
+        color:red[arrange]
       });
       settweet('')
       navigation.goBack()

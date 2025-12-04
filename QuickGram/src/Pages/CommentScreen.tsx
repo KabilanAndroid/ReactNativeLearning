@@ -44,8 +44,10 @@ const CommentScreen = () => {
     item: Rendercomment;
     index: number;
   }) => {
+   
     const dateInMilliseconds = item?.commenttime?.seconds * 1000;
     const timeAgo = moment(dateInMilliseconds).fromNow();
+    
     return (
       <KeyboardAvoidingView>
         <View style={styles.renderitemmain}>
@@ -85,6 +87,7 @@ const CommentScreen = () => {
       .doc(routeData?.docid?.toString())
       .update({
         count: firestore.FieldValue.increment(1),
+        commentby: firestore.FieldValue.arrayUnion(user.userid),
       });
   };
 
