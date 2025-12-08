@@ -4,11 +4,16 @@ import { name as appName } from './app.json';
 import { store,persistor } from '../QuickGram/src/redux/Store';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+
 
 const QuickGram = () => (
+  
   <Provider store={store}>
     <PersistGate loading={null} persistor={persistor}>
+    <GestureHandlerRootView>
     <App />
+    </GestureHandlerRootView>
     </PersistGate>
   </Provider>
 );

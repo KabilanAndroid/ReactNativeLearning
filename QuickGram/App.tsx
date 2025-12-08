@@ -19,6 +19,7 @@ import NotificationScreen from './src/Pages/NotificationScreen';
 import PostScreen from './src/Pages/PostScreen';
 import CommentScreen from './src/Pages/CommentScreen';
 import IntroScreen from './src/Pages/IntroScreen';
+import Bridge from './src/Pages/Bridge';
 
 
 
@@ -172,6 +173,23 @@ const MainTabNavigator = () => {
           },
         }}
       />
+
+        <Tab.Screen
+        name='bridge'
+        component={Bridge}
+        // eslint-disable-next-line react/no-unstable-nested-components
+        options={{
+          title: 'Bridge',
+          tabBarActiveTintColor: '#5b63b7',
+          tabBarInactiveTintColor: Colors.white,
+          tabBarIcon: () => {
+            return (
+              <Image style={{ width: 30, height: 30 }} source={image.chat} />
+            );
+          },
+        }}
+      />
+
     </Tab.Navigator>
   );
 };
@@ -202,9 +220,11 @@ const App = () => {
   console.log('isloggedin:', authState.isLoggedIn);
 
   return (
+    
     <NavigationContainer>
       {isLoggedIn ? <RootNavigator /> : <AuthStack />}
     </NavigationContainer>
+   
   );
 };
 

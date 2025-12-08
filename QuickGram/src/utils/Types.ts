@@ -74,6 +74,7 @@ export interface F3akieJ7JeY4Gt2XmjtD0ozDmoi3 {
 
 export type ScreenType = {
   
+  bridge:undefined;
   postscreen :undefined;
   introscreen:undefined;
   signupscreen: undefined;
@@ -204,6 +205,7 @@ export interface RenderPost {
   Text: string
   color:string
   count: number
+  likedByName:string
   PostTime: PostTime
   commentby:string[]
   likedBy: string[]

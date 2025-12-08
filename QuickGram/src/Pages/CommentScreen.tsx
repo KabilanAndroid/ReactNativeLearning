@@ -148,7 +148,7 @@ const CommentScreen = () => {
         ></TouchableOpacity>
       </View>
       <View style={styles.modalView}>
-        <CommentHeader callback={() => navigation.goBack()} />
+        <CommentHeader callback={() => navigation.goBack()} text={'Comment'} />
 
         <FlatList
           data={comments}

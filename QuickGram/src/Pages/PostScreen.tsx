@@ -1,8 +1,10 @@
 import {
   Alert,
+  NativeModules,
   StyleSheet,
   Text,
   TextInput,
+  ToastAndroid,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -16,21 +18,36 @@ import PostTexttInput from '../atoms/PostTexttInput';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { ScreenType } from '../utils/Types';
 
-
-
 const PostScreen = () => {
   const [tweet, settweet] = useState('');
   const user = useAppSelector(state => state.auth);
-    const navigation = useNavigation<NavigationProp<ScreenType>>();
-     const red = [ 'black', 'red', 'blue', 'brown', 'green', 'violet', 'yellow', 'orange', 'aqua', 'indigo', 'maroon', 'teal', 'turquoise', 'burgundy', 'skyblue' , 'beige']
-        const number = Math.random()*10;
-        const arrange = Math.ceil(number)
-  let show = false
-  if (tweet.trim().length > 1){
-    show = true
-  }
-  else{
-    show = false
+  const navigation = useNavigation<NavigationProp<ScreenType>>();
+  const red = [
+    'black',
+    'red',
+    'blue',
+    'brown',
+    'green',
+    'violet',
+    'yellow',
+    'orange',
+    'aqua',
+    'indigo',
+    'maroon',
+    'teal',
+    'turquoise',
+    'burgundy',
+    'skyblue',
+    'beige',
+  ];
+  const number = Math.random() * 10;
+  const arrange = Math.ceil(number);
+    const ToastExample = NativeModules.ToastExample;
+  let show = false;
+  if (tweet.trim().length > 1) {
+    show = true;
+  } else {
+    show = false;
   }
   const NewPost = async () => {
     await firestore().collection('Post').add({
@@ -38,7 +55,7 @@ const PostScreen = () => {
       SenderId: user.userid,
       SenderName: user.username,
       PostTime: new Date(),
-      color:red[arrange]
+      color: red[arrange],
     });
 
     await firestore()
@@ -50,21 +67,21 @@ const PostScreen = () => {
         SenderId: user.userid,
         SenderName: user.username,
         PostTime: new Date(),
-        color:red[arrange]
+        color: red[arrange],
       });
-      settweet('')
-      navigation.goBack()
-    
+    settweet('');
+    navigation.goBack();
+    ToastExample?.show('Post successful ✅',ToastAndroid.SHORT);
   };
 
   return (
     <View style={styles.mainstyle}>
       <View style={styles.header}>
-        <PostHeader NewPost={NewPost} show={show}  />
+        <PostHeader NewPost={NewPost} show={show} />
         <Postusername />
         {/* <PostTextInput settweet={settweet} tweet={tweet} />
          */}
-         <PostTexttInput settweet={settweet} tweet={tweet}/>
+        <PostTexttInput settweet={settweet} tweet={tweet} />
       </View>
     </View>
   );

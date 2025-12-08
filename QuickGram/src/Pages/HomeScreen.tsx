@@ -2,15 +2,9 @@ import React, { useEffect, useState } from 'react';
 import {
   View,
   StyleSheet,
-  Image,
   TouchableOpacity,
   FlatList,
-  Text,
-  Modal,
-  Alert,
-  Pressable,
 } from 'react-native';
-import moment from 'moment';
 import { useDispatch } from 'react-redux';
 import { setlogout, setusernameredux } from '../redux/AuthSlice';
 import firestore from '@react-native-firebase/firestore';
@@ -31,6 +25,13 @@ const UserDetailsScreen = () => {
   const user = useAppSelector(state => state.auth);
   const [renderpost, setrenderpost] = useState<RenderPost[]>();
   const [modalVisible, setModalVisible] = useState(false);
+  const [selectedItem, setSelectedItem] = useState('');
+
+  const openmodel = (likedby:any)=>{
+    setModalVisible(true)
+    setSelectedItem(likedby)
+  }
+
   const handleLogout = async () => {
     try {
       dispatch(setlogout());
@@ -72,6 +73,7 @@ const UserDetailsScreen = () => {
           .doc(id)
           .update({
             likedBy: firestore.FieldValue.arrayRemove(user.userid),
+            likedByName:firestore.FieldValue.arrayRemove(user.username)
           });
       } else {
         await firestore()
@@ -79,6 +81,7 @@ const UserDetailsScreen = () => {
           .doc(id)
           .update({
             likedBy: firestore.FieldValue.arrayUnion(user.userid),
+            likedByName:firestore.FieldValue.arrayUnion(user.username)
           });
       }
     };
@@ -120,7 +123,6 @@ const UserDetailsScreen = () => {
                 <View
                   style={{
                     padding: 10,
-                    // borderRadius: 20,
                   }}
                 >
                   <TouchableOpacity
@@ -131,9 +133,8 @@ const UserDetailsScreen = () => {
                 </View>
               )}
               
-              <TouchableOpacity onPress={()=>setModalVisible(true)} >
-              {item?.likedBy?.includes(user?.userid) ? (
-                
+              <TouchableOpacity onPress={()=>openmodel(item?.likedByName)} >
+              {item?.likedBy?.includes(user?.userid) ? (                
                 <AppText
                   text={item?.likedBy?.length.toString()}
                   type={'lastmessage'}
@@ -227,7 +228,7 @@ const UserDetailsScreen = () => {
   }, []);
   return (
     <SafeAreaProvider>
-      <Models modalVisible={modalVisible} setModalVisible={setModalVisible} item={''} />
+      <Models modalVisible={modalVisible} setModalVisible={setModalVisible} item={''} selectedItem={selectedItem} />
     <View style={styles.container}>
       <Homeheader logout={handleLogout} />
       <FlatList

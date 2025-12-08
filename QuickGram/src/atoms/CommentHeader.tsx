@@ -7,15 +7,16 @@ import AppText from './AppText'
 
 type CommentHeaderType ={
     callback:()=>void;
+    text:string;
 }
-const CommentHeader:FC<CommentHeaderType> = ({callback}) => {
+const CommentHeader:FC<CommentHeaderType> = ({callback,text}) => {
   return (
     <View style={styles.commentheader}>
               <TouchableOpacity onPress={callback}>
                 <AppImage source={image.backarrows} style={styles.icon} />
               </TouchableOpacity>
               <AppText
-                text={'Comments'}
+                text={text}
                 type={'lastmessage'}
                 style={{ fontSize: 20 }}
               />
