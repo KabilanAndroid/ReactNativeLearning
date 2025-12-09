@@ -244,3 +244,33 @@ export interface Commenttime {
   seconds: number
   nanoseconds: number
 }
+
+
+
+
+export interface Moremessage {
+  Text: string
+  PostTime: PostTime
+  SenderName: string
+  SenderId: string
+  color: string
+}
+
+export interface PostTime {
+  seconds: number
+  nanoseconds: number
+}
+
+
+export interface Lastmessage {
+  Text: string
+  PostTime: PostTime
+  SenderName: string
+  SenderId: string
+  color: string
+}
+
+export interface PostTime {
+  seconds: number
+  nanoseconds: number
+}

@@ -9,7 +9,7 @@ import { useDispatch } from 'react-redux';
 import { setlogout, setusernameredux } from '../redux/AuthSlice';
 import firestore from '@react-native-firebase/firestore';
 import { useAppSelector } from '../redux/ReduxHook';
-import { RenderPost, ScreenType, searchnewtype } from '../utils/Types';
+import { Lastmessage, MessageType, Moremessage, RenderPost, ScreenType, searchnewtype } from '../utils/Types';
 import AppText from '../atoms/AppText';
 import { Colors } from '../utils/Colors';
 import { image } from '../utils/Images';
@@ -26,6 +26,7 @@ const UserDetailsScreen = () => {
   const [renderpost, setrenderpost] = useState<RenderPost[]>();
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedItem, setSelectedItem] = useState('');
+  const [lastvisible, setlastvisible] = useState<Lastmessage >();
 
   const openmodel = (likedby:any)=>{
     setModalVisible(true)
@@ -223,9 +224,46 @@ const UserDetailsScreen = () => {
         );
         setrenderpost(newpost);
         console.log('post->>:', newpost);
+        const firstloadlast = querySnapshot.docs[querySnapshot.docs.length - 1];
+        console.log('first final :', firstloadlast);
+        const newdata = firstloadlast.data() as Lastmessage
+        setlastvisible(firstloadlast);
       });
     return () => subscriber();
   }, []);
+
+  const loadMoreMessages = async () => {
+    try {
+      if (!lastvisible) return;
+      const querySnapshot = await firestore()
+        .collection('Post')
+        .orderBy('PostTime', 'desc')
+        .startAfter(lastvisible)
+        .limit(10)
+        .get();
+      const moreMessages = querySnapshot.docs.map(
+        doc =>
+          ({
+            id: doc.id,
+            ...doc.data(),
+          } as RenderPost),
+      );
+     
+      setrenderpost(prevMessages => [...prevMessages || [], ...moreMessages]);
+      if (querySnapshot.docs.length > 0) {
+        const secondvisiblelast=
+          querySnapshot.docs[querySnapshot.docs.length - 1];
+          const newdata = secondvisiblelast.data() as Lastmessage
+          console.log('moremessage -->: ', newdata);
+        setlastvisible(secondvisiblelast);
+      } else {
+      }
+    } catch (error) {
+      console.error('Error loading more messages:', error);
+    }
+  };
+
+
   return (
     <SafeAreaProvider>
       <Models modalVisible={modalVisible} setModalVisible={setModalVisible} item={''} selectedItem={selectedItem} />
@@ -234,7 +272,8 @@ const UserDetailsScreen = () => {
       <FlatList
         data={renderpost}
         renderItem={renderflatlistpost}
-        keyExtractor={item => item.id}
+        keyExtractor={(item, index) => `${index}`}
+        onEndReached={loadMoreMessages}
       />
       <View style={styles.buttonstyle}>
         <TouchableOpacity

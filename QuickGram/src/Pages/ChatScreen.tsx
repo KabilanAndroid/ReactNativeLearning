@@ -81,7 +81,7 @@ const ChatScreen = () => {
       .doc(routeData?.discussionid?.toString())
       .collection('messages')
       .orderBy('timestamp', 'desc')
-      .limit(20)
+      .limit(10)
       .onSnapshot(querySnapshot => {
         const newMessages = querySnapshot.docs.map(
           doc =>
@@ -429,7 +429,7 @@ const ChatScreen = () => {
       <FlatList
         data={messages}
         renderItem={renderMessage}
-        keyExtractor={item => item.id}
+        keyExtractor={(item, index) => `${index}`}
         onEndReached={loadMoreMessages}
         onStartReached={last}
         onEndReachedThreshold={0.5}
