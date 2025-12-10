@@ -213,7 +213,6 @@ const UserDetailsScreen = () => {
     const subscriber = firestore()
       .collection('Post')
       .orderBy('PostTime', 'desc')
-      .limit(10)
       .onSnapshot(querySnapshot => {
         const newpost = querySnapshot.docs.map(
           doc =>
@@ -224,44 +223,44 @@ const UserDetailsScreen = () => {
         );
         setrenderpost(newpost);
         console.log('post->>:', newpost);
-        const firstloadlast = querySnapshot.docs[querySnapshot.docs.length - 1];
-        console.log('first final :', firstloadlast);
-        const newdata = firstloadlast.data() as Lastmessage
-        setlastvisible(firstloadlast);
+        // const firstloadlast = querySnapshot.docs[querySnapshot.docs.length - 1];
+        // console.log('first final :', firstloadlast);
+        // const newdata = firstloadlast.data() as Lastmessage
+        // setlastvisible(firstloadlast);
       });
     return () => subscriber();
   }, []);
 
-  const loadMoreMessages = async () => {
-    try {
-      if (!lastvisible) return;
-      const querySnapshot = await firestore()
-        .collection('Post')
-        .orderBy('PostTime', 'desc')
-        .startAfter(lastvisible)
-        .limit(10)
-        .get();
-      const moreMessages = querySnapshot.docs.map(
-        doc =>
-          ({
-            id: doc.id,
-            ...doc.data(),
-          } as RenderPost),
-      );
+  // const loadMoreMessages = async () => {
+  //   try {
+  //     if (!lastvisible) return;
+  //     const querySnapshot = await firestore()
+  //       .collection('Post')
+  //       .orderBy('PostTime', 'desc')
+  //       .startAfter(lastvisible)
+  //       .limit(10)
+  //       .get();
+  //     const moreMessages = querySnapshot.docs.map(
+  //       doc =>
+  //         ({
+  //           id: doc.id,
+  //           ...doc.data(),
+  //         } as RenderPost),
+  //     );
      
-      setrenderpost(prevMessages => [...prevMessages || [], ...moreMessages]);
-      if (querySnapshot.docs.length > 0) {
-        const secondvisiblelast=
-          querySnapshot.docs[querySnapshot.docs.length - 1];
-          const newdata = secondvisiblelast.data() as Lastmessage
-          console.log('moremessage -->: ', newdata);
-        setlastvisible(secondvisiblelast);
-      } else {
-      }
-    } catch (error) {
-      console.error('Error loading more messages:', error);
-    }
-  };
+  //     setrenderpost(prevMessages => [...prevMessages || [], ...moreMessages]);
+  //     if (querySnapshot.docs.length > 0) {
+  //       const secondvisiblelast=
+  //         querySnapshot.docs[querySnapshot.docs.length - 1];
+  //         const newdata = secondvisiblelast.data() as Lastmessage
+  //         console.log('moremessage -->: ', newdata);
+  //       setlastvisible(secondvisiblelast);
+  //     } else {
+  //     }
+  //   } catch (error) {
+  //     console.error('Error loading more messages:', error);
+  //   }
+  // };
 
 
   return (
@@ -273,7 +272,7 @@ const UserDetailsScreen = () => {
         data={renderpost}
         renderItem={renderflatlistpost}
         keyExtractor={(item, index) => `${index}`}
-        onEndReached={loadMoreMessages}
+        // onEndReached={loadMoreMessages}
       />
       <View style={styles.buttonstyle}>
         <TouchableOpacity

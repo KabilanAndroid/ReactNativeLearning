@@ -74,6 +74,8 @@ export interface F3akieJ7JeY4Gt2XmjtD0ozDmoi3 {
 
 export type ScreenType = {
   
+  swipe:undefined;
+  slideex:undefined;
   bridge:undefined;
   postscreen :undefined;
   introscreen:undefined;

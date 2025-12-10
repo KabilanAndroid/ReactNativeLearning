@@ -33,11 +33,12 @@ const Models: FC<ModelsType> = ({
     );
   };
   return (
-    <View>
+    
       <Modal
         animationType="slide"
         transparent={true}
         visible={modalVisible}
+        // presentationStyle="overFullScreen"
         onRequestClose={() => {
           Alert.alert('Modal has been closed.');
           setModalVisible(!modalVisible);
@@ -57,14 +58,14 @@ const Models: FC<ModelsType> = ({
             <CommentHeader
               callback={() => setModalVisible(!modalVisible)} text={'Likes'}        />
             <FlatList
-              data={selectedItem}
+              data={[selectedItem]}
               renderItem={renderitem}
               keyExtractor={item => item}
             />
           </View>
         </View>
       </Modal>
-    </View>
+    // </View>
   );
 };
 
@@ -89,7 +90,7 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOpacity: 0.25,
     shadowRadius: 4,
-    elevation: 5,
+    // elevation: 5,
     shadowOffset: {
       width: 0,
       height: 2,

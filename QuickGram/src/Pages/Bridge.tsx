@@ -1,6 +1,6 @@
 import 'react-native-gesture-handler';
 import { runOnJS, scheduleOnRN } from 'react-native-worklets';
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import Animated, {
   clamp,
@@ -16,11 +16,16 @@ import {
 } from 'react-native-gesture-handler';
 import AppText from '../atoms/AppText';
 import AppButton from '../atoms/AppButton';
+import Models from '../atoms/Models';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { ScreenType } from '../utils/Types';
 
 export default function App() {
   const pressed = useSharedValue(false);
   const LOWER_BOUND = -160;
+  const navigation = useNavigation<NavigationProp<ScreenType>>();
   const UPPER_BOUND = 160;
+  const [modalVisible, setModalVisible] = useState(false);
 
   const savedX = useSharedValue(-160.0);
   const translateX = useSharedValue(-160.0);
@@ -59,7 +64,7 @@ export default function App() {
   return (
     <GestureHandlerRootView style={styles.container}>
       <View style={{alignSelf:'flex-end',marginEnd:10,marginTop:10}}>
-        <AppButton text={'open'}  Style={{backgroundColor:'black'}} Onpress={()=>console.log('')}/>
+        <AppButton text={'open'}  Style={{backgroundColor:'black'}} Onpress={()=>navigation.navigate('slideex')}/>
       </View>
       <View>
         <AppText text={getval?.toFixed(0)} type={'edittext'} style={{fontSize:30}}/>
@@ -67,7 +72,6 @@ export default function App() {
       <View style={styles.container}>
         <View style={{ backgroundColor: 'red', height: 10, width: 350 }}></View>
         <GestureDetector gesture={pan}>
-          
           <Animated.View style={[styles?.circle, animatedStyles]} />
         </GestureDetector>
       </View>
@@ -82,11 +86,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   circle: {
-    height: 40,
+    height: 60,
     borderWidth: 2,
     position: 'absolute',
     borderColor: 'black',
-    width: 40,
+    width: 60,
     borderRadius: 30,
   },
 });

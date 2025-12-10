@@ -20,6 +20,8 @@ import PostScreen from './src/Pages/PostScreen';
 import CommentScreen from './src/Pages/CommentScreen';
 import IntroScreen from './src/Pages/IntroScreen';
 import Bridge from './src/Pages/Bridge';
+import SlideEx from './src/Pages/SlideEx';
+import swipe from './src/Pages/swipe';
 
 
 
@@ -73,6 +75,16 @@ const AppStack = () => (
       options={{ 
         headerShown: false ,
         'animation':'slide_from_bottom',
+        presentation:'transparentModal'
+      }}
+    />
+
+    <Stack.Screen
+      name="slideex"
+      component={SlideEx}
+      options={{ 
+        headerShown: false ,
+        'animation':'slide_from_right',
         presentation:'transparentModal'
       }}
     />
@@ -180,6 +192,22 @@ const MainTabNavigator = () => {
         // eslint-disable-next-line react/no-unstable-nested-components
         options={{
           title: 'Bridge',
+          tabBarActiveTintColor: '#5b63b7',
+          tabBarInactiveTintColor: Colors.white,
+          tabBarIcon: () => {
+            return (
+              <Image style={{ width: 30, height: 30 }} source={image.chat} />
+            );
+          },
+        }}
+      />
+
+      <Tab.Screen
+        name='swipe'
+        component={swipe}
+        // eslint-disable-next-line react/no-unstable-nested-components
+        options={{
+          title: 'swipe',
           tabBarActiveTintColor: '#5b63b7',
           tabBarInactiveTintColor: Colors.white,
           tabBarIcon: () => {
