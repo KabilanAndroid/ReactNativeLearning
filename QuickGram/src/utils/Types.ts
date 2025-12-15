@@ -276,3 +276,18 @@ export interface PostTime {
   seconds: number
   nanoseconds: number
 }
+
+
+
+
+export interface Apicall {
+  id: number
+  country: string
+  code: string
+  phone_code: number
+  flag_img: string
+  nationality_male: string
+  nationality_female: string
+  value: string
+  major: number
+}

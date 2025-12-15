@@ -22,6 +22,7 @@ import IntroScreen from './src/Pages/IntroScreen';
 import Bridge from './src/Pages/Bridge';
 import SlideEx from './src/Pages/SlideEx';
 import swipe from './src/Pages/swipe';
+import Api from './src/Pages/Api';
 
 
 
@@ -204,7 +205,7 @@ const MainTabNavigator = () => {
 
       <Tab.Screen
         name='swipe'
-        component={swipe}
+        component={Api}
         // eslint-disable-next-line react/no-unstable-nested-components
         options={{
           title: 'swipe',

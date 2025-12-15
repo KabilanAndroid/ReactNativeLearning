@@ -223,10 +223,6 @@ const UserDetailsScreen = () => {
         );
         setrenderpost(newpost);
         console.log('post->>:', newpost);
-        // const firstloadlast = querySnapshot.docs[querySnapshot.docs.length - 1];
-        // console.log('first final :', firstloadlast);
-        // const newdata = firstloadlast.data() as Lastmessage
-        // setlastvisible(firstloadlast);
       });
     return () => subscriber();
   }, []);

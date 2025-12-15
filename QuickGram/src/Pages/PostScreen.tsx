@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import PostHeader from '../atoms/PostHeader';
 import Postusername from '../atoms/Postusername';
@@ -17,6 +17,7 @@ import { useAppSelector } from '../redux/ReduxHook';
 import PostTexttInput from '../atoms/PostTexttInput';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { ScreenType } from '../utils/Types';
+import axios from "axios";
 
 const PostScreen = () => {
   const [tweet, settweet] = useState('');
@@ -49,6 +50,27 @@ const PostScreen = () => {
   } else {
     show = false;
   }
+
+
+const goForAxios = () => {
+    
+        axios.get("https://jsonplaceholder.typicode.com/users")
+            .then(response => {
+                setTimeout(() => {
+                    console.log("response:",response.data);
+                }, 2000)
+            })
+            .catch(error => {
+                console.log(error);
+            });
+            
+            
+    }
+
+    useEffect(()=>{
+      goForAxios()
+    },[])
+
   const NewPost = async () => {
     await firestore().collection('Post').add({
       Text: tweet,
