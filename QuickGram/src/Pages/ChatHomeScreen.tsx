@@ -1,10 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import {
+  Dimensions,
   FlatList,
   Image,
   KeyboardAvoidingView,
+  NativeModules,
+  PermissionsAndroid,
   Platform,
   StyleSheet,
+  ToastAndroid,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -17,12 +21,46 @@ import { Rootofchathome, ScreenType } from '../utils/Types';
 import { useAppSelector } from '../redux/ReduxHook';
 import HomeChatView from '../atoms/HomeChatView';
 import ChatHomedatewise from '../atoms/ChatHomedatewise';
-
+import AppImage from '../atoms/AppImage';
+import { image } from '../utils/Images';
+const windowWidth = Dimensions.get('window').width;
+const { AudioRecorder } = NativeModules;
+const { VoiceToText } = NativeModules;
+const ToastExample = NativeModules.ToastExample;
 export type usernametype = {
   uid: string;
   displayName: string;
 };
 
+
+const startVoice = async () => {
+  if (Platform.OS !== 'android') return '';
+
+  if (!VoiceToText || !VoiceToText.startVoiceSearch) {
+    console.error('Native bridge not linked');
+    return '';
+  }
+  try {
+    return await VoiceToText.startVoiceSearch();
+  } catch (e) {
+    // console.error(e);
+    ToastExample?.show('voice search cancelled',ToastAndroid.SHORT);
+    return '';
+  }
+};
+async function requestMicPermission() {
+  if (Platform.OS !== 'android') return true;
+
+  const granted = await PermissionsAndroid.request(
+    PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
+    {
+      title: 'Microphone Permission',
+      message: 'QuickGram needs access to your microphone',
+      buttonPositive: 'OK',
+    },
+  );
+  return granted === PermissionsAndroid.RESULTS.GRANTED;
+}
 /*----------------------------------------renderlist-------------------------------------------------*/
 const ChatListItem = ({
   username,
@@ -36,7 +74,11 @@ const ChatListItem = ({
   console.log('users:', username);
 
   return (
-   <ChatHomedatewise usermessage={usermessage} countreads={countreads} username={username}/>
+    <ChatHomedatewise
+      usermessage={usermessage}
+      countreads={countreads}
+      username={username}
+    />
   );
 };
 
@@ -125,12 +167,26 @@ const ChatHomeScreen = () => {
       style={styles.container}
     >
       <HomeChatView />
-      <ChatSearch
-        onChangeText={setSearchitem}
-        value={searchitem}
-        placeholder={'search'}
-        style={styles.searchbar}
-      />
+      <View style={styles.searchview}>
+        <ChatSearch
+          onChangeText={setSearchitem}
+          value={searchitem}
+          placeholder={'search'}
+          style={styles.searchbar}
+        />
+      
+      <View>
+        <TouchableOpacity
+          onPress={async () => {
+            const result = await startVoice();
+            setSearchitem(result);
+            console.log(result);
+          }}
+        >
+          <AppImage source={image.voice} style={styles.voiceicon} />
+        </TouchableOpacity>
+      </View>
+      </View>
       <FlatList
         data={filteredData}
         renderItem={renderItem}
@@ -167,14 +223,16 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 10,
     height: 45,
-    borderBottomWidth:1,
-    borderBottomColor:Colors.black,
+    width:windowWidth - 60,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.black,
     borderColor: Colors.black,
     borderWidth: 1,
     marginHorizontal: 10,
     marginVertical: 10,
     paddingHorizontal: 30,
   },
+  voiceicon: { height: 25, width: 25 },
   avatar: {
     width: 50,
     height: 50,
@@ -188,4 +246,5 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2,
     borderBottomColor: '#f0ebebff',
   },
+  searchview:{ flexDirection: 'row', alignItems: 'center' },
 });

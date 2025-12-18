@@ -1,99 +1,90 @@
-import 'react-native-gesture-handler';
-import { runOnJS, scheduleOnRN } from 'react-native-worklets';
-import React, { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
-import Animated, {
-  clamp,
-  useAnimatedStyle,
-  useSharedValue,
-  withClamp,
-  withSpring,
-} from 'react-native-reanimated';
-import {
-  Gesture,
-  GestureDetector,
-  GestureHandlerRootView,
-} from 'react-native-gesture-handler';
-import AppText from '../atoms/AppText';
-import AppButton from '../atoms/AppButton';
-import Models from '../atoms/Models';
-import { NavigationProp, useNavigation } from '@react-navigation/native';
-import { ScreenType } from '../utils/Types';
+import React, { useState } from "react";
+import { View, Button, Image, StyleSheet, Alert, NativeModules } from "react-native";
+import AppText from "../atoms/AppText";
+import { NavigationProp, useNavigation } from "@react-navigation/native";
+import { ScreenType } from "../utils/Types";
 
-export default function App() {
-  const pressed = useSharedValue(false);
-  const LOWER_BOUND = -160;
+const { CameraModule } = NativeModules;
+
+type CameraResult = {
+  uri: string;
+  type: string;
+};
+
+export default function CameraGalleryScreen() {
+  const [imageUri, setImageUri] = useState<string | null>(null);
   const navigation = useNavigation<NavigationProp<ScreenType>>();
-  const UPPER_BOUND = 160;
-  const [modalVisible, setModalVisible] = useState(false);
 
-  const savedX = useSharedValue(-160.0);
-  const translateX = useSharedValue(-160.0);
-  const [getval, setval] = useState(0);
+  const handleCapture = async (crop = false) => {
+    console.log("Camera pressed");
+    try {
+      const result: CameraResult = await CameraModule.captureImage({ crop });
+      setImageUri(result.uri);
+      console.log("Camera URI:", result.uri);
+    } catch (error: any) {
+      console.error(error);
+      Alert.alert("Error", error?.message ?? "Could not capture image");
+    }
+  };
 
-  const pan = Gesture.Pan()
-    .onStart(() => {
-      pressed.value = true;
-    })
-    .onUpdate(event => {
-      // 'worklet';
-      translateX.value = savedX.value + event.translationX;
-      if (translateX.value >= -160 && translateX.value <= 160) {
-        const percentage = ((translateX.value + 160) / 320) * 100;
-        runOnJS(setval)(Math.round(percentage));
-      }
-    })
+  const handleGallery = async (crop = false) => {
+    console.log("Gallery pressed");
+    try {
+      const result: CameraResult = await CameraModule.pickImage({ crop });
+      setImageUri(result.uri);
+      console.log("Gallery URI:", result.uri);
+    } catch (error: any) {
+      console.error(error);
+      Alert.alert("Error", error?.message ?? "Could not pick image");
+    }
+  };
 
-    .onEnd(event => {
-      savedX.value = translateX.value;
-      pressed.value = false;
-    });
+  const name = "kabilan";
 
-  const animatedStyles = useAnimatedStyle(() => ({
-    backgroundColor: pressed.value ? '#FFE04B' : '#B58DF1',
-    transform: [
-      {
-        translateX: withClamp(
-          { min: LOWER_BOUND, max: UPPER_BOUND },
-          withSpring(translateX.value),
-        ),
-      },
-    ],
-  }));
-  console.log('vall->>', getval.toString());
   return (
-    <GestureHandlerRootView style={styles.container}>
-      <View style={{alignSelf:'flex-end',marginEnd:10,marginTop:10}}>
-        <AppButton text={'open'}  Style={{backgroundColor:'black'}} Onpress={()=>navigation.navigate('slideex')}/>
+    <View style={styles.container}>
+      <AppText style={styles.text}>
+        {imageUri ? "Selected Image:" : "Pick an image from Camera or Gallery"}
+      </AppText>
+
+      {imageUri && <Image source={{ uri: imageUri }} style={styles.image} />}
+
+      <View style={styles.buttons}>
+        <Button title="Open Camera" onPress={() => handleCapture(false)} />
+        <Button title="Open Gallery" onPress={() => handleGallery(false)} />
+        <Button
+          title="Zoom"
+          onPress={() =>
+            navigation.navigate("zoom", {
+              id: imageUri,
+            })
+          }
+        />
       </View>
-      <View>
-        <AppText text={getval?.toFixed(0)} type={'edittext'} style={{fontSize:30}}/>
-      </View>
-      <View style={styles.container}>
-        <View style={{ backgroundColor: 'red', height: 10, width: 350 }}></View>
-        <GestureDetector gesture={pan}>
-          <Animated.View style={[styles?.circle, animatedStyles]} />
-        </GestureDetector>
-      </View>
-    </GestureHandlerRootView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 16,
   },
-  circle: {
-    height: 60,
-    borderWidth: 2,
-    position: 'absolute',
-    borderColor: 'black',
-    width: 60,
-    borderRadius: 30,
+  text: {
+    fontSize: 18,
+    marginBottom: 20,
+  },
+  image: {
+    width: 250,
+    height: 250,
+    marginBottom: 20,
+    borderRadius: 12,
+  },
+  buttons: {
+    width: "100%",
+    justifyContent: "space-around",
+    gap: 10,
   },
 });
-
-
-

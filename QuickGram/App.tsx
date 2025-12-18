@@ -21,10 +21,8 @@ import CommentScreen from './src/Pages/CommentScreen';
 import IntroScreen from './src/Pages/IntroScreen';
 import Bridge from './src/Pages/Bridge';
 import SlideEx from './src/Pages/SlideEx';
-import swipe from './src/Pages/swipe';
-import Api from './src/Pages/Api';
-
-
+import Zoom from './src/Pages/Zoom';
+import Swipe from './src/Pages/Swipe';
 
 const Stack = createNativeStackNavigator<ScreenType>();
 const Tab = createBottomTabNavigator<ScreenType>();
@@ -89,6 +87,15 @@ const AppStack = () => (
         presentation:'transparentModal'
       }}
     />
+
+    <Stack.Screen
+      name="zoom"
+      component={Zoom}
+      options={{ 
+        headerShown: false ,
+      }}
+    />
+    
   </Stack.Navigator>
 );
 
@@ -205,7 +212,7 @@ const MainTabNavigator = () => {
 
       <Tab.Screen
         name='swipe'
-        component={Api}
+        component={Swipe}
         // eslint-disable-next-line react/no-unstable-nested-components
         options={{
           title: 'swipe',

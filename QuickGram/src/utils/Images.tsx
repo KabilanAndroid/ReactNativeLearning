@@ -35,4 +35,5 @@ export const image ={
     share:require('../assests/share.png'),  
     like:require('../assests/like.png'),  
     dislike:require('../assests/dislike.png'),  
+    voice:require('../assests/voice.png'),  
 }

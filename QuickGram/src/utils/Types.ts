@@ -74,6 +74,9 @@ export interface F3akieJ7JeY4Gt2XmjtD0ozDmoi3 {
 
 export type ScreenType = {
   
+  zoom:{
+    id:string | null;
+  };
   swipe:undefined;
   slideex:undefined;
   bridge:undefined;

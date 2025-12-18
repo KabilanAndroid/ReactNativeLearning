@@ -67,7 +67,7 @@ const fadeOutAndClose = () => {
     const combined = gestureOpacity * fade.value;
     return {
       opacity: combined,
-      backgroundColor: '#00000030',
+      backgroundColor: '#00000020',
     };
   });
 

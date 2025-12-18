@@ -1,15 +1,49 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-shadow */
-import { FlatList, Image, StyleSheet, TouchableOpacity, View } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import {
+  Dimensions,
+  FlatList,
+  Image,
+  NativeModules,
+  PermissionsAndroid,
+  Platform,
+  StyleSheet,
+  ToastAndroid,
+  TouchableOpacity,
+  useWindowDimensions,
+  View,
+} from 'react-native';
+import React, { useEffect, useState } from 'react'; 
 import ChatSearch from '../atoms/ChatSearch';
 import { Colors } from '../utils/Colors';
 import AppText from '../atoms/AppText';
 import firestore from '@react-native-firebase/firestore';
-import { notificationType} from '../utils/Types';
+import { notificationType } from '../utils/Types';
 import { useAppSelector } from '../redux/ReduxHook';
 import { RequestStatusType } from '../utils/Enum';
 import SearchView from '../atoms/SearchView';
+import AppImage from '../atoms/AppImage';
+import { image } from '../utils/Images';
+
+const windowWidth = Dimensions.get('window').width;
+const { VoiceToText } = NativeModules;
+const ToastExample = NativeModules.ToastExample;
+const startVoice = async () => {
+  if (Platform.OS !== 'android') return '';
+
+  if (!VoiceToText || !VoiceToText.startVoiceSearch) {
+    console.error('Native bridge not linked');
+    return '';
+  }
+  try {
+    return await VoiceToText.startVoiceSearch();
+  } catch (e) {
+    // console.error(e);
+    ToastExample?.show('voice search cancelled',ToastAndroid.SHORT);
+    return '';
+  }
+};
+
 
 /*-------------------------------------search screen------------------------------------------ */
 
@@ -18,14 +52,19 @@ const SearchScreen = () => {
   const [chatuser, setchatuser] = useState<notificationType[]>([]);
   const user = useAppSelector(state => state.auth);
   console.log('chatuser:', chatuser);
+  const [getval, setval] = useState<boolean>(false);
 
   const filteredData = chatuser.filter(item => {
     return item.username.toLowerCase().includes(searchitem.toLowerCase());
   });
+  /* ------------------------------------------record-----------------------------------------------*/
+  
+
+  /*---------------------------------------------------------------------------------*/
 
   /*-------------------------------Getting and displaying global data ---------------------------------- */
   /*-------------------------------Getting pending data for current user ---------------------------------------- */
-  
+
   const getsearchitem = async () => {
     firestore()
       .collection('FriendRequest')
@@ -120,7 +159,6 @@ const SearchScreen = () => {
 
   /*------------------------------------------ useEffect --------------------------------------------- */
 
-  
   /*-------------------------------click events in firebase ------------------------------------------ */
   const request = async (recieveid: String) => {
     console.log('item click id :', recieveid);
@@ -144,29 +182,48 @@ const SearchScreen = () => {
     console.log('itemid now is ->:', item);
 
     return (
-      <SearchView item={item} callback={()=>{request(item.id)}}/>
+      <SearchView
+        item={item}
+        callback={() => {
+          request(item.id);
+        }}
+      />
     );
   };
   useEffect(() => {
-    getsearchitem()
-    
+    getsearchitem();
   }, []);
   /*-------------------------------Return------------------------------------------------------------ */
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-      <AppText
-        text={'Search'}
-        type={'heardertext'}
-        style={styles.headertextstyle}
-      />
+        <AppText
+          text={'Search'}
+          type={'heardertext'}
+          style={styles.headertextstyle}
+        />
       </View>
-      <ChatSearch
-        onChangeText={setSearchitem}
-        value={searchitem}
-        placeholder={'search'}
-        style={styles.searchbar}
-      />
+      <View style={styles.searchview}>
+        <View>
+          <ChatSearch
+            onChangeText={setSearchitem}
+            value={searchitem}
+            placeholder={'search'}
+            style={styles.searchbar}
+          />
+        </View>
+        <View>
+          <TouchableOpacity
+            onPress={async () => {
+              const result = await startVoice();
+              setSearchitem(result);
+              console.log(result);
+            }}
+          >
+            <AppImage source={image.voice} style={styles.voiceicon} />
+          </TouchableOpacity>
+        </View>
+      </View>
       <FlatList
         data={filteredData}
         renderItem={renderItem}
@@ -182,19 +239,19 @@ const styles = StyleSheet.create({
     // backgroundColor: Colors.white,
   },
 
-  header:{justifyContent:'center',backgroundColor:Colors.headercolor},
+  header: { justifyContent: 'center', backgroundColor: Colors.headercolor },
   headertextstyle: {
-        padding: 10,
-        alignSelf:'center',
-        // backgroundColor: Colors.headercolor,
-        // borderBottomWidth: 2,
-        // borderBottomColor: '#f0ebebff',
-      },
- 
+    padding: 10,
+    alignSelf: 'center',
+    // backgroundColor: Colors.headercolor,
+    // borderBottomWidth: 2,
+    // borderBottomColor: '#f0ebebff',
+  },
 
   searchbar: {
     backgroundColor: 'white',
     borderRadius: 10,
+    width: windowWidth - 60,
     height: 45,
     borderColor: Colors.black,
     borderWidth: 1,
@@ -202,5 +259,6 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     paddingHorizontal: 30,
   },
-  
+  searchview:{ flexDirection: 'row', alignItems: 'center' },
+  voiceicon:{ height: 25, width: 25 },
 });

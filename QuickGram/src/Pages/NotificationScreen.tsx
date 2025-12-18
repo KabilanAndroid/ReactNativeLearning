@@ -1,4 +1,4 @@
-import { FlatList,  StyleSheet, View } from 'react-native';
+import { FlatList, StyleSheet, View } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import firestore from '@react-native-firebase/firestore';
 import { Colors } from '../utils/Colors';
@@ -17,9 +17,9 @@ const NotificationScreen = () => {
     const subscriber = firestore()
       .collection('FriendRequest')
       .where('recieverid', '==', user.userid)
-      .where('receiverstatus', '==', RequestStatusType.acceptOrreject)
+      .where(' ', '==', RequestStatusType.acceptOrreject)
       .onSnapshot(querySnapshot => {
-        const notifationusers = querySnapshot.docs.map(
+        const notifationusers = querySnapshot?.docs?.map(
           doc =>
             ({
               id: doc.id,
@@ -30,7 +30,7 @@ const NotificationScreen = () => {
         console.log('firstload:', notifationusers);
       });
     return () => subscriber();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   /*------------------------------------creating room for chat------------------------------------------- */
   const createroom = async (getid: string, getname: string) => {
@@ -38,10 +38,12 @@ const NotificationScreen = () => {
       .collection('chatRooms')
       .add({
         createdAt: firestore.FieldValue.serverTimestamp(),
+        userIds: [user.userid, getid],
+
         users: [
           {
             uid: user.userid,
-            displayName: user.username,
+            displayName: user.username, 
           },
           {
             uid: getid,
@@ -69,10 +71,10 @@ const NotificationScreen = () => {
     return (
       <NotificationList
         item={item}
-        callback={() => { 
-          console.log("press",item);
-          handleaccept(item.id) 
-         createroom(item.senderid, item.sendername);
+        callback={() => {
+          console.log('press', item);
+          handleaccept(item.id);
+          createroom(item.senderid, item.sendername);
         }}
         handlereject={() => {
           handlereject(item.id);
@@ -83,7 +85,7 @@ const NotificationScreen = () => {
   /*-------------------------------------Return------------------------------------------ */
   return (
     <View style={styles.container}>
-      <NotificationView/>
+      <NotificationView />
       <FlatList
         data={notifications}
         renderItem={renderitem}
@@ -92,7 +94,7 @@ const NotificationScreen = () => {
     </View>
   );
 };
-  /*--------------------------------------------------------------------------------------- */
+/*--------------------------------------------------------------------------------------- */
 export default NotificationScreen;
 const styles = StyleSheet.create({
   container: {
@@ -109,7 +111,7 @@ const styles = StyleSheet.create({
     height: 45,
     borderColor: Colors.black,
     borderWidth: 1,
-    
+
     marginHorizontal: 10,
     marginVertical: 10,
     paddingHorizontal: 30,
