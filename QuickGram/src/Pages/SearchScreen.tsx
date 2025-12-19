@@ -3,14 +3,11 @@
 import {
   Dimensions,
   FlatList,
-  Image,
   NativeModules,
-  PermissionsAndroid,
   Platform,
   StyleSheet,
   ToastAndroid,
   TouchableOpacity,
-  useWindowDimensions,
   View,
 } from 'react-native';
 import React, { useEffect, useState } from 'react'; 
@@ -38,7 +35,7 @@ const startVoice = async () => {
   try {
     return await VoiceToText.startVoiceSearch();
   } catch (e) {
-    // console.error(e);
+    console.error(e);
     ToastExample?.show('voice search cancelled',ToastAndroid.SHORT);
     return '';
   }
@@ -52,7 +49,7 @@ const SearchScreen = () => {
   const [chatuser, setchatuser] = useState<notificationType[]>([]);
   const user = useAppSelector(state => state.auth);
   console.log('chatuser:', chatuser);
-  const [getval, setval] = useState<boolean>(false);
+  
 
   const filteredData = chatuser.filter(item => {
     return item.username.toLowerCase().includes(searchitem.toLowerCase());
@@ -242,7 +239,7 @@ const styles = StyleSheet.create({
   header: { justifyContent: 'center', backgroundColor: Colors.headercolor },
   headertextstyle: {
     padding: 10,
-    alignSelf: 'center',
+    // alignSelf: 'center',
     // backgroundColor: Colors.headercolor,
     // borderBottomWidth: 2,
     // borderBottomColor: '#f0ebebff',

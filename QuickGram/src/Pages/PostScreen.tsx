@@ -1,11 +1,7 @@
 import {
-  Alert,
   NativeModules,
   StyleSheet,
-  Text,
-  TextInput,
   ToastAndroid,
-  TouchableOpacity,
   View,
 } from 'react-native';
 import React, { useEffect, useState } from 'react';

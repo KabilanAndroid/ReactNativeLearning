@@ -2,10 +2,8 @@
 import {
   Dimensions,
   FlatList,
-  Image,
   KeyboardAvoidingView,
   NativeModules,
-  PermissionsAndroid,
   Platform,
   StyleSheet,
   ToastAndroid,
@@ -24,7 +22,6 @@ import ChatHomedatewise from '../atoms/ChatHomedatewise';
 import AppImage from '../atoms/AppImage';
 import { image } from '../utils/Images';
 const windowWidth = Dimensions.get('window').width;
-const { AudioRecorder } = NativeModules;
 const { VoiceToText } = NativeModules;
 const ToastExample = NativeModules.ToastExample;
 export type usernametype = {
@@ -48,19 +45,7 @@ const startVoice = async () => {
     return '';
   }
 };
-async function requestMicPermission() {
-  if (Platform.OS !== 'android') return true;
 
-  const granted = await PermissionsAndroid.request(
-    PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
-    {
-      title: 'Microphone Permission',
-      message: 'QuickGram needs access to your microphone',
-      buttonPositive: 'OK',
-    },
-  );
-  return granted === PermissionsAndroid.RESULTS.GRANTED;
-}
 /*----------------------------------------renderlist-------------------------------------------------*/
 const ChatListItem = ({
   username,

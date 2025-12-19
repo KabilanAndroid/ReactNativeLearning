@@ -1,5 +1,5 @@
 import React from 'react';
-import { Dimensions, StyleSheet, View } from 'react-native';
+import {  StyleSheet, View } from 'react-native';
 import Animated, {
   clamp,
   useAnimatedStyle,
@@ -14,7 +14,6 @@ import {
 import { useAppRoute } from '../navigation/NavigationHook';
 import AppImage from '../atoms/AppImage';
 
-const { width, height } = Dimensions.get('window');
 
 const Zoom = () => {
   const route = useAppRoute<'zoom'>();

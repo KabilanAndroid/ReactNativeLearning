@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import React, { useEffect, useState } from 'react';
 import {
   View,
@@ -9,7 +10,7 @@ import { useDispatch } from 'react-redux';
 import { setlogout, setusernameredux } from '../redux/AuthSlice';
 import firestore from '@react-native-firebase/firestore';
 import { useAppSelector } from '../redux/ReduxHook';
-import { Lastmessage, MessageType, Moremessage, RenderPost, ScreenType, searchnewtype } from '../utils/Types';
+import {  RenderPost, ScreenType, searchnewtype } from '../utils/Types';
 import AppText from '../atoms/AppText';
 import { Colors } from '../utils/Colors';
 import { image } from '../utils/Images';
@@ -26,7 +27,7 @@ const UserDetailsScreen = () => {
   const [renderpost, setrenderpost] = useState<RenderPost[]>();
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedItem, setSelectedItem] = useState('');
-  const [lastvisible, setlastvisible] = useState<Lastmessage >();
+  
 
   const openmodel = (likedby:any)=>{
     setModalVisible(true)
@@ -88,6 +89,10 @@ const UserDetailsScreen = () => {
     };
 
     return (
+      <TouchableOpacity onPress={()=> navigation.navigate('postdetails',{
+        text:item.Text,
+        commentid:item.id,
+      })}>
       
       <View style={styles.top}>
         
@@ -207,6 +212,7 @@ const UserDetailsScreen = () => {
           </View>
         </View>
       </View>
+      </TouchableOpacity>
     );
   };
   useEffect(() => {
@@ -329,7 +335,7 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 20,
     paddingVertical: 10,
-    elevation: 10,
+    // elevation: 10,
     opacity: 20,
   },
 

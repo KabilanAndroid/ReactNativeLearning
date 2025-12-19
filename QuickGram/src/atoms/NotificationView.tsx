@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.headercolor,
     borderBottomColor: '#f0ebebff',
   },
-  textview1: {flex:1,alignItems:'flex-end',alignSelf:'center'},
+  textview1: {flex:1,alignSelf:'center'},
    headertextstyle: {
     padding: 10,
     alignSelf:'center',

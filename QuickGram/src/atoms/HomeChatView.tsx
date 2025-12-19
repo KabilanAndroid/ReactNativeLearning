@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
     padding:10,
     backgroundColor: Colors.headercolor,
   },
-  textview1: { flex:1, flexDirection: 'row',justifyContent:'flex-end' },
+  textview1: { flex:1, flexDirection: 'row' },
   headertextstyle: {
     // padding: 10,
     // backgroundColor: Colors.introbg,
@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
     flex:1,
     flexDirection:'row',
     justifyContent:'flex-end',
-    alignItems:'center',
+    // alignItems:'center',
     columnGap:20
   },
   message2: {

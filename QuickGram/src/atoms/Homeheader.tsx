@@ -12,7 +12,7 @@ type HomeheaderType ={
 const Homeheader:FC<HomeheaderType> = ({logout}) => {
   return (
     <View style={styles.textview}>
-            <View style={{flex:1,alignItems:'flex-end'}}>
+            <View style={{flex:1}}>
             <AppText
               text={'Home'}
               type={'heardertext'}

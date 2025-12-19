@@ -77,6 +77,10 @@ export type ScreenType = {
   zoom:{
     id:string | null;
   };
+  postdetails:{
+    text:string ;
+    commentid:string;
+  };
   swipe:undefined;
   slideex:undefined;
   bridge:undefined;

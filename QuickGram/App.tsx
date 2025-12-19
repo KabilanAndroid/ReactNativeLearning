@@ -23,6 +23,7 @@ import Bridge from './src/Pages/Bridge';
 import SlideEx from './src/Pages/SlideEx';
 import Zoom from './src/Pages/Zoom';
 import Swipe from './src/Pages/Swipe';
+import PostDetails from './src/Pages/PostDetails';
 
 const Stack = createNativeStackNavigator<ScreenType>();
 const Tab = createBottomTabNavigator<ScreenType>();
@@ -91,6 +92,14 @@ const AppStack = () => (
     <Stack.Screen
       name="zoom"
       component={Zoom}
+      options={{ 
+        headerShown: false ,
+      }}
+    />
+
+     <Stack.Screen
+      name='postdetails'
+      component={PostDetails}
       options={{ 
         headerShown: false ,
       }}
