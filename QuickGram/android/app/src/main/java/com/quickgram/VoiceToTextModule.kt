@@ -11,7 +11,7 @@ class VoiceToTextModule(
 ) : ReactContextBaseJavaModule(reactContext), ActivityEventListener {
 
     private var voicePromise: Promise? = null
-    private val REQUEST_CODE = 2001
+        private val REQUEST_CODE = 2001
 
     init {
         reactContext.addActivityEventListener(this)

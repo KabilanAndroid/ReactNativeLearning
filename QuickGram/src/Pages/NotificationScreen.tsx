@@ -17,7 +17,7 @@ const NotificationScreen = () => {
     const subscriber = firestore()
       .collection('FriendRequest')
       .where('recieverid', '==', user.userid)
-      .where(' ', '==', RequestStatusType.acceptOrreject)
+      .where('receiverstatus', '==', RequestStatusType.acceptOrreject)
       .onSnapshot(querySnapshot => {
         const notifationusers = querySnapshot?.docs?.map(
           doc =>
