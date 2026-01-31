@@ -80,7 +80,12 @@ export type ScreenType = {
   postdetails:{
     text:string ;
     commentid:string;
+    postusername:string;
+    commentcount:number;
+    posttime:created;
+
   };
+ 
   swipe:undefined;
   slideex:undefined;
   bridge:undefined;
@@ -105,6 +110,10 @@ export type ScreenType = {
   maintabnavigator: undefined;
   notificationscreen: undefined;
 };
+ export interface created {
+  seconds: number;
+  nanoseconds: number;
+}
 
 export interface SearchType {
   id: string;

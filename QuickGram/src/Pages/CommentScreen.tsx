@@ -1,3 +1,5 @@
+/* eslint-disable react-native/no-inline-styles */
+/* eslint-disable react/self-closing-comp */
 import {
   FlatList,
   Keyboard,
@@ -39,7 +41,6 @@ const CommentScreen = () => {
 
   const renderitem = ({
     item,
-    index,
   }: {
     item: Rendercomment;
     index: number;

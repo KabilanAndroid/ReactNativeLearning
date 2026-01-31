@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-native/no-inline-styles */
 import React, { useEffect, useState } from 'react';
 import {
@@ -27,7 +28,6 @@ const UserDetailsScreen = () => {
   const [renderpost, setrenderpost] = useState<RenderPost[]>();
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedItem, setSelectedItem] = useState('');
-  
 
   const openmodel = (likedby:any)=>{
     setModalVisible(true)
@@ -43,10 +43,12 @@ const UserDetailsScreen = () => {
     }
   };
   useEffect(() => {
+    console.log('iam searching............................................................');
+    
     getsearchitem();
   }, []);
   const getsearchitem = async () => {
-    const querySnapshot = await firestore().collection('UserDetails').get();
+    const querySnapshot = (await firestore().collection('UserDetails').get());
     const newMessages = querySnapshot.docs.map(
       doc =>
         ({
@@ -61,13 +63,11 @@ const UserDetailsScreen = () => {
   };
   const renderflatlistpost = ({
     item,
-    index,
   }: {
     item: RenderPost;
     index: number;
   }) => {
     const posttext = item.Text;
-
     const like = async (id: string | undefined, liked: string | string[]) => {
       if (liked?.includes(user.userid)) {
         await firestore()
@@ -92,6 +92,9 @@ const UserDetailsScreen = () => {
       <TouchableOpacity onPress={()=> navigation.navigate('postdetails',{
         text:item.Text,
         commentid:item.id,
+        postusername:item.SenderName,
+        commentcount:item.count,
+        posttime:item?.PostTime,
       })}>
       
       <View style={styles.top}>
